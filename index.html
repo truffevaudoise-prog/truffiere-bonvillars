@@ -12,15 +12,12 @@
   <script src="_ds/modernist-f34565a0-5829-41f2-8eb9-01444e9f05df/_ds_bundle.js"></script>
   <script src="./image-slot.js"></script>
   <style>
-    body{margin:0;background:var(--color-neutral-200);font-family:var(--font-body)}
-    .gallery{display:flex;gap:56px;padding:64px 56px;overflow-x:auto;align-items:flex-start}
-    .col{display:flex;flex-direction:column;gap:18px;flex:none}
-    .col-label{display:flex;align-items:baseline;gap:10px}
-    .col-num{font:600 12px var(--font-body);color:#fff;background:var(--color-text);padding:3px 8px}
-    .col-title{font:600 14px var(--font-heading);color:var(--color-text);letter-spacing:.02em;text-transform:uppercase}
-    .screen{width:100%;height:100%;background:var(--color-bg);display:flex;flex-direction:column;font-family:var(--font-body);color:var(--color-text);overflow:hidden;padding-top:62px;box-sizing:border-box}
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:2px solid var(--color-divider)}
-    .backbtn{font:600 20px var(--font-body);color:var(--color-text);text-decoration:none}
+    html,body{margin:0;background:var(--color-neutral-200);font-family:var(--font-body);height:100%}
+    a{color:var(--color-accent-700)}
+    a:hover{color:var(--color-accent)}
+    .app{width:100%;max-width:480px;margin:0 auto;height:100vh;background:var(--color-bg);display:flex;flex-direction:column;overflow:hidden;color:var(--color-text)}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:2px solid var(--color-divider);flex:none}
+    .backbtn{font:600 20px var(--font-body);color:var(--color-text);text-decoration:none;cursor:pointer;background:none;border:none;padding:0}
     .screentitle{font:700 17px var(--font-heading);letter-spacing:.01em}
     .content{flex:1;overflow-y:auto;padding:18px}
     .wordmark{font:800 22px var(--font-heading);letter-spacing:-.01em;line-height:1}
@@ -28,303 +25,267 @@
     .langtag{cursor:pointer}
   </style>
 </helmet>
-<div class="gallery">
+<div class="app">
 
-<div class="col">
-  <div class="col-label"><span class="col-num">1</span><span class="col-title">Accueil</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div style="padding:22px 20px 0"><span class="kicker">{{ t.home_kicker }}</span></div>
-      <div style="padding:6px 20px 0;display:flex;justify-content:space-between;align-items:flex-start">
-        <div class="wordmark">{{ t.home_line1 }}<br>{{ t.home_line2 }}</div>
-        <div class="seg" style="width:auto">
-          <div class="seg-opt langtag" onClick="{{ setLangFr }}" style="{{ segFr }}">FR</div>
-          <div class="seg-opt langtag" onClick="{{ setLangDe }}" style="{{ segDe }}">DE</div>
-          <div class="seg-opt langtag" onClick="{{ setLangEn }}" style="{{ segEn }}">EN</div>
-        </div>
-      </div>
-      <div style="padding:18px 20px 0">
-        <image-slot id="home-hero" shape="rect" placeholder="Photo : entrée de la truffière" style="width:100%;height:180px" fit="cover"></image-slot>
-        <div style="margin-top:6px;font:11px var(--font-body);color:var(--color-neutral-700)">Noir et blanc, comme prévu par le système</div>
-      </div>
-      <div class="content" style="padding-top:16px">
-        <p style="font:15px/1.5 var(--font-body);margin:0 0 16px">{{ t.home_intro }}</p>
-        <div style="display:flex;gap:10px;margin-bottom:20px">
-          <span class="tag tag-accent">{{ t.tag_postes }}</span>
-          <span class="tag tag-neutral">{{ t.tag_parcours }}</span>
-        </div>
-        <a class="btn btn-primary btn-block" style="justify-content:flex-start">{{ t.btn_carte }}</a>
-        <a class="btn btn-ghost btn-block" style="margin-top:10px;justify-content:flex-start">{{ t.btn_infos }}</a>
-        <a class="btn btn-ghost btn-block" style="margin-top:10px;justify-content:flex-start">{{ t.btn_cuisine }}</a>
-      </div>
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div style="padding:22px 20px 0"><span class="kicker">{{ t.home_kicker }}</span></div>
+  <div style="padding:6px 20px 0;display:flex;justify-content:space-between;align-items:flex-start">
+    <div class="wordmark">{{ t.home_line1 }}<br>{{ t.home_line2 }}</div>
+    <div class="seg" style="width:auto">
+      <div class="seg-opt langtag" onClick="{{ setLangFr }}" style="{{ segFr }}">FR</div>
+      <div class="seg-opt langtag" onClick="{{ setLangDe }}" style="{{ segDe }}">DE</div>
+      <div class="seg-opt langtag" onClick="{{ setLangEn }}" style="{{ segEn }}">EN</div>
     </div>
-  </x-import>
-</div>
+  </div>
+  <div style="padding:18px 20px 0">
+    <image-slot id="home-hero" shape="rect" placeholder="Photo : entrée de la truffière" style="width:100%;height:180px" fit="cover"></image-slot>
+  </div>
+  <div class="content" style="padding-top:16px">
+    <p style="font:15px/1.5 var(--font-body);margin:0 0 16px">{{ t.home_intro }}</p>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <span class="tag tag-accent">{{ t.tag_postes }}</span>
+      <span class="tag tag-neutral">{{ t.tag_parcours }}</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a class="btn btn-primary btn-block" onClick="{{ goMap }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_carte }}</a>
+      <a class="btn btn-ghost btn-block" onClick="{{ goListe }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_liste }}</a>
+      <a class="btn btn-ghost btn-block" onClick="{{ goInfos }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_infos }}</a>
+      <a class="btn btn-ghost btn-block" onClick="{{ goTruffe }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_truffe }}</a>
+      <a class="btn btn-ghost btn-block" onClick="{{ goCuisine }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_cuisine }}</a>
+      <a class="btn btn-ghost btn-block" onClick="{{ goQuiz }}" style="justify-content:flex-start;cursor:pointer">{{ t.quiz_title }}</a>
+    </div>
+  </div>
+</sc-if>
 
-<div class="col">
-  <div class="col-label"><span class="col-num">2</span><span class="col-title">Carte du parcours</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div class="topbar">
-        <a class="backbtn">‹</a>
-        <span class="screentitle">{{ t.map_title }}</span>
-        <span class="tag {{ editTagClass }}" style="font-size:11px;cursor:pointer" onClick="{{ toggleEdit }}">{{ editLabel }}</span>
-      </div>
-      <div ref="{{ mapRef }}" style="position:relative;flex:1;background:#eeece5;overflow:hidden">
-        <image-slot id="course-map" src="assets/plan-map-crop.png" shape="rect" placeholder="Plan de la truffière didactique" style="width:100%;height:100%" fit="cover"></image-slot>
-        <sc-for list="{{ stations }}" as="st" hint-placeholder-count="21">
-          <div onClick="{{ st.onSelect }}" onPointerDown="{{ st.onDragStart }}" style="position:absolute;left:{{ st.x }}%;top:{{ st.y }}%;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);color:#fff;background:{{ st.bg }};box-shadow:{{ st.ring }}">{{ st.num }}</div>
-        </sc-for>
-      </div>
-      <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:6px 18px;font:11px var(--font-body);color:var(--color-neutral-700);background:var(--color-neutral-100);border-top:2px solid var(--color-divider)">{{ t.map_hint }} · <a onClick="{{ logCoords }}" style="color:var(--color-accent-700);cursor:pointer">{{ t.map_copy }}</a></div>
+<sc-if value="{{ isMap }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.map_title }}</span>
+    <span class="tag {{ editTagClass }}" style="font-size:11px;cursor:pointer" onClick="{{ toggleEdit }}">{{ editLabel }}</span>
+  </div>
+  <div ref="{{ mapRef }}" style="position:relative;flex:1;background:#eeece5;overflow:hidden">
+    <image-slot id="course-map" src="assets/plan-map-crop.png" shape="rect" placeholder="Plan de la truffière didactique" style="width:100%;height:100%" fit="cover"></image-slot>
+    <sc-for list="{{ stations }}" as="st" hint-placeholder-count="21">
+      <div onClick="{{ st.onSelect }}" onPointerDown="{{ st.onDragStart }}" style="position:absolute;left:{{ st.x }}%;top:{{ st.y }}%;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);color:#fff;background:{{ st.bg }};box-shadow:{{ st.ring }}">{{ st.num }}</div>
+    </sc-for>
+  </div>
+  <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:6px 18px;font:11px var(--font-body);color:var(--color-neutral-700);background:var(--color-neutral-100);border-top:2px solid var(--color-divider)">{{ t.map_hint }} · <a onClick="{{ logCoords }}" style="cursor:pointer">{{ t.map_copy }}</a></div>
+  </sc-if>
+  <div class="content" style="flex:0 0 auto">
+    <div style="display:flex;align-items:center;gap:12px;padding:4px 0 12px">
+      <span class="tag tag-accent">{{ selected.num }}</span>
+      <div style="flex:1"><div style="font:600 15px var(--font-body)">{{ selected.title }}</div><div style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ selected.short }}</div></div>
+    </div>
+    <a class="btn btn-secondary btn-block" onClick="{{ openSelected }}" style="justify-content:flex-start;cursor:pointer">{{ t.map_open_poste }} {{ selected.num }} →</a>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isPoste }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goMap }}">‹</button>
+    <span class="screentitle">{{ poste.title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content" style="padding:0">
+    <image-slot id="poste-{{ poste.num }}" shape="rect" placeholder="Photo panneau" style="width:100%;height:180px" fit="cover"></image-slot>
+    <div style="padding:18px 20px">
+      <span class="kicker">{{ t.poste_label }} {{ poste.num }} {{ t.poste_of }}</span>
+      <h2 style="font:700 22px var(--font-heading);margin:6px 0 14px">{{ poste.title }}</h2>
+      <sc-if value="{{ hasVideoId }}" hint-placeholder-val="{{ false }}">
+        <div class="card elev-sm" style="padding:0;margin-bottom:16px;overflow:hidden">
+          <iframe key="{{ video.id }}-{{ lang }}" src="{{ videoEmbedUrl }}" title="{{ video.title }}" style="width:100%;height:196px;border:0;display:block" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="{{ true }}"></iframe>
+          <div style="padding:8px 12px;font:12px var(--font-body);color:var(--color-neutral-600)">{{ video.title }} · {{ video.duration }}</div>
+        </div>
       </sc-if>
-      <div class="content" style="flex:0 0 auto">
-        <div style="display:flex;align-items:center;gap:12px;padding:4px 0 12px">
-          <span class="tag tag-accent">{{ selected.num }}</span>
-          <div style="flex:1"><div style="font:600 15px var(--font-body)">{{ selected.title }}</div><div style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ selected.short }}</div></div>
-        </div>
-        <a class="btn btn-secondary btn-block" style="justify-content:flex-start">{{ t.map_open_poste }} {{ selected.num }} →</a>
-      </div>
-    </div>
-  </x-import>
-</div>
-
-<div class="col">
-  <div class="col-label"><span class="col-num">3</span><span class="col-title">Fiche station — les 23 postes (◀▶)</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div class="topbar">
-        <a class="backbtn">‹</a>
-        <span class="screentitle">{{ poste.title }}</span>
-        <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
-      </div>
-      <div class="content" style="padding:0">
-        <image-slot id="poste-{{ poste.num }}" shape="rect" placeholder="Photo panneau" style="width:100%;height:180px" fit="cover"></image-slot>
-        <div style="padding:18px 20px">
-          <span class="kicker">{{ t.poste_label }} {{ poste.num }} {{ t.poste_of }}</span>
-          <h2 style="font:700 22px var(--font-heading);margin:6px 0 14px">{{ poste.title }}</h2>
-          <sc-if value="{{ hasVideoId }}" hint-placeholder-val="{{ false }}">
-            <div class="card elev-sm" style="padding:0;margin-bottom:16px;overflow:hidden">
-              <iframe key="{{ video.id }}-{{ lang }}" src="{{ videoEmbedUrl }}" title="{{ video.title }}" style="width:100%;height:196px;border:0;display:block" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="{{ true }}"></iframe>
-              <div style="padding:8px 12px;font:12px var(--font-body);color:var(--color-neutral-600)">{{ video.title }} · {{ video.duration }}</div>
+      <sc-if value="{{ hasVideoNoId }}">
+        <div class="card elev-sm" style="padding:0;margin-bottom:16px;overflow:hidden">
+          <div style="position:relative;background:var(--color-text);height:130px;display:flex;align-items:center;justify-content:center">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center">
+              <div style="width:0;height:0;border-left:14px solid var(--color-text);border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:3px"></div>
             </div>
-          </sc-if>
-          <sc-if value="{{ hasVideoNoId }}">
-            <div class="card elev-sm" style="padding:0;margin-bottom:16px;overflow:hidden">
-              <div style="position:relative;background:var(--color-text);height:130px;display:flex;align-items:center;justify-content:center">
-                <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center">
-                  <div style="width:0;height:0;border-left:14px solid var(--color-text);border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:3px"></div>
-                </div>
-                <span style="position:absolute;bottom:10px;left:12px;color:#fff;font:12px var(--font-body)">{{ video.title }} · {{ video.duration }}</span>
-              </div>
-            </div>
-          </sc-if>
-          <sc-if value="{{ hasLink }}">
-            <a class="btn btn-secondary btn-block" style="justify-content:flex-start;margin-bottom:16px">{{ link.label }} →</a>
-          </sc-if>
-          <sc-if value="{{ hasNoVideo }}">
-            <div class="card elev-sm" style="padding:14px;margin-bottom:16px;background:var(--color-neutral-100);border-style:dashed">
-              <span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.poste_video_soon }}</span>
-            </div>
-          </sc-if>
-          <sc-if value="{{ hasSections }}">
-            <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:16px">
-              <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
-                <div style="border-bottom:2px solid var(--color-divider);padding-bottom:14px">
-                  <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;color:var(--color-accent-700)">{{ sec.title }}</div>
-                  <p style="font:14px/1.55 var(--font-body);margin:0">{{ sec.body }}</p>
-                </div>
-              </sc-for>
-            </div>
-          </sc-if>
-          <p style="font:15px/1.6 var(--font-body);margin:0 0 16px">{{ poste.body }}</p>
-          <sc-if value="{{ hasFacts }}">
-            <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">
-              <sc-for list="{{ facts }}" as="f" hint-placeholder-count="2">
-                <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ f.label }}</span><span style="font:600 13px var(--font-body);text-align:right">{{ f.value }}</span></div>
-              </sc-for>
-            </div>
-          </sc-if>
-          <div style="display:flex;gap:10px">
-            <a class="btn btn-ghost" onClick="{{ gotoPrev }}" style="justify-content:center;flex:1">{{ t.poste_prev }}</a>
-            <a class="btn btn-secondary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1">{{ t.poste_next }}</a>
+            <span style="position:absolute;bottom:10px;left:12px;color:#fff;font:12px var(--font-body)">{{ video.title }} · {{ video.duration }}</span>
           </div>
         </div>
-      </div>
-    </div>
-  </x-import>
-</div>
-
-<div class="col">
-  <div class="col-label"><span class="col-num">4</span><span class="col-title">Infos pratiques</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div class="topbar">
-        <a class="backbtn">‹</a>
-        <span class="screentitle">{{ t.infos_title }}</span>
-        <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
-      </div>
-      <div class="content">
-        <div class="hr" style="margin:0 0 14px"></div>
-        <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_horaires }}</div>
-        <table class="table" style="margin-bottom:24px;width:100%">
-          <tbody>
-            <tr><td>{{ t.infos_access_libre }}</td><td>{{ t.infos_access_libre_val }}</td></tr>
-            <tr><td>{{ t.infos_visite_org }}</td><td>{{ t.infos_visite_org_val }}</td></tr>
-            <tr><td>{{ t.infos_visite_indiv }}</td><td>{{ t.infos_visite_indiv_val }}</td></tr>
-            <tr><td>{{ t.infos_parcours }}</td><td>{{ t.infos_parcours_val }}</td></tr>
-          </tbody>
-        </table>
-        <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_acces }}</div>
-        <div class="card elev-sm" style="padding:0;margin-bottom:24px;overflow:hidden">
-          <image-slot id="access-map" shape="rect" placeholder="Extrait de carte / accès" style="width:100%;height:130px" fit="cover"></image-slot>
-          <a href="https://maps.app.goo.gl/EimvH8V2UT94YVrCA" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="border-radius:0;text-decoration:none">{{ t.infos_maps_btn }}</a>
+      </sc-if>
+      <sc-if value="{{ hasLink }}">
+        <a class="btn btn-secondary btn-block" href="https://{{ link.url }}" target="_blank" rel="noopener" style="justify-content:flex-start;margin-bottom:16px;text-decoration:none">{{ link.label }} →</a>
+      </sc-if>
+      <sc-if value="{{ hasNoVideo }}">
+        <div class="card elev-sm" style="padding:14px;margin-bottom:16px;background:var(--color-neutral-100);border-style:dashed">
+          <span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.poste_video_soon }}</span>
         </div>
-        <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_contact }}</div>
-        <p style="font:14px/1.6 var(--font-body);margin:0">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffe-vaudoise.ch</p>
-      </div>
-    </div>
-  </x-import>
-</div>
-
-<div class="col">
-  <div class="col-label"><span class="col-num">5</span><span class="col-title">À propos de la truffe</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div class="topbar">
-        <a class="backbtn">‹</a>
-        <span class="screentitle">{{ t.truffe_title }}</span>
-        <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
-      </div>
-      <div class="content" style="padding:0">
-        <image-slot id="truffle-photo" shape="rect" placeholder="Photo : truffe et chêne" style="width:100%;height:170px" fit="cover"></image-slot>
-        <div style="padding:18px 20px">
-          <p style="font:15px/1.6 var(--font-body);margin:0 0 18px">{{ t.truffe_intro }}</p>
-          <div style="display:flex;flex-direction:column;gap:0">
-            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_espece }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_espece_val }}</span></div>
-            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_maturite }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_maturite_val }}</span></div>
-            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_arbre }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_arbre_val }}</span></div>
-            <div style="display:flex;justify-content:space-between;padding:12px 0"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_recherche }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_recherche_val }}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </x-import>
-</div>
-
-<div class="col">
-  <div class="col-label"><span class="col-num">6</span><span class="col-title">Cuisine de la truffe</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div class="topbar">
-        <a class="backbtn">‹</a>
-        <span class="screentitle">{{ t.cuisine_title }}</span>
-        <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
-      </div>
-      <div class="content" style="padding-top:12px">
-        <div class="seg" style="width:100%;margin-bottom:18px">
-          <div class="seg-opt" onClick="{{ setTabConseils }}" style="{{ tabConseilsStyle }}">{{ t.tab_conseils }}</div>
-          <div class="seg-opt" onClick="{{ setTabEspeces }}" style="{{ tabEspecesStyle }}">{{ t.tab_especes }}</div>
-          <div class="seg-opt" onClick="{{ setTabRecettes }}" style="{{ tabRecettesStyle }}">{{ t.tab_recettes }}</div>
-        </div>
-        <sc-if value="{{ isConseils }}" hint-placeholder-val="{{ true }}">
-          <div style="display:flex;flex-direction:column;gap:0">
-            <sc-for list="{{ conseils }}" as="c" hint-placeholder-count="4">
-              <div style="padding:14px 0;border-bottom:2px solid var(--color-divider)">
-                <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;color:var(--color-accent-700)">{{ c.title }}</div>
-                <p style="font:14px/1.55 var(--font-body);margin:0">{{ c.body }}</p>
-              </div>
-            </sc-for>
-          </div>
-        </sc-if>
-        <sc-if value="{{ isEspeces }}">
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <sc-for list="{{ especes }}" as="e" hint-placeholder-count="4">
-              <div class="card elev-sm" style="padding:14px">
-                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-                  <span style="font:700 15px var(--font-heading)">{{ e.name }}</span>
-                  <span class="tag tag-neutral" style="font-size:10px">{{ e.temp }}</span>
-                </div>
-                <p style="font:13px/1.5 var(--font-body);margin:0 0 8px;color:var(--color-neutral-700)">{{ e.taste }}</p>
-                <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_recolte }}</span><span style="font:600 12px var(--font-body)">{{ e.season }}</span></div>
-              </div>
-            </sc-for>
-          </div>
-        </sc-if>
-        <sc-if value="{{ isRecettes }}">
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <sc-for list="{{ recettes }}" as="r" hint-placeholder-count="5">
-              <div class="card elev-sm" style="padding:14px">
-                <div style="font:700 15px var(--font-heading);margin-bottom:6px">{{ r.title }}</div>
-                <p style="font:13px/1.5 var(--font-body);margin:0 0 8px;color:var(--color-neutral-700)">{{ r.desc }}</p>
-                <span class="tag tag-accent" style="font-size:10px">{{ r.truffe }}</span>
-              </div>
-            </sc-for>
-          </div>
-        </sc-if>
-      </div>
-    </div>
-  </x-import>
-</div>
-
-<div class="col">
-  <div class="col-label"><span class="col-num">7</span><span class="col-title">Quiz enfants</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div class="topbar">
-        <a class="backbtn">‹</a>
-        <span class="screentitle">{{ t.quiz_title }}</span>
-        <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
-      </div>
-      <div class="content">
-        <div style="display:flex;gap:6px;margin-bottom:24px">
-          <div style="height:4px;flex:1;background:var(--color-text)"></div>
-          <div style="height:4px;flex:1;background:var(--color-text)"></div>
-          <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
-          <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
-          <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
-        </div>
-        <span class="kicker">{{ t.quiz_qlabel }}</span>
-        <h2 style="font:700 20px/1.3 var(--font-heading);margin:8px 0 22px">{{ t.quiz_question }}</h2>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
-          <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-text);background:var(--color-accent-100)"><span class="dot"></span>{{ t.quiz_opt1 }}</label>
-          <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-divider)"><span class="dot"></span>{{ t.quiz_opt2 }}</label>
-          <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-divider)"><span class="dot"></span>{{ t.quiz_opt3 }}</label>
-        </div>
-        <a class="btn btn-primary btn-block" style="justify-content:flex-start">{{ t.quiz_next }}</a>
-      </div>
-    </div>
-  </x-import>
-</div>
-
-<div class="col">
-  <div class="col-label"><span class="col-num">8</span><span class="col-title">Liste des 23 postes</span></div>
-  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="390px,844px">
-    <div class="screen">
-      <div class="topbar">
-        <a class="backbtn">‹</a>
-        <span class="screentitle">{{ t.liste_title }}</span>
-        <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
-      </div>
-      <div class="content" style="padding-top:12px">
-        <input class="input" placeholder="{{ t.liste_search }}" style="width:100%;margin-bottom:16px;box-sizing:border-box">
-        <div style="display:flex;flex-direction:column">
-          <sc-for list="{{ postes }}" as="p" hint-placeholder-count="21">
-            <div style="display:flex;gap:12px;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span class="tag tag-neutral" style="flex:none">{{ p.num }}</span><div><div style="font:600 14px var(--font-body)">{{ p.title }}</div><div style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ p.short }}</div></div></div>
+      </sc-if>
+      <sc-if value="{{ hasSections }}">
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:16px">
+          <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+            <div style="border-bottom:2px solid var(--color-divider);padding-bottom:14px">
+              <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;color:var(--color-accent-700)">{{ sec.title }}</div>
+              <p style="font:14px/1.55 var(--font-body);margin:0">{{ sec.body }}</p>
+            </div>
           </sc-for>
         </div>
+      </sc-if>
+      <p style="font:15px/1.6 var(--font-body);margin:0 0 16px">{{ poste.body }}</p>
+      <sc-if value="{{ hasFacts }}">
+        <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">
+          <sc-for list="{{ facts }}" as="f" hint-placeholder-count="2">
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ f.label }}</span><span style="font:600 13px var(--font-body);text-align:right">{{ f.value }}</span></div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="display:flex;gap:10px">
+        <a class="btn btn-ghost" onClick="{{ gotoPrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
+        <a class="btn btn-secondary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
       </div>
     </div>
-  </x-import>
-</div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isInfos }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.infos_title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content">
+    <div class="hr" style="margin:0 0 14px"></div>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_horaires }}</div>
+    <table class="table" style="margin-bottom:24px;width:100%">
+      <tbody>
+        <tr><td>{{ t.infos_access_libre }}</td><td>{{ t.infos_access_libre_val }}</td></tr>
+        <tr><td>{{ t.infos_visite_org }}</td><td>{{ t.infos_visite_org_val }}</td></tr>
+        <tr><td>{{ t.infos_visite_indiv }}</td><td>{{ t.infos_visite_indiv_val }}</td></tr>
+        <tr><td>{{ t.infos_parcours }}</td><td>{{ t.infos_parcours_val }}</td></tr>
+      </tbody>
+    </table>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_acces }}</div>
+    <div class="card elev-sm" style="padding:0;margin-bottom:24px;overflow:hidden">
+      <image-slot id="access-map" shape="rect" placeholder="Extrait de carte / accès" style="width:100%;height:130px" fit="cover"></image-slot>
+      <a href="https://maps.app.goo.gl/EimvH8V2UT94YVrCA" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="border-radius:0;text-decoration:none">{{ t.infos_maps_btn }}</a>
+    </div>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_contact }}</div>
+    <p style="font:14px/1.6 var(--font-body);margin:0">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffe-vaudoise.ch</p>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isTruffe }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.truffe_title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content" style="padding:0">
+    <image-slot id="truffle-photo" shape="rect" placeholder="Photo : truffe et chêne" style="width:100%;height:170px" fit="cover"></image-slot>
+    <div style="padding:18px 20px">
+      <p style="font:15px/1.6 var(--font-body);margin:0 0 18px">{{ t.truffe_intro }}</p>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_espece }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_espece_val }}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_maturite }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_maturite_val }}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_arbre }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_arbre_val }}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 0"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_recherche }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_recherche_val }}</span></div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isCuisine }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.cuisine_title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content" style="padding-top:12px">
+    <div class="seg" style="width:100%;margin-bottom:18px">
+      <div class="seg-opt" onClick="{{ setTabConseils }}" style="{{ tabConseilsStyle }}">{{ t.tab_conseils }}</div>
+      <div class="seg-opt" onClick="{{ setTabEspeces }}" style="{{ tabEspecesStyle }}">{{ t.tab_especes }}</div>
+      <div class="seg-opt" onClick="{{ setTabRecettes }}" style="{{ tabRecettesStyle }}">{{ t.tab_recettes }}</div>
+    </div>
+    <sc-if value="{{ isConseils }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:0">
+        <sc-for list="{{ conseils }}" as="c" hint-placeholder-count="4">
+          <div style="padding:14px 0;border-bottom:2px solid var(--color-divider)">
+            <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;color:var(--color-accent-700)">{{ c.title }}</div>
+            <p style="font:14px/1.55 var(--font-body);margin:0">{{ c.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isEspeces }}">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ especes }}" as="e" hint-placeholder-count="4">
+          <div class="card elev-sm" style="padding:14px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+              <span style="font:700 15px var(--font-heading)">{{ e.name }}</span>
+              <span class="tag tag-neutral" style="font-size:10px">{{ e.temp }}</span>
+            </div>
+            <p style="font:13px/1.5 var(--font-body);margin:0 0 8px;color:var(--color-neutral-700)">{{ e.taste }}</p>
+            <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_recolte }}</span><span style="font:600 12px var(--font-body)">{{ e.season }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isRecettes }}">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <sc-for list="{{ recettes }}" as="r" hint-placeholder-count="5">
+          <div class="card elev-sm" style="padding:14px">
+            <div style="font:700 15px var(--font-heading);margin-bottom:6px">{{ r.title }}</div>
+            <p style="font:13px/1.5 var(--font-body);margin:0 0 8px;color:var(--color-neutral-700)">{{ r.desc }}</p>
+            <span class="tag tag-accent" style="font-size:10px">{{ r.truffe }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isQuiz }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.quiz_title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content">
+    <div style="display:flex;gap:6px;margin-bottom:24px">
+      <div style="height:4px;flex:1;background:var(--color-text)"></div>
+      <div style="height:4px;flex:1;background:var(--color-text)"></div>
+      <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
+      <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
+      <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
+    </div>
+    <span class="kicker">{{ t.quiz_qlabel }}</span>
+    <h2 style="font:700 20px/1.3 var(--font-heading);margin:8px 0 22px">{{ t.quiz_question }}</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+      <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-text);background:var(--color-accent-100)"><span class="dot"></span>{{ t.quiz_opt1 }}</label>
+      <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-divider)"><span class="dot"></span>{{ t.quiz_opt2 }}</label>
+      <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-divider)"><span class="dot"></span>{{ t.quiz_opt3 }}</label>
+    </div>
+    <a class="btn btn-primary btn-block" style="justify-content:flex-start">{{ t.quiz_next }}</a>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isListe }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.liste_title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content" style="padding-top:12px">
+    <input class="input" placeholder="{{ t.liste_search }}" style="width:100%;margin-bottom:16px;box-sizing:border-box">
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ postes }}" as="p" hint-placeholder-count="21">
+        <div onClick="{{ p.onOpen }}" style="display:flex;gap:12px;padding:12px 0;border-bottom:2px solid var(--color-divider);cursor:pointer"><span class="tag tag-neutral" style="flex:none">{{ p.num }}</span><div><div style="font:600 14px var(--font-body)">{{ p.title }}</div><div style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ p.short }}</div></div></div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
 
 </div>
 
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr" };
+  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr" };
   mapRef = React.createRef();
   componentDidMount() {
     this._onMove = (e) => {
@@ -346,7 +307,7 @@ class Component extends DCLogic {
   T = {
     fr: { home_kicker:"Truffière didactique · Bonvillars", home_line1:"École de la", home_line2:"truffe",
       home_intro:"Bienvenue à la truffière didactique. 23 postes jalonnent librement le terrain — panneaux et courtes vidéos expliquent le sol, l'arbre et le champignon.",
-      tag_postes:"23 postes", tag_parcours:"Parcours libre", btn_carte:"Ouvrir la carte →", btn_infos:"Infos pratiques", btn_cuisine:"Cuisine de la truffe",
+      tag_postes:"23 postes", tag_parcours:"Parcours libre", btn_carte:"Ouvrir la carte →", btn_liste:"Liste des postes", btn_infos:"Infos pratiques", btn_truffe:"La truffe", btn_cuisine:"Cuisine de la truffe",
       map_title:"Carte", map_edit:"Modifier", map_done:"Terminer", map_hint:"Glissez une pastille pour la repositionner", map_copy:"copier les coordonnées", map_open_poste:"Ouvrir la fiche du poste",
       poste_label:"Poste", poste_of:"/ 23", poste_video_soon:"Vidéo à venir · TruffeVaudoise-APRTS", poste_prev:"← Précédent", poste_next:"Suivant →",
       infos_title:"Infos pratiques", infos_horaires:"Horaires", infos_access_libre:"Accès libre", infos_access_libre_val:"Non disponible",
@@ -359,7 +320,7 @@ class Component extends DCLogic {
       liste_title:"Les 23 postes", liste_search:"Rechercher un poste…" },
     de: { home_kicker:"Didaktische Trüffelanlage · Bonvillars", home_line1:"Schule der", home_line2:"Trüffel",
       home_intro:"Willkommen an der didaktischen Trüffelanlage. 23 Stationen führen frei über das Gelände — Tafeln und kurze Videos erklären Boden, Baum und Pilz.",
-      tag_postes:"23 Stationen", tag_parcours:"Freier Rundgang", btn_carte:"Karte öffnen →", btn_infos:"Praktische Infos", btn_cuisine:"Trüffelküche",
+      tag_postes:"23 Stationen", tag_parcours:"Freier Rundgang", btn_carte:"Karte öffnen →", btn_liste:"Stationsliste", btn_infos:"Praktische Infos", btn_truffe:"Die Trüffel", btn_cuisine:"Trüffelküche",
       map_title:"Karte", map_edit:"Bearbeiten", map_done:"Fertig", map_hint:"Pastille zum Verschieben ziehen", map_copy:"Koordinaten kopieren", map_open_poste:"Station öffnen",
       poste_label:"Station", poste_of:"/ 23", poste_video_soon:"Video folgt · TruffeVaudoise-APRTS", poste_prev:"← Zurück", poste_next:"Weiter →",
       infos_title:"Praktische Infos", infos_horaires:"Öffnungszeiten", infos_access_libre:"Freier Zugang", infos_access_libre_val:"Nicht verfügbar",
@@ -372,7 +333,7 @@ class Component extends DCLogic {
       liste_title:"Die 23 Stationen", liste_search:"Station suchen…" },
     en: { home_kicker:"Educational truffle ground · Bonvillars", home_line1:"The truffle", home_line2:"school",
       home_intro:"Welcome to the educational truffle ground. 23 stops are freely scattered across the site — panels and short videos explain the soil, the tree and the fungus.",
-      tag_postes:"23 stops", tag_parcours:"Free route", btn_carte:"Open the map →", btn_infos:"Practical info", btn_cuisine:"Truffle cuisine",
+      tag_postes:"23 stops", tag_parcours:"Free route", btn_carte:"Open the map →", btn_liste:"List of stops", btn_infos:"Practical info", btn_truffe:"The truffle", btn_cuisine:"Truffle cuisine",
       map_title:"Map", map_edit:"Edit", map_done:"Done", map_hint:"Drag a pin to reposition it", map_copy:"copy coordinates", map_open_poste:"Open stop",
       poste_label:"Stop", poste_of:"/ 23", poste_video_soon:"Video coming soon · TruffeVaudoise-APRTS", poste_prev:"← Previous", poste_next:"Next →",
       infos_title:"Practical info", infos_horaires:"Opening hours", infos_access_libre:"Free access", infos_access_libre_val:"Not available",
@@ -562,9 +523,11 @@ class Component extends DCLogic {
   renderVals() {
     const lang = this.state.lang;
     const t = this.T[lang];
-    const postes = this.postesByLang[lang];
+    const langOrder = ["fr", "de", "en"];
+    const screen = this.state.screen;
+    const postesAll = this.postesByLang[lang];
     const positions = this.state.positions || {};
-    const findPoste = (num) => postes.find(p => p.num === num) || postes[0];
+    const findPoste = (num) => postesAll.find(p => p.num === num) || postesAll[0];
     const selectedPoste = findPoste(this.state.selected);
     const pins = this.stationPos.map(s => {
       const p = positions[s.num] || s;
@@ -582,8 +545,8 @@ class Component extends DCLogic {
       console.log(lines);
       if (navigator.clipboard) navigator.clipboard.writeText(lines).catch(() => {});
     };
-    const i = postes.findIndex(p => p.num === this.state.poste);
-    const poste = postes[i];
+    const i = postesAll.findIndex(p => p.num === this.state.poste);
+    const poste = postesAll[i];
     const facts = (poste.facts || []).map(f => ({ label: f[0], value: f[1] }));
     const vid = this.videoIds[poste.num];
     const hasVideo = !!poste.video;
@@ -596,9 +559,19 @@ class Component extends DCLogic {
     const videoEmbedUrl = vid ? `https://www.youtube-nocookie.com/embed/${vid}?cc_load_policy=1&cc_lang_pref=${lang}&hl=${lang}&modestbranding=1&rel=0` : "";
     const segBase = { padding: "8px", fontSize: "12px", textAlign: "center" };
     const segOn = { ...segBase, background: "var(--color-text)", color: "#fff" };
-    const langOrder = ["fr", "de", "en"];
+    const postesList = postesAll.map(p => ({ ...p, onOpen: () => this.setState({ screen: "poste", poste: p.num }) }));
     return {
       t, lang, langCode: lang.toUpperCase(),
+      isHome: screen === "home", isMap: screen === "map", isPoste: screen === "poste", isInfos: screen === "infos",
+      isTruffe: screen === "truffe", isCuisine: screen === "cuisine", isQuiz: screen === "quiz", isListe: screen === "liste",
+      goHome: () => this.setState({ screen: "home" }),
+      goMap: () => this.setState({ screen: "map" }),
+      goInfos: () => this.setState({ screen: "infos" }),
+      goTruffe: () => this.setState({ screen: "truffe" }),
+      goCuisine: () => this.setState({ screen: "cuisine" }),
+      goQuiz: () => this.setState({ screen: "quiz" }),
+      goListe: () => this.setState({ screen: "liste" }),
+      openSelected: () => this.setState({ screen: "poste", poste: selectedPoste.num }),
       setLangFr: () => this.setState({ lang: "fr" }), setLangDe: () => this.setState({ lang: "de" }), setLangEn: () => this.setState({ lang: "en" }),
       cycleLang: () => this.setState(s => ({ lang: langOrder[(langOrder.indexOf(s.lang) + 1) % 3] })),
       segFr: lang === "fr" ? { padding: "6px 8px", fontSize: "11px", background: "var(--color-text)", color: "#fff" } : { padding: "6px 8px", fontSize: "11px" },
@@ -618,12 +591,12 @@ class Component extends DCLogic {
       setTabConseils: () => this.setState({ cuisineTab: "conseils" }),
       setTabEspeces: () => this.setState({ cuisineTab: "especes" }),
       setTabRecettes: () => this.setState({ cuisineTab: "recettes" }),
-      postes,
+      postes: postesList,
       poste, facts, hasFacts: facts.length > 0, hasVideo, hasVideoId, hasVideoNoId, hasLink, hasSections,
       sections: poste.sections || [],
       hasNoVideo: !hasVideo && !hasLink, video, link, videoEmbedUrl,
       gotoPrev: () => this.setState(s => ({ poste: this.postesByLang[s.lang][Math.max(0, i - 1)].num })),
-      gotoNext: () => this.setState(s => ({ poste: this.postesByLang[s.lang][Math.min(postes.length - 1, i + 1)].num })),
+      gotoNext: () => this.setState(s => ({ poste: this.postesByLang[s.lang][Math.min(postesAll.length - 1, i + 1)].num })),
     };
   }
 }
