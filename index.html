@@ -246,21 +246,30 @@
     <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
   </div>
   <div class="content">
-    <div style="display:flex;gap:6px;margin-bottom:24px">
-      <div style="height:4px;flex:1;background:var(--color-text)"></div>
-      <div style="height:4px;flex:1;background:var(--color-text)"></div>
-      <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
-      <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
-      <div style="height:4px;flex:1;background:var(--color-neutral-300)"></div>
-    </div>
-    <span class="kicker">{{ t.quiz_qlabel }}</span>
-    <h2 style="font:700 20px/1.3 var(--font-heading);margin:8px 0 22px">{{ t.quiz_question }}</h2>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
-      <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-text);background:var(--color-accent-100)"><span class="dot"></span>{{ t.quiz_opt1 }}</label>
-      <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-divider)"><span class="dot"></span>{{ t.quiz_opt2 }}</label>
-      <label class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid var(--color-divider)"><span class="dot"></span>{{ t.quiz_opt3 }}</label>
-    </div>
-    <a class="btn btn-primary btn-block" style="justify-content:flex-start">{{ t.quiz_next }}</a>
+    <sc-if value="{{ quizDone }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:40px">
+        <div class="kicker" style="margin-bottom:10px">{{ t.quiz_score_label }}</div>
+        <div style="font:800 56px var(--font-heading);color:var(--color-accent);margin-bottom:14px">{{ quizScore }} / 10</div>
+        <p style="font:16px/1.5 var(--font-body);margin:0 0 28px;max-width:320px">{{ quizMessage }}</p>
+        <a class="btn btn-primary btn-block" onClick="{{ quizRestart }}" style="justify-content:center;cursor:pointer;margin-bottom:10px">{{ t.quiz_restart }}</a>
+        <a class="btn btn-ghost btn-block" onClick="{{ goHome }}" style="justify-content:center;cursor:pointer">{{ t.quiz_home }}</a>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isQuizPlaying }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:6px;margin-bottom:24px">
+        <sc-for list="{{ quizDots }}" as="d" hint-placeholder-count="10">
+          <div style="height:4px;flex:1;background:{{ d.bg }}"></div>
+        </sc-for>
+      </div>
+      <span class="kicker">{{ quizQuestionLabel }}</span>
+      <h2 style="font:700 20px/1.3 var(--font-heading);margin:8px 0 22px">{{ quizQ.question }}</h2>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <sc-for list="{{ quizOptions }}" as="o" hint-placeholder-count="3">
+          <label onClick="{{ o.onSelect }}" class="radio" style="display:flex;align-items:center;gap:10px;padding:14px;border:2px solid {{ o.border }};background:{{ o.bg }};cursor:pointer"><span class="dot"></span>{{ o.text }}</label>
+        </sc-for>
+      </div>
+      <a class="btn btn-primary btn-block" onClick="{{ quizNext }}" style="justify-content:flex-start;cursor:pointer;opacity:{{ quizNextOpacity }}">{{ quizNextLabel }}</a>
+    </sc-if>
   </div>
 </sc-if>
 
@@ -285,7 +294,45 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr" };
+  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr", quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false };
+  quizByLang = {
+    fr: [
+      { question: "Avec quel arbre la truffe aime-t-elle le plus vivre ?", options: ["Le chêne", "Le pin", "Le bouleau"], correct: 0 },
+      { question: "Où poussent les truffes ?", options: ["Dans les arbres", "Sous la terre", "Sur les rochers"], correct: 1 },
+      { question: "Quel animal aide à trouver les truffes ?", options: ["Le chat", "Le chien", "L'oiseau"], correct: 1 },
+      { question: "La truffe est-elle une plante, un animal ou un champignon ?", options: ["Une plante", "Un animal", "Un champignon"], correct: 2 },
+      { question: "Quelle couleur a la truffe la plus connue (Périgord) ?", options: ["Noire", "Rose", "Bleue"], correct: 0 },
+      { question: "Combien de temps faut-il pour qu'une truffe pousse ?", options: ["Quelques heures", "Quelques jours", "Plusieurs mois"], correct: 2 },
+      { question: "Quel sens utilise-t-on surtout pour trouver une truffe ?", options: ["La vue", "L'odorat", "Le toucher"], correct: 1 },
+      { question: "Dans quel sol la truffe aime-t-elle le plus pousser ?", options: ["Un sol tout mouillé", "Un sol avec du calcaire", "Du sable de mer"], correct: 1 },
+      { question: "Quel pays est célèbre pour sa truffe blanche d'Alba ?", options: ["La Norvège", "L'Espagne", "L'Italie"], correct: 2 },
+      { question: "Que fait-on avec les truffes en cuisine ?", options: ["On les porte comme bijoux", "On les plante comme des graines", "On les mange râpées sur les plats"], correct: 2 },
+    ],
+    de: [
+      { question: "Mit welchem Baum lebt die Trüffel am liebsten zusammen?", options: ["Die Eiche", "Die Kiefer", "Die Birke"], correct: 0 },
+      { question: "Wo wachsen Trüffeln?", options: ["In den Bäumen", "Unter der Erde", "Auf Felsen"], correct: 1 },
+      { question: "Welches Tier hilft, Trüffeln zu finden?", options: ["Die Katze", "Der Hund", "Der Vogel"], correct: 1 },
+      { question: "Ist die Trüffel eine Pflanze, ein Tier oder ein Pilz?", options: ["Eine Pflanze", "Ein Tier", "Ein Pilz"], correct: 2 },
+      { question: "Welche Farbe hat die bekannteste Trüffel (Périgord)?", options: ["Schwarz", "Rosa", "Blau"], correct: 0 },
+      { question: "Wie lange braucht eine Trüffel, um zu wachsen?", options: ["Ein paar Stunden", "Ein paar Tage", "Mehrere Monate"], correct: 2 },
+      { question: "Welchen Sinn braucht man vor allem, um eine Trüffel zu finden?", options: ["Das Sehen", "Das Riechen", "Das Fühlen"], correct: 1 },
+      { question: "In welchem Boden wächst die Trüffel am liebsten?", options: ["In ganz nassem Boden", "In Boden mit Kalk", "In Meeressand"], correct: 1 },
+      { question: "Welches Land ist berühmt für seine weisse Alba-Trüffel?", options: ["Norwegen", "Spanien", "Italien"], correct: 2 },
+      { question: "Was macht man mit Trüffeln in der Küche?", options: ["Man trägt sie als Schmuck", "Man pflanzt sie wie Samen", "Man reibt sie über die Speisen"], correct: 2 },
+    ],
+    en: [
+      { question: "Which tree does the truffle like living with most?", options: ["The oak", "The pine", "The birch"], correct: 0 },
+      { question: "Where do truffles grow?", options: ["In the trees", "Underground", "On rocks"], correct: 1 },
+      { question: "Which animal helps find truffles?", options: ["The cat", "The dog", "The bird"], correct: 1 },
+      { question: "Is the truffle a plant, an animal or a fungus?", options: ["A plant", "An animal", "A fungus"], correct: 2 },
+      { question: "What colour is the most famous truffle (Périgord)?", options: ["Black", "Pink", "Blue"], correct: 0 },
+      { question: "How long does a truffle take to grow?", options: ["A few hours", "A few days", "Several months"], correct: 2 },
+      { question: "Which sense do you mainly use to find a truffle?", options: ["Sight", "Smell", "Touch"], correct: 1 },
+      { question: "What kind of soil do truffles like best?", options: ["Soil that's completely wet", "Soil with limestone", "Sea sand"], correct: 1 },
+      { question: "Which country is famous for its white Alba truffle?", options: ["Norway", "Spain", "Italy"], correct: 2 },
+      { question: "What do people do with truffles in cooking?", options: ["Wear them as jewellery", "Plant them like seeds", "Grate them over dishes"], correct: 2 },
+    ],
+  };
   mapRef = React.createRef();
   componentDidMount() {
     this._onMove = (e) => {
@@ -315,7 +362,9 @@ class Component extends DCLogic {
       infos_parcours:"Parcours", infos_parcours_val:"env. 1h30", infos_acces:"Accès", infos_maps_btn:"Ouvrir dans Google Maps", infos_contact:"Contact",
       truffe_title:"La truffe", truffe_intro:"La truffe est un champignon souterrain qui vit en symbiose avec les racines des arbres. À Bonvillars, deux espèces poussent en sol calcaire sous chênes et noisetiers.",
       truffe_espece:"Espèce", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Maturité", truffe_maturite_val:"Juin – septembre", truffe_arbre:"Arbre hôte", truffe_arbre_val:"Chêne, noisetier", truffe_recherche:"Recherche", truffe_recherche_val:"au chien truffier",
-      quiz_title:"Quiz enfants", quiz_qlabel:"Question 2 / 5", quiz_question:"Avec quel arbre la truffe aime-t-elle le plus vivre ?", quiz_opt1:"Le chêne", quiz_opt2:"Le pin", quiz_opt3:"Le bouleau", quiz_next:"Suivant →",
+      quiz_title:"Quiz enfants", quiz_word:"Question", quiz_next:"Suivant →", quiz_finish:"Voir mon score →",
+      quiz_score_label:"Ton score", quiz_restart:"Recommencer", quiz_home:"Retour à l'accueil",
+      quiz_msg_great:"Bravo, expert(e) de la truffe !", quiz_msg_good:"Très bien, tu connais bien la truffe !", quiz_msg_ok:"Pas mal, continue à apprendre !", quiz_msg_low:"Retente ta chance après une visite du parcours !",
       cuisine_title:"Cuisine de la truffe", tab_conseils:"Conseils", tab_especes:"Espèces", tab_recettes:"Recettes", especes_recolte:"Récolte",
       liste_title:"Les 23 postes", liste_search:"Rechercher un poste…" },
     de: { home_kicker:"Didaktische Trüffelanlage · Bonvillars", home_line1:"Schule der", home_line2:"Trüffel",
@@ -328,7 +377,9 @@ class Component extends DCLogic {
       infos_parcours:"Rundgang", infos_parcours_val:"ca. 1.5 Std.", infos_acces:"Zugang", infos_maps_btn:"In Google Maps öffnen", infos_contact:"Kontakt",
       truffe_title:"Die Trüffel", truffe_intro:"Die Trüffel ist ein unterirdischer Pilz, der in Symbiose mit den Wurzeln von Bäumen lebt. In Bonvillars wachsen zwei Arten auf Kalkboden unter Eichen und Haseln.",
       truffe_espece:"Art", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Reife", truffe_maturite_val:"Juni – September", truffe_arbre:"Wirtsbaum", truffe_arbre_val:"Eiche, Hasel", truffe_recherche:"Suche", truffe_recherche_val:"mit dem Trüffelhund",
-      quiz_title:"Kinderquiz", quiz_qlabel:"Frage 2 / 5", quiz_question:"Mit welchem Baum lebt die Trüffel am liebsten zusammen?", quiz_opt1:"Die Eiche", quiz_opt2:"Die Kiefer", quiz_opt3:"Die Birke", quiz_next:"Weiter →",
+      quiz_title:"Kinderquiz", quiz_word:"Frage", quiz_next:"Weiter →", quiz_finish:"Ergebnis anzeigen →",
+      quiz_score_label:"Dein Ergebnis", quiz_restart:"Neu starten", quiz_home:"Zurück zur Startseite",
+      quiz_msg_great:"Bravo, du bist ein Trüffel-Experte!", quiz_msg_good:"Sehr gut, du kennst die Trüffel gut!", quiz_msg_ok:"Nicht schlecht, lerne weiter!", quiz_msg_low:"Versuch's nach dem Rundgang noch einmal!",
       cuisine_title:"Trüffelküche", tab_conseils:"Tipps", tab_especes:"Arten", tab_recettes:"Rezepte", especes_recolte:"Ernte",
       liste_title:"Die 23 Stationen", liste_search:"Station suchen…" },
     en: { home_kicker:"Educational truffle ground · Bonvillars", home_line1:"The truffle", home_line2:"school",
@@ -341,7 +392,9 @@ class Component extends DCLogic {
       infos_parcours:"Route", infos_parcours_val:"approx. 1h30", infos_acces:"Access", infos_maps_btn:"Open in Google Maps", infos_contact:"Contact",
       truffe_title:"The truffle", truffe_intro:"The truffle is an underground fungus that lives in symbiosis with tree roots. In Bonvillars, two species grow in calcareous soil beneath oaks and hazels.",
       truffe_espece:"Species", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Season", truffe_maturite_val:"June – September", truffe_arbre:"Host tree", truffe_arbre_val:"Oak, hazel", truffe_recherche:"Search method", truffe_recherche_val:"with a truffle dog",
-      quiz_title:"Kids' quiz", quiz_qlabel:"Question 2 / 5", quiz_question:"Which tree does the truffle like living with most?", quiz_opt1:"The oak", quiz_opt2:"The pine", quiz_opt3:"The birch", quiz_next:"Next →",
+      quiz_title:"Kids' quiz", quiz_word:"Question", quiz_next:"Next →", quiz_finish:"See my score →",
+      quiz_score_label:"Your score", quiz_restart:"Restart", quiz_home:"Back to home",
+      quiz_msg_great:"Bravo, you're a truffle expert!", quiz_msg_good:"Well done, you know your truffles!", quiz_msg_ok:"Not bad, keep learning!", quiz_msg_low:"Try again after the tour!",
       cuisine_title:"Truffle cuisine", tab_conseils:"Tips", tab_especes:"Species", tab_recettes:"Recipes", especes_recolte:"Harvest",
       liste_title:"The 23 stops", liste_search:"Search a stop…" },
   };
@@ -560,6 +613,29 @@ class Component extends DCLogic {
     const segBase = { padding: "8px", fontSize: "12px", textAlign: "center" };
     const segOn = { ...segBase, background: "var(--color-text)", color: "#fff" };
     const postesList = postesAll.map(p => ({ ...p, onOpen: () => this.setState({ screen: "poste", poste: p.num }) }));
+    const quizList = this.quizByLang[lang];
+    const quizQ = quizList[this.state.quizIndex] || quizList[0];
+    const quizSel = this.state.quizSelected;
+    const quizOptions = quizQ.options.map((opt, idx) => ({
+      text: opt,
+      border: quizSel === idx ? 'var(--color-accent)' : 'var(--color-text)',
+      bg: quizSel === idx ? 'var(--color-accent-100)' : 'transparent',
+      onSelect: () => this.setState({ quizSelected: idx }),
+    }));
+    const quizDots = quizList.map((_, idx) => ({ bg: idx <= this.state.quizIndex ? 'var(--color-text)' : 'var(--color-neutral-300)' }));
+    const isLastQuestion = this.state.quizIndex === quizList.length - 1;
+    const quizScore = this.state.quizAnswers.filter((a, idx) => a === quizList[idx].correct).length;
+    let quizMessage = t.quiz_msg_low;
+    if (quizScore >= 9) quizMessage = t.quiz_msg_great;
+    else if (quizScore >= 6) quizMessage = t.quiz_msg_good;
+    else if (quizScore >= 3) quizMessage = t.quiz_msg_ok;
+    const quizNext = () => {
+      if (this.state.quizSelected == null) return;
+      const answers = [...this.state.quizAnswers, this.state.quizSelected];
+      if (isLastQuestion) this.setState({ quizAnswers: answers, quizDone: true, quizSelected: null });
+      else this.setState({ quizAnswers: answers, quizIndex: this.state.quizIndex + 1, quizSelected: null });
+    };
+    const quizRestart = () => this.setState({ quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false });
     return {
       t, lang, langCode: lang.toUpperCase(),
       isHome: screen === "home", isMap: screen === "map", isPoste: screen === "poste", isInfos: screen === "infos",
@@ -597,6 +673,12 @@ class Component extends DCLogic {
       hasNoVideo: !hasVideo && !hasLink, video, link, videoEmbedUrl,
       gotoPrev: () => this.setState(s => ({ poste: this.postesByLang[s.lang][Math.max(0, i - 1)].num })),
       gotoNext: () => this.setState(s => ({ poste: this.postesByLang[s.lang][Math.min(postesAll.length - 1, i + 1)].num })),
+      quizDone: this.state.quizDone, isQuizPlaying: !this.state.quizDone,
+      quizQ, quizOptions, quizDots, quizScore, quizMessage,
+      quizQuestionLabel: `${t.quiz_word} ${this.state.quizIndex + 1} / 10`,
+      quizNext, quizRestart,
+      quizNextLabel: isLastQuestion ? t.quiz_finish : t.quiz_next,
+      quizNextOpacity: quizSel == null ? 0.45 : 1,
     };
   }
 }
