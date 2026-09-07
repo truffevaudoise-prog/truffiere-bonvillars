@@ -49,13 +49,28 @@
       <span class="tag tag-accent">{{ t.tag_postes }}</span>
       <span class="tag tag-neutral">{{ t.tag_parcours }}</span>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      <a class="btn btn-primary btn-block" onClick="{{ goMap }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_carte }}</a>
-      <a class="btn btn-ghost btn-block" onClick="{{ goListe }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_liste }}</a>
-      <a class="btn btn-ghost btn-block" onClick="{{ goInfos }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_infos }}</a>
-      <a class="btn btn-ghost btn-block" onClick="{{ goTruffe }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_truffe }}</a>
-      <a class="btn btn-ghost btn-block" onClick="{{ goCuisine }}" style="justify-content:flex-start;cursor:pointer">{{ t.btn_cuisine }}</a>
-      <a class="btn btn-ghost btn-block" onClick="{{ goQuiz }}" style="justify-content:flex-start;cursor:pointer">{{ t.quiz_title }}</a>
+    <a class="btn btn-primary btn-block" onClick="{{ goMap }}" style="justify-content:flex-start;cursor:pointer;margin-bottom:14px">{{ t.btn_carte }}</a>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div onClick="{{ goListe }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.btn_liste }}</span>
+      </div>
+      <div onClick="{{ goTruffe }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"></circle><path d="M9 6.5c1-2 4-2 5 0"></path></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.btn_truffe }}</span>
+      </div>
+      <div onClick="{{ goCuisine }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21H7v-2a5 5 0 0 1 10 0v2Z"></path><path d="M12 3a4 4 0 0 0-4 4c0 1.2.5 2 1 2.5"></path><path d="M8 12h8"></path></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.btn_cuisine }}</span>
+      </div>
+      <div onClick="{{ goQuiz }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line><circle cx="12" cy="12" r="10"></circle></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.quiz_title }}</span>
+      </div>
+      <div onClick="{{ goInfos }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px;grid-column:1/3">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.btn_infos }}</span>
+      </div>
     </div>
   </div>
 </sc-if>
@@ -64,13 +79,15 @@
   <div class="topbar">
     <button class="backbtn" onClick="{{ goHome }}">‹</button>
     <span class="screentitle">{{ t.map_title }}</span>
-    <span class="tag {{ editTagClass }}" style="font-size:11px;cursor:pointer" onClick="{{ toggleEdit }}">{{ editLabel }}</span>
+    <span style="width:60px"></span>
   </div>
-  <div ref="{{ mapRef }}" style="position:relative;flex:1;background:#eeece5;overflow:hidden">
-    <image-slot id="course-map" src="assets/plan-map-crop.png" shape="rect" placeholder="Plan de la truffière didactique" style="width:100%;height:100%" fit="contain"></image-slot>
-    <sc-for list="{{ stations }}" as="st" hint-placeholder-count="21">
-      <div onClick="{{ st.onSelect }}" onPointerDown="{{ st.onDragStart }}" title="{{ st.title }}" style="position:absolute;left:{{ st.x }}%;top:{{ st.y }}%;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);color:#fff;background:{{ st.bg }};box-shadow:{{ st.ring }}">{{ st.num }}</div>
-    </sc-for>
+  <div ref="{{ mapOuterRef }}" style="position:relative;flex:1;background:#eeece5;overflow:hidden;display:flex;align-items:center;justify-content:center">
+    <div ref="{{ mapRef }}" style="{{ mapBoxStyle }}">
+      <image-slot id="course-map" src="assets/plan-map-crop.png" shape="rect" placeholder="Plan de la truffière didactique" style="width:100%;height:100%" fit="contain"></image-slot>
+      <sc-for list="{{ stations }}" as="st" hint-placeholder-count="21">
+        <div onClick="{{ st.onSelect }}" onPointerDown="{{ st.onDragStart }}" title="{{ st.title }}" style="position:absolute;left:{{ st.x }}%;top:{{ st.y }}%;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);color:#fff;background:{{ st.bg }};box-shadow:{{ st.ring }}">{{ st.num }}</div>
+      </sc-for>
+    </div>
   </div>
   <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}">
     <div style="padding:6px 18px;font:11px var(--font-body);color:var(--color-neutral-700);background:var(--color-neutral-100);border-top:2px solid var(--color-divider)">{{ t.map_hint }} · <a onClick="{{ logCoords }}" style="cursor:pointer">{{ t.map_copy }}</a></div>
@@ -79,12 +96,12 @@
     <textarea readOnly="{{ true }}" value="{{ coordsText }}" onClick="{{ selectCoordsText }}" style="margin:8px 18px;padding:10px;font:11px monospace;height:100px;border:2px solid var(--color-text);background:var(--color-neutral-100)"></textarea>
     <div style="padding:0 18px 8px;font:11px var(--font-body);color:var(--color-neutral-700)">Touche le texte, sélectionne tout, copie, puis colle-le dans le chat.</div>
   </sc-if>
-  <div class="content" style="flex:0 0 auto">
-    <div style="display:flex;align-items:center;gap:12px;padding:4px 0 12px">
+  <div class="content" style="flex:0 0 auto;padding-top:8px;padding-bottom:10px">
+    <div style="display:flex;align-items:center;gap:12px;padding:4px 0 10px">
       <span class="tag tag-accent">{{ selected.num }}</span>
       <div style="flex:1"><div style="font:600 15px var(--font-body)">{{ selected.title }}</div><div style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ selected.short }}</div></div>
     </div>
-    <a class="btn btn-secondary btn-block" onClick="{{ openSelected }}" style="justify-content:flex-start;cursor:pointer">{{ t.map_open_poste }} {{ selected.num }} →</a>
+    <a class="btn btn-secondary btn-block" onClick="{{ openSelected }}" style="justify-content:flex-start;cursor:pointer;margin-top:0">{{ t.map_open_poste }} {{ selected.num }} →</a>
   </div>
 </sc-if>
 
@@ -184,7 +201,8 @@
       <a href="https://maps.app.goo.gl/EimvH8V2UT94YVrCA" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="border-radius:0;text-decoration:none">{{ t.infos_maps_btn }}</a>
     </div>
     <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_contact }}</div>
-    <p style="font:14px/1.6 var(--font-body);margin:0">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffevaudoise.ch</p>
+    <p style="font:14px/1.6 var(--font-body);margin:0 0 14px">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffevaudoise.ch</p>
+    <a href="https://www.truffevaudoise.ch" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="text-decoration:none">{{ t.infos_site_btn }} →</a>
   </div>
 </sc-if>
 
@@ -461,27 +479,30 @@ class Component extends DCLogic {
     16: "Robert Pisu", 17: "Robert Pisu",
   };
   mapRef = React.createRef();
+  mapOuterRef = React.createRef();
   componentDidMount() {
     this._computeRect = () => {
-      if (!this.mapRef.current) return;
-      const cw = this.mapRef.current.clientWidth, ch = this.mapRef.current.clientHeight;
+      if (!this.mapOuterRef.current) return;
+      const cw = this.mapOuterRef.current.clientWidth, ch = this.mapOuterRef.current.clientHeight;
       if (!cw || !ch) return;
-      const imgRatio = 975 / 1080;
-      let w, h, ox, oy;
-      if (cw / ch > imgRatio) { h = ch; w = ch * imgRatio; ox = (cw - w) / 2; oy = 0; }
-      else { w = cw; h = cw / imgRatio; ox = 0; oy = (ch - h) / 2; }
-      this.setState({ mapRect: { cw, ch, w, h, ox, oy } });
+      const frameRatio = cw / ch;
+      let bw, bh;
+      bw = cw; bh = ch;
+      const scale = Math.min(bw / 975, bh / 1080);
+      const dispW = 975 * scale, dispH = 1080 * scale;
+      const offX = (bw - dispW) / 2, offY = (bh - dispH) / 2;
+      this.setState({ mapRect: { bw, bh, dispW, dispH, offX, offY } });
     };
     this._ro = new ResizeObserver(() => this._computeRect());
-    if (this.mapRef.current) this._ro.observe(this.mapRef.current);
+    if (this.mapOuterRef.current) this._ro.observe(this.mapOuterRef.current);
     this._computeRect();
     this._onMove = (e) => {
       if (this.state.dragNum == null || !this.mapRef.current || !this.state.mapRect) return;
       const rect = this.mapRef.current.getBoundingClientRect();
       const mr = this.state.mapRect;
-      const px = e.clientX - rect.left - mr.ox, py = e.clientY - rect.top - mr.oy;
-      const x = Math.max(0, Math.min(100, (px / mr.w) * 100));
-      const y = Math.max(0, Math.min(100, (py / mr.h) * 100));
+      const ix = (e.clientX - rect.left) - mr.offX, iy = (e.clientY - rect.top) - mr.offY;
+      const x = Math.max(0, Math.min(100, (ix / mr.dispW) * 100));
+      const y = Math.max(0, Math.min(100, (iy / mr.dispH) * 100));
       const positions = { ...(this.state.positions || {}), [this.state.dragNum]: { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 } };
       this.setState({ positions });
     };
@@ -495,8 +516,8 @@ class Component extends DCLogic {
     if (this._ro) this._ro.disconnect();
   }
   componentDidUpdate() {
-    if (this.state.screen === "map" && this.mapRef.current && !this._observedEl) {
-      this._observedEl = this.mapRef.current;
+    if (this.state.screen === "map" && this.mapOuterRef.current && !this._observedEl) {
+      this._observedEl = this.mapOuterRef.current;
       this._ro.observe(this._observedEl);
       this._computeRect();
     } else if (this.state.screen !== "map" && this._observedEl) {
@@ -512,7 +533,7 @@ class Component extends DCLogic {
       poste_label:"Poste", poste_of:"/ 23", poste_video_soon:"Vidéo à venir · TruffeVaudoise-APRTS", poste_prev:"← Précédent", poste_next:"Suivant →",
       infos_title:"Infos pratiques", infos_horaires:"Horaires", infos_access_libre:"Accès libre", infos_access_libre_val:"Non disponible",
       infos_visite_org:"Visite organisée", infos_visite_org_val:"Sur inscription", infos_visite_indiv:"Visite individuelle", infos_visite_indiv_val:"Sur rendez-vous",
-      infos_parcours:"Parcours", infos_parcours_val:"env. 1h30", infos_acces:"Accès", infos_maps_btn:"Ouvrir dans Google Maps", infos_contact:"Contact",
+      infos_parcours:"Parcours", infos_parcours_val:"env. 1h30", infos_acces:"Accès", infos_maps_btn:"Ouvrir dans Google Maps", infos_contact:"Contact", infos_site_btn:"Réserver une visite · truffevaudoise.ch",
       truffe_title:"La truffe", truffe_intro:"La truffe est un champignon souterrain qui vit en symbiose avec les racines des arbres. À Bonvillars, 7 espèces poussent en sol calcaire sous 14 essences d'arbres hôtes différentes.",
       truffe_espece:"Espèce", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Maturité", truffe_maturite_val:"Juin – septembre", truffe_arbre:"Arbres hôtes", truffe_arbre_val:"14 essences (chênes, noisetiers, hêtre, tilleul…)", truffe_recherche:"Recherche", truffe_recherche_val:"au chien truffier",
       quiz_title:"Quiz enfants", quiz_word:"Question", quiz_next:"Suivant →", quiz_finish:"Voir mon score →",
@@ -532,7 +553,7 @@ class Component extends DCLogic {
       poste_label:"Station", poste_of:"/ 23", poste_video_soon:"Video folgt · TruffeVaudoise-APRTS", poste_prev:"← Zurück", poste_next:"Weiter →",
       infos_title:"Praktische Infos", infos_horaires:"Öffnungszeiten", infos_access_libre:"Freier Zugang", infos_access_libre_val:"Nicht verfügbar",
       infos_visite_org:"Organisierte Besichtigung", infos_visite_org_val:"Auf Anmeldung", infos_visite_indiv:"Individuelle Besichtigung", infos_visite_indiv_val:"Nach Vereinbarung",
-      infos_parcours:"Rundgang", infos_parcours_val:"ca. 1.5 Std.", infos_acces:"Zugang", infos_maps_btn:"In Google Maps öffnen", infos_contact:"Kontakt",
+      infos_parcours:"Rundgang", infos_parcours_val:"ca. 1.5 Std.", infos_acces:"Zugang", infos_maps_btn:"In Google Maps öffnen", infos_contact:"Kontakt", infos_site_btn:"Besuch buchen · truffevaudoise.ch",
       truffe_title:"Die Trüffel", truffe_intro:"Die Trüffel ist ein unterirdischer Pilz, der in Symbiose mit den Wurzeln von Bäumen lebt. In Bonvillars wachsen 7 Arten auf Kalkboden unter 14 verschiedenen Wirtsbaumarten.",
       truffe_espece:"Art", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Reife", truffe_maturite_val:"Juni – September", truffe_arbre:"Wirtsbäume", truffe_arbre_val:"14 Arten (Eichen, Hasel, Buche, Linde…)", truffe_recherche:"Suche", truffe_recherche_val:"mit dem Trüffelhund",
       quiz_title:"Kinderquiz", quiz_word:"Frage", quiz_next:"Weiter →", quiz_finish:"Ergebnis anzeigen →",
@@ -552,7 +573,7 @@ class Component extends DCLogic {
       poste_label:"Stop", poste_of:"/ 23", poste_video_soon:"Video coming soon · TruffeVaudoise-APRTS", poste_prev:"← Previous", poste_next:"Next →",
       infos_title:"Practical info", infos_horaires:"Opening hours", infos_access_libre:"Free access", infos_access_libre_val:"Not available",
       infos_visite_org:"Guided visit", infos_visite_org_val:"By registration", infos_visite_indiv:"Individual visit", infos_visite_indiv_val:"By appointment",
-      infos_parcours:"Route", infos_parcours_val:"approx. 1h30", infos_acces:"Access", infos_maps_btn:"Open in Google Maps", infos_contact:"Contact",
+      infos_parcours:"Route", infos_parcours_val:"approx. 1h30", infos_acces:"Access", infos_maps_btn:"Open in Google Maps", infos_contact:"Contact", infos_site_btn:"Book a visit · truffevaudoise.ch",
       truffe_title:"The truffle", truffe_intro:"The truffle is an underground fungus that lives in symbiosis with tree roots. In Bonvillars, 7 species grow in calcareous soil beneath 14 different host tree varieties.",
       truffe_espece:"Species", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Season", truffe_maturite_val:"June – September", truffe_arbre:"Host trees", truffe_arbre_val:"14 varieties (oaks, hazels, beech, lime…)", truffe_recherche:"Search method", truffe_recherche_val:"with a truffle dog",
       quiz_title:"Kids' quiz", quiz_word:"Question", quiz_next:"Next →", quiz_finish:"See my score →",
@@ -572,10 +593,10 @@ class Component extends DCLogic {
     15: "WRVMx-4ya0U", 16: "MxJ6M_JBK7s", 17: "MmyMxbowge8", 18: "Ud3crTExIAo", 21: "ES1kimcUeKM", 22: "MbhQJfc6SiE", 23: "b7VTAAYwTe0",
   };
   stationPos = [
-    { num: "1–3", x: 85, y: 87.4 }, { num: 4, x: 84.6, y: 82.9 }, { num: 5, x: 84.3, y: 79.3 }, { num: 6, x: 87.7, y: 68.8 },
-    { num: 7, x: 78.4, y: 36.5 }, { num: 8, x: 80, y: 15.2 }, { num: 9, x: 61, y: 19 }, { num: 10, x: 56.7, y: 18.7 }, { num: 11, x: 52.9, y: 20.6 },
-    { num: 12, x: 49.7, y: 18.2 }, { num: 13, x: 34.5, y: 13.6 }, { num: 14, x: 24.2, y: 14.4 }, { num: 15, x: 20.9, y: 25.3 }, { num: 16, x: 35, y: 39 },
-    { num: 17, x: 53.2, y: 33.5 }, { num: 18, x: 71.9, y: 44.8 }, { num: 19, x: 73, y: 69.5 }, { num: 20, x: 72.4, y: 80.4 }, { num: 21, x: 73.3, y: 83.9 },
+    { num: "1–3", x: 75.7, y: 75.6 }, { num: 4, x: 74.7, y: 71.9 }, { num: 5, x: 74.3, y: 68.5 }, { num: 6, x: 77.6, y: 41.6 },
+    { num: 7, x: 65.7, y: 30.5 }, { num: 8, x: 74.7, y: 22 }, { num: 9, x: 67.6, y: 16.8 }, { num: 10, x: 63.9, y: 10.4 }, { num: 11, x: 73, y: 9.6 },
+    { num: 12, x: 43.2, y: 13 }, { num: 13, x: 23.6, y: 24.7 }, { num: 14, x: 20.3, y: 20.7 }, { num: 15, x: 25.9, y: 20.2 }, { num: 16, x: 40.1, y: 34.5 },
+    { num: 17, x: 66.8, y: 36.5 }, { num: 18, x: 67.4, y: 47.2 }, { num: 19, x: 68.6, y: 64.6 }, { num: 20, x: 68.6, y: 68.5 }, { num: 21, x: 68.6, y: 72.3 },
   ];
   postesByLang = {
     fr: [
@@ -790,9 +811,10 @@ class Component extends DCLogic {
     const findPoste = (num) => postesAll.find(p => p.num === num) || postesAll[0];
     const selectedPoste = findPoste(this.state.selected);
     const mr = this.state.mapRect;
+    const mapBoxStyle = mr ? { position: "relative", width: mr.bw + "px", height: mr.bh + "px", overflow: "hidden" } : { position: "relative", width: "100%", height: "100%", overflow: "hidden" };
     const project = (px, py) => {
       if (!mr) return { x: px, y: py };
-      return { x: ((mr.ox + (px / 100) * mr.w) / mr.cw) * 100, y: ((mr.oy + (py / 100) * mr.h) / mr.ch) * 100 };
+      return { x: ((mr.offX + (px / 100) * mr.dispW) / mr.bw) * 100, y: ((mr.offY + (py / 100) * mr.dispH) / mr.bh) * 100 };
     };
     const pins = this.stationPos.map(s => {
       const p = positions[s.num] || s;
@@ -921,7 +943,7 @@ class Component extends DCLogic {
       segFr: lang === "fr" ? { padding: "6px 8px", fontSize: "11px", background: "var(--color-text)", color: "#fff" } : { padding: "6px 8px", fontSize: "11px" },
       segDe: lang === "de" ? { padding: "6px 8px", fontSize: "11px", background: "var(--color-text)", color: "#fff" } : { padding: "6px 8px", fontSize: "11px" },
       segEn: lang === "en" ? { padding: "6px 8px", fontSize: "11px", background: "var(--color-text)", color: "#fff" } : { padding: "6px 8px", fontSize: "11px" },
-      stations: pins, selected: selectedPoste, mapRef: this.mapRef,
+      stations: pins, selected: selectedPoste, mapRef: this.mapRef, mapOuterRef: this.mapOuterRef, mapBoxStyle,
       editMode: this.state.editMode,
       editLabel: this.state.editMode ? t.map_done : t.map_edit,
       editTagClass: this.state.editMode ? "tag-accent" : "tag-outline",
