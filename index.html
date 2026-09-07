@@ -196,9 +196,16 @@
         </div>
       </sc-if>
       <div style="display:flex;gap:10px">
-        <a class="btn btn-secondary" onClick="{{ gotoPrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
-        <a class="btn btn-secondary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+        <sc-if value="{{ hasPrevPoste }}" hint-placeholder-val="{{ true }}">
+          <a class="btn btn-secondary" onClick="{{ gotoPrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
+        </sc-if>
+        <sc-if value="{{ hasNextPoste }}" hint-placeholder-val="{{ true }}">
+          <a class="btn btn-secondary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+        </sc-if>
       </div>
+      <sc-if value="{{ isLastPoste }}" hint-placeholder-val="{{ false }}">
+        <a class="btn btn-primary btn-block" href="https://s1.sphinxonline.net/surveyserver/s/Observatoirevd/VaudOenoClient/Associationpremiereregiontruffieresuisse.htm?ORIGINE_SAISIE=qr_code" target="_blank" rel="noopener" style="justify-content:center;margin-top:10px;text-decoration:none">{{ t.poste_feedback }}</a>
+      </sc-if>
     </div>
   </div>
 </sc-if>
@@ -718,11 +725,10 @@ class Component extends DCLogic {
     ],
   };
   speakersByNum = {
-    "1–3": "Pierre-Yves Masson", 4: "Pierre-Yves Masson", 5: "Pierre-Yves Masson", 13: "Pierre-Yves Masson", 14: "Pierre-Yves Masson",
     6: "Pierre Pittet", 9: "Pierre Pittet", 18: "Pierre Pittet", 22: "Pierre Pittet", 23: "Pierre Pittet",
-    7: "Alain Jutzeler", 8: "Christophe Corbaz",
+    5: "Pierre-Yves Masson", 13: "Pierre-Yves Masson", 14: "Pierre-Yves Masson",
+    7: "Alain Jutzeler", 8: "Christophe Corbaz", "6a": "Pierre Pittet",
     10: "Frank Siffert", 15: "Frank Siffert", 21: "Frank Siffert",
-    12: "Christophe Corbaz",
     11: "Rahman Dedic",
     16: "Robert Pisu", 17: "Robert Pisu",
   };
@@ -778,7 +784,7 @@ class Component extends DCLogic {
       home_intro:"Bienvenue à la truffière didactique. 23 postes jalonnent librement le terrain — panneaux et courtes vidéos expliquent le sol, l'arbre et le champignon.",
       tag_postes:"23 postes", tag_parcours:"Parcours libre", btn_carte:"Ouvrir la carte →", btn_liste:"Liste des postes", btn_infos:"Infos pratiques", btn_truffe:"La truffe", btn_cuisine:"Cuisine de la truffe",
       map_title:"Carte", map_edit:"Modifier", map_done:"Terminer", map_hint:"Glissez une pastille pour la repositionner", map_copy:"copier les coordonnées", map_open_poste:"Ouvrir la fiche du poste",
-      poste_label:"Poste", poste_of:"/ 23", poste_video_soon:"Vidéo à venir · TruffeVaudoise-APRTS", poste_prev:"← Précédent", poste_next:"Suivant →",
+      poste_label:"Poste", poste_of:"/ 23", poste_video_soon:"Vidéo à venir · TruffeVaudoise-APRTS", poste_prev:"← Précédent", poste_next:"Suivant →", poste_feedback:"Laisser un commentaire",
       infos_title:"Infos pratiques", infos_horaires:"Horaires", infos_access_libre:"Accès libre", infos_access_libre_val:"Non disponible",
       infos_visite_org:"Visite organisée", infos_visite_org_val:"Sur inscription", infos_visite_indiv:"Visite individuelle", infos_visite_indiv_val:"Sur rendez-vous",
       infos_parcours:"Parcours", infos_parcours_val:"env. 1h30", infos_acces:"Accès", infos_maps_btn:"Ouvrir dans Google Maps", infos_contact:"Contact", infos_site_btn:"Réserver une visite · truffevaudoise.ch",
@@ -802,7 +808,7 @@ class Component extends DCLogic {
       home_intro:"Willkommen an der didaktischen Trüffelanlage. 23 Stationen führen frei über das Gelände — Tafeln und kurze Videos erklären Boden, Baum und Pilz.",
       tag_postes:"23 Stationen", tag_parcours:"Freier Rundgang", btn_carte:"Karte öffnen →", btn_liste:"Stationsliste", btn_infos:"Praktische Infos", btn_truffe:"Die Trüffel", btn_cuisine:"Trüffelküche",
       map_title:"Karte", map_edit:"Bearbeiten", map_done:"Fertig", map_hint:"Pastille zum Verschieben ziehen", map_copy:"Koordinaten kopieren", map_open_poste:"Station öffnen",
-      poste_label:"Station", poste_of:"/ 23", poste_video_soon:"Video folgt · TruffeVaudoise-APRTS", poste_prev:"← Zurück", poste_next:"Weiter →",
+      poste_label:"Station", poste_of:"/ 23", poste_video_soon:"Video folgt · TruffeVaudoise-APRTS", poste_prev:"← Zurück", poste_next:"Weiter →", poste_feedback:"Feedback geben",
       infos_title:"Praktische Infos", infos_horaires:"Öffnungszeiten", infos_access_libre:"Freier Zugang", infos_access_libre_val:"Nicht verfügbar",
       infos_visite_org:"Organisierte Besichtigung", infos_visite_org_val:"Auf Anmeldung", infos_visite_indiv:"Individuelle Besichtigung", infos_visite_indiv_val:"Nach Vereinbarung",
       infos_parcours:"Rundgang", infos_parcours_val:"ca. 1.5 Std.", infos_acces:"Zugang", infos_maps_btn:"In Google Maps öffnen", infos_contact:"Kontakt", infos_site_btn:"Besuch buchen · truffevaudoise.ch",
@@ -826,7 +832,7 @@ class Component extends DCLogic {
       home_intro:"Welcome to the educational truffle ground. 23 stops are freely scattered across the site — panels and short videos explain the soil, the tree and the fungus.",
       tag_postes:"23 stops", tag_parcours:"Free route", btn_carte:"Open the map →", btn_liste:"List of stops", btn_infos:"Practical info", btn_truffe:"The truffle", btn_cuisine:"Truffle cuisine",
       map_title:"Map", map_edit:"Edit", map_done:"Done", map_hint:"Drag a pin to reposition it", map_copy:"copy coordinates", map_open_poste:"Open stop",
-      poste_label:"Stop", poste_of:"/ 23", poste_video_soon:"Video coming soon · TruffeVaudoise-APRTS", poste_prev:"← Previous", poste_next:"Next →",
+      poste_label:"Stop", poste_of:"/ 23", poste_video_soon:"Video coming soon · TruffeVaudoise-APRTS", poste_prev:"← Previous", poste_next:"Next →", poste_feedback:"Leave feedback",
       infos_title:"Practical info", infos_horaires:"Opening hours", infos_access_libre:"Free access", infos_access_libre_val:"Not available",
       infos_visite_org:"Guided visit", infos_visite_org_val:"By registration", infos_visite_indiv:"Individual visit", infos_visite_indiv_val:"By appointment",
       infos_parcours:"Route", infos_parcours_val:"approx. 1h30", infos_acces:"Access", infos_maps_btn:"Open in Google Maps", infos_contact:"Contact", infos_site_btn:"Book a visit · truffevaudoise.ch",
@@ -848,7 +854,7 @@ class Component extends DCLogic {
       liste_all:"All", poste_speaker:"Speaker" },
   };
   videoIds = {
-    5: "VIoNE0SejCE", 6: "jSUZtq6mWWo", 7: "ndQ93YCW9R8", 8: "hPRJHYot4So",
+    "6a": "51g2yVXcTd0", 5: "VIoNE0SejCE", 6: "jSUZtq6mWWo", 7: "ndQ93YCW9R8", 8: "hPRJHYot4So",
     9: "B6XCHso93U8", 10: "L3noRvvRQIA", 11: "nLwjZN5RLqQ", 13: "dHUVxX4zJY0", 14: "dHUVxX4zJY0",
     15: "WRVMx-4ya0U", 16: "MxJ6M_JBK7s", 17: "MmyMxbowge8", 18: "Ud3crTExIAo", 21: "ES1kimcUeKM", 22: "MbhQJfc6SiE", 23: "b7VTAAYwTe0",
   };
@@ -860,13 +866,13 @@ class Component extends DCLogic {
   ];
   postesByLang = {
     fr: [
-      { num: "1–3", title: "Bienvenue à la truffière", short: "Présentation, histoire et la truffière — regroupés à l'accueil", body: "Trois panneaux d'introduction, regroupés au point d'accueil du parcours.", video: { title: "La truffière didactique de Bonvillars", duration: "0:37" },
+      { num: "1–3", title: "Bienvenue à la truffière", short: "Présentation, histoire et la truffière — regroupés à l'accueil", body: "Trois panneaux d'introduction, regroupés au point d'accueil du parcours.",
         sections: [
           { title: "1. Présentation", body: "Bienvenue à la truffière didactique de Bonvillars, un terrain de 6000 m² conçu pour présenter toutes les variétés de truffes cultivées en Europe. Chaque zone a été adaptée aux besoins propres de chaque variété — humidité, exposition, sol.", videoId: "HUAUCG9gHcQ" },
-          { title: "2. Histoire", body: "Depuis l'Égypte ancienne, la truffe fascine. Théophraste expliquait déjà son origine par les pluies d'automne et le tonnerre ; on lui prêtait ensuite des pouvoirs aphrodisiaques. En patois vaudois, la pomme de terre elle-même s'est longtemps appelée « la trufyé ».", videoId: "uSTKxtMrl4Q" },
-          { title: "3. La truffière", body: "Inaugurée le 23 octobre 2020, c'est la première truffière didactique de Suisse, portée par les Compagnons de la Truffe Vaudoise. On y trouve toutes les espèces de truffes comestibles d'Europe et leurs arbres hôtes, sur un terrain aux qualités pédologiques idéales.", videoId: "yvlHRmZUJ7g" },
+          { title: "2. Histoire", body: "Depuis l'Égypte ancienne, la truffe fascine. Théophraste expliquait déjà son origine par les pluies d'automne et le tonnerre ; on lui prêtait ensuite des pouvoirs aphrodisiaques. En patois vaudois, la pomme de terre elle-même s'est longtemps appelée « la trufyé ».", videoId: "uSTKxtMrl4Q", speaker: "Pierre-Yves Masson" },
+          { title: "3. La truffière", body: "Inaugurée le 23 octobre 2020, c'est la première truffière didactique de Suisse, portée par les Compagnons de la Truffe Vaudoise. On y trouve toutes les espèces de truffes comestibles d'Europe et leurs arbres hôtes, sur un terrain aux qualités pédologiques idéales.", videoId: "yvlHRmZUJ7g", speaker: "Pierre Pittet" },
         ] },
-      { num: 4, title: "Plan", short: "Le parcours et ses 23 postes", body: "23 postes jalonnent le parcours, de l'histoire de la truffe aux techniques de récolte. La carte interactive permet de repérer chaque poste sur le terrain." },
+      { num: 4, title: "Plan", short: "Le parcours et ses 23 postes", body: "23 postes jalonnent le parcours, de l'histoire de la truffe aux techniques de récolte. La carte interactive permet de repérer chaque poste sur le terrain.", noVideo: true },
       { num: 5, title: "Trufficulture", short: "Sol calcaire, plantation, entretien", body: "La trufficulture est l'art de cultiver la truffe : sol calcaire (pH ≥ 7), densité de plantation adaptée à la variété, désherbage manuel, taille des arbres. Aucun produit chimique n'est utilisé — une culture biologique et locale, soutenue par le GIVT vaudois.", video: { title: "La trufficulture : définition", duration: "0:39" },
         sections: [
           { title: "b. Irrigation : un enjeu pour l'avenir", videoId: "3zqOtxvP_4Q", speaker: "Alain Jutzeler" },
@@ -874,8 +880,8 @@ class Component extends DCLogic {
           { title: "d. Tuber aestivum", videoId: "hAtf2W-vCkg", speaker: "Robert Pisu" },
           { title: "e. Variétés de truffes", videoId: "wH_iE0Zi3a8", speaker: "Pierre-Yves Masson" },
         ] },
-      { num: 6, title: "Tuber melanosporum", short: "La périgourdine, le diamant noir", body: "La périgourdine, le diamant noir : c'est à partir de la Renaissance qu'elle devient la truffe de référence — Brillat-Savarin la surnomme ainsi.", facts: [["Goût / odeur","Référence de l'arôme truffe"],["Habitat","Ensoleillé, sols calcaires"],["Maturité","Décembre – mars"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" },
-        sections: [ { title: "a. La truffe vaudoise", videoId: "51g2yVXcTd0" } ] },
+      { num: 6, title: "Tuber melanosporum", short: "La périgourdine, le diamant noir", body: "La périgourdine, le diamant noir : c'est à partir de la Renaissance qu'elle devient la truffe de référence — Brillat-Savarin la surnomme ainsi.", facts: [["Goût / odeur","Référence de l'arôme truffe"],["Habitat","Ensoleillé, sols calcaires"],["Maturité","Décembre – mars"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" } },
+      { num: "6a", title: "Présentation d'une truffe", short: "La truffe vaudoise, en gros plan", body: "Le péridium, la peau : l'enveloppe de protection extérieure de la truffe. Blanc, crème, brun, jaune, rouge, violet ou noir, sa couleur varie selon les espèces et leur maturité. Adhérent ou se détachant facilement, il se compose de prismes plus ou moins gros et peut être lisse chez certaines variétés.\n\nLa gléba, sa chair : masse interne de la truffe. Elle prend des teintes propres à son espèce au fur et à mesure de sa maturité. Elle est composée de deux organes distincts : les veines blanches, dites stériles, qui forment l'organe respiratoire, de régulation et d'assimilation ; et les veines foncées qui contiennent les asques dans lesquels se trouvent les spores.", video: { title: "La truffe vaudoise", duration: "0:41" } },
       { num: 7, title: "Les arbres hôtes", short: "Chêne pubescent, vert, sessile, noisetier, hêtre…", body: "Ces arbres ont noué un pacte avec la truffe au fil de leur évolution. Ils doivent atteindre l'âge adulte avant que leurs mycorhizes puissent produire des truffes — frênes, érables et merisiers n'en portent jamais. À Bonvillars, la truffière plante : chêne pubescent, chêne vert, chêne sessile (rouvre), chêne pédonculé, chêne kermès, chêne des marais, noisetier, noisetier turc (de Byzance), hêtre commun, charme-houblon et tilleul à petites feuilles.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
       { num: 8, title: "Sol et climat", short: "pH et teneur en calcaire actif", body: "Le pH et la teneur en calcaire actif du sol déterminent quelles variétés s'y développent. Le changement climatique redessine la carte européenne de la truffe — une évolution qui pourrait, à terme, avantager nos régions.", video: { title: "Truffes suisses : comprendre les sols et le climat", duration: "0:41" } },
       { num: 9, title: "Biologie de la truffe", short: "Thale, hyphe et primordium", body: "La truffe est un champignon souterrain qui vit en symbiose avec les racines d'un arbre. Deux hyphes, mâle et femelle, se rencontrent pour former un primordium ; seuls quelques-uns arriveront à maturité et deviendront une truffe.", video: { title: "La biologie de la truffe vaudoise", duration: "0:39" } },
@@ -884,29 +890,29 @@ class Component extends DCLogic {
       { num: 12, title: "Tuber uncinatum", short: "La truffe de Bourgogne, recherche GIVT", body: "La truffe de Bourgogne — dite aussi truffe d'automne ou truffe de Bonvillars — est la variante automnale de la truffe d'été, à l'arôme plus prononcé. Un programme de recherche mené avec la DGAV et le GIVT étudie la sexualité de son mycélium.", facts: [["Maturité","15 septembre – fin mars"],["Comestibilité","Excellent comestible"]],
         sections: [
           { title: "12a. Tuber uncinatum", imgId: "poste-12a", body: "Dite de Bourgogne, d'automne ou de Bonvillars, cette truffe s'est longtemps invitée à la table des rois — jusque sous le règne de François 1er. Son péridium est souvent à gros prismes, sa gleba beige à brun marron en pleine maturité, parfois marbrée, et sa forme arrondie ou irrégulière.\n\nEn bouche, elle révèle le fameux goût de noisette et de sous-bois, tout en douceur, avec une odeur en parfait équilibre. Elle se récolte sur des sols assez profonds et riches en matière organique, dans une ambiance où lumière et ombre alternent tout au long de la journée.\n\nExcellent comestible, elle mérite d'être mieux connue et mieux cuisinée sous nos latitudes — elle va sans nul doute reconquérir ses lettres de noblesse et retrouver la table des rois." },
-          { title: "12b. Recherche GIVT & DGAV", videoId: "zldIr_iYKnE" },
+          { title: "12b. Recherche GIVT & DGAV", videoId: "zldIr_iYKnE", speaker: "Christophe Corbaz" },
         ] },
       { num: 13, title: "Tuber magnatum pico", short: "La truffe blanche d'Alba, la plus chère du monde", body: "La truffe blanche d'Alba est la plus chère du monde. Elle demande un sol très alcalin et se récolte d'octobre à fin janvier — attention à ne pas la confondre avec sa cousine la borchii, vendue dix fois moins cher.", facts: [["Maturité","Octobre – fin janvier"],["Habitat","Sol profond à sablonneux"]], video: { title: "La tuber magnatum pico et borchii", duration: "1:20" } },
       { num: 14, title: "Tuber borchii", short: "Cousine de la magnatum, plus abordable", body: "Moins prestigieuse que la magnatum pico mais tout aussi délicieuse, la truffe de Borchii tolère des sols plus variés, parfois sablonneux ou légèrement acides. Elle se récolte de décembre à fin avril.", facts: [["Maturité","Décembre – fin avril"],["Comestibilité","Bon comestible"]], video: { title: "La tuber magnatum pico et borchii", duration: "1:20" } },
       { num: 15, title: "Gastronomie", short: "Crue et fraîche : les règles d'or", body: "La truffe se déguste toujours meilleure fraîche, crue et taillée en fines lamelles. Évitez les cuissons au-delà de 50°C, sauf pour la mésentérique et la mélanosporum qui supportent bien la chaleur.", video: { title: "Gastronomie", duration: "1:06" },
-        sections: [ { title: "B. Conservation des truffes fraîches", videoId: "i0nQ5hUEux4" } ] },
+        sections: [ { title: "B. Conservation des truffes fraîches", videoId: "i0nQ5hUEux4", speaker: "Rahman Dedic" } ] },
       { num: 16, title: "Achat et qualité", short: "Les contrôles avant d'acheter une truffe", body: "Avant d'acheter une truffe : vérifiez la saison, l'espèce, le parfum sur toute sa surface, le poids par rapport au prix, la fermeté et l'absence de terre ou de réparations.", video: { title: "Acheter des truffes fraîches : qualité et bons réflexes", duration: "0:47" } },
       { num: 17, title: "Tuber brumale", short: "La truffe d'hiver, rustique cousine de la mélano", body: "La truffe d'hiver ressemble beaucoup à la mélanosporum, mais son arôme est plus doux, presque musqué. Elle tolère mieux l'humidité et affectionne noisetiers et tilleuls.", facts: [["Maturité","Fin octobre – mars"],["Comestibilité","Très bonne"]], video: { title: "Tuber brumale : la truffe brumale", duration: "0:42" } },
       { num: 18, title: "Tuber mésentérique", short: "Goût de phénol et de bitume, révélée à la cuisson", body: "Son goût, proche du phénol ou du bitume, surprend au premier abord — mais révèle des notes de chocolat et de noisette une fois cuisinée. Peu exigeante, elle pousse presque partout en Europe.", facts: [["Maturité","Juillet – mars"],["Comestibilité","Bon, en épice ou condiment"]], video: { title: "La tuber mesentericum", duration: "0:42" } },
-      { num: 19, title: "Tourisme", short: "Découvrir la région autour de la truffière", body: "La région de Bonvillars se découvre aussi par ses vignes et son terroir vaudois — une étape naturelle après la visite de la truffière.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
+      { num: 19, title: "Tourisme", short: "Découvrir la région autour de la truffière", body: "Bonvillars se niche entre lac de Neuchâtel et premiers reliefs du Jura, au cœur d'un vignoble façonné en terrasses depuis des siècles. L'appellation AOC Bonvillars, l'une des plus anciennes de Suisse, y produit des chasselas minéraux et des rouges (pinot noir, gamaret) portés par des sols calcaires — les mêmes qui font la truffe. Entre ceps et forêts, la région se découvre aussi par ses châteaux, ses rives lacustres et ses sentiers viticoles : une étape naturelle après la visite de la truffière.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
       { num: 20, title: "Offre touristique", short: "Activités à combiner avec le parcours", body: "Balades, dégustations, visites guidées : plusieurs activités locales se combinent avec le parcours de la truffière didactique.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
       { num: 21, title: "Marché aux truffes", short: "Le plus grand marché du pays, dernier samedi d'octobre", body: "Depuis 2009, le marché de Bonvillars — le plus grand du pays — réunit chaque dernier samedi d'octobre des milliers de visiteurs autour de la Tuber Uncinatum : démonstrations de cavage, dégustations et conférences.", video: { title: "Marché aux Truffes de Bonvillars", duration: "0:38" } },
       { num: 22, title: "Association APRTS", short: "Née en 2012, moteur de la trufficulture vaudoise", body: "Née en 2012, l'Association Première Région Truffière de Suisse a fondé le GIVT en 2014 pour développer la trufficulture vaudoise — aujourd'hui une vingtaine de vergers truffiers sur plus de 25 hectares.", video: { title: "l'APRTS : explications", duration: "0:56" } },
       { num: 23, title: "Compagnon Truffe Vaudoise", short: "Soutenez la truffière, 1000.– l'arbre", body: "Pour 1000 francs, devenez Compagnon et parrainez un arbre truffier. Votre soutien finance l'entretien de la truffière didactique et sa pérennité.", video: { title: "Les Compagnons de la truffe vaudoise", duration: "0:27" } },
     ],
     de: [
-      { num: "1–3", title: "Willkommen an der Trüffelanlage", short: "Präsentation, Geschichte und die Trüffelanlage — am Empfang zusammengefasst", body: "Drei Einführungstafeln, zusammengefasst am Empfangspunkt des Rundgangs.", video: { title: "La truffière didactique de Bonvillars", duration: "0:37" },
+      { num: "1–3", title: "Willkommen an der Trüffelanlage", short: "Präsentation, Geschichte und die Trüffelanlage — am Empfang zusammengefasst", body: "Drei Einführungstafeln, zusammengefasst am Empfangspunkt des Rundgangs.",
         sections: [
           { title: "1. Präsentation", body: "Willkommen an der didaktischen Trüffelanlage von Bonvillars, einem 6000 m² grossen Gelände, das alle in Europa kultivierten Trüffelsorten zeigt. Jede Zone wurde an die Bedürfnisse der jeweiligen Sorte angepasst — Feuchtigkeit, Ausrichtung, Boden.", videoId: "HUAUCG9gHcQ" },
-          { title: "2. Geschichte", body: "Seit dem alten Ägypten fasziniert die Trüffel die Menschen. Theophrast erklärte ihre Entstehung einst mit den Herbstregen und dem Donner; später schrieb man ihr aphrodisierende Kräfte zu. Im waadtländischen Patois wurde sogar die Kartoffel lange «la trufyé» genannt.", videoId: "uSTKxtMrl4Q" },
-          { title: "3. Die Trüffelanlage", body: "Eingeweiht am 23. Oktober 2020, ist sie die erste didaktische Trüffelanlage der Schweiz, getragen von den Compagnons de la Truffe Vaudoise. Hier findet man alle essbaren Trüffelarten Europas und ihre Wirtsbäume, auf einem Gelände mit idealen Bodeneigenschaften.", videoId: "yvlHRmZUJ7g" },
+          { title: "2. Geschichte", body: "Seit dem alten Ägypten fasziniert die Trüffel die Menschen. Theophrast erklärte ihre Entstehung einst mit den Herbstregen und dem Donner; später schrieb man ihr aphrodisierende Kräfte zu. Im waadtländischen Patois wurde sogar die Kartoffel lange «la trufyé» genannt.", videoId: "uSTKxtMrl4Q", speaker: "Pierre-Yves Masson" },
+          { title: "3. Die Trüffelanlage", body: "Eingeweiht am 23. Oktober 2020, ist sie die erste didaktische Trüffelanlage der Schweiz, getragen von den Compagnons de la Truffe Vaudoise. Hier findet man alle essbaren Trüffelarten Europas und ihre Wirtsbäume, auf einem Gelände mit idealen Bodeneigenschaften.", videoId: "yvlHRmZUJ7g", speaker: "Pierre Pittet" },
         ] },
-      { num: 4, title: "Plan", short: "Der Rundgang und seine 23 Stationen", body: "23 Stationen führen entlang des Rundgangs, von der Geschichte der Trüffel bis zu den Erntetechniken. Die interaktive Karte hilft, jede Station im Gelände zu finden." },
+      { num: 4, title: "Plan", short: "Der Rundgang und seine 23 Stationen", body: "23 Stationen führen entlang des Rundgangs, von der Geschichte der Trüffel bis zu den Erntetechniken. Die interaktive Karte hilft, jede Station im Gelände zu finden.", noVideo: true },
       { num: 5, title: "Trüffelanbau", short: "Kalkboden, Pflanzung, Pflege", body: "Trüffelanbau ist die Kunst, die Trüffel zu kultivieren: kalkhaltiger Boden (pH ≥ 7), an die Sorte angepasste Pflanzdichte, manuelles Unkrautjäten, Baumschnitt. Es werden keine Chemikalien verwendet — ein biologischer, lokaler Anbau, unterstützt vom waadtländischen GIVT.", video: { title: "La trufficulture : définition", duration: "0:39" },
         sections: [
           { title: "b. Bewässerung: eine Herausforderung für die Zukunft", videoId: "3zqOtxvP_4Q", speaker: "Alain Jutzeler" },
@@ -914,8 +920,8 @@ class Component extends DCLogic {
           { title: "d. Tuber aestivum", videoId: "hAtf2W-vCkg", speaker: "Robert Pisu" },
           { title: "e. Trüffelsorten", videoId: "wH_iE0Zi3a8", speaker: "Pierre-Yves Masson" },
         ] },
-      { num: 6, title: "Tuber melanosporum", short: "Die Périgord-Trüffel, der schwarze Diamant", body: "Die Périgord-Trüffel, der schwarze Diamant: Erst seit der Renaissance gilt sie als Referenztrüffel — Brillat-Savarin gab ihr diesen Namen.", facts: [["Geschmack / Geruch","Referenzaroma der Trüffel"],["Habitat","Sonnig, kalkhaltige Böden"],["Reife","Dezember – März"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" },
-        sections: [ { title: "a. Die Waadtländer Trüffel", videoId: "51g2yVXcTd0" } ] },
+      { num: 6, title: "Tuber melanosporum", short: "Die Périgord-Trüffel, der schwarze Diamant", body: "Die Périgord-Trüffel, der schwarze Diamant: Erst seit der Renaissance gilt sie als Referenztrüffel — Brillat-Savarin gab ihr diesen Namen.", facts: [["Geschmack / Geruch","Referenzaroma der Trüffel"],["Habitat","Sonnig, kalkhaltige Böden"],["Reife","Dezember – März"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" } },
+      { num: "6a", title: "Präsentation einer Trüffel", short: "Die Waadtländer Trüffel im Nahbild", body: "Das Peridium, die Schale: die äussere Schutzhülle der Trüffel. Weiss, cremefarben, braun, gelb, rot, violett oder schwarz — ihre Farbe variiert je nach Art und Reifegrad. Mal fest anhaftend, mal leicht ablösbar, besteht sie aus mehr oder weniger groben Prismen und kann bei manchen Sorten glatt sein.\n\nDie Gleba, ihr Fleisch: die innere Masse der Trüffel. Sie nimmt im Laufe der Reife die für ihre Art typischen Farbtöne an. Sie besteht aus zwei unterschiedlichen Bereichen: den weissen, unfruchtbaren Adern, die für Atmung, Regulierung und Aufnahme sorgen, und den dunklen Adern, die die Asci mit den Sporen enthalten.", video: { title: "La truffe vaudoise", duration: "0:41" } },
       { num: 7, title: "Die Wirtsbäume", short: "Flaumeiche, Steineiche, Traubeneiche, Hasel, Buche…", body: "Diese Bäume sind im Laufe ihrer Entwicklung einen Pakt mit der Trüffel eingegangen. Sie müssen das Erwachsenenalter erreichen, bevor ihre Mykorrhizen Trüffeln bilden können — Eschen, Ahorn und Vogelkirschen tragen nie welche. In Bonvillars wachsen: Flaumeiche, Steineiche, Traubeneiche, Stieleiche, Kermeseiche, Sumpfeiche, Hasel, Baumhasel (Türkische Hasel), Rotbuche, Hopfenbuche und Winterlinde.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
       { num: 8, title: "Boden und Klima", short: "pH-Wert und aktiver Kalkgehalt", body: "Der pH-Wert und der Anteil an aktivem Kalk im Boden bestimmen, welche Sorten sich entwickeln. Der Klimawandel verändert die europäische Trüffelkarte — eine Entwicklung, die unseren Regionen langfristig zugutekommen könnte.", video: { title: "Truffes suisses : comprendre les sols et le climat", duration: "0:41" } },
       { num: 9, title: "Biologie der Trüffel", short: "Hyphen, Myzel und Primordium", body: "Die Trüffel ist ein unterirdischer Pilz, der in Symbiose mit den Wurzeln eines Baumes lebt. Zwei Hyphen, männlich und weiblich, treffen sich und bilden ein Primordium; nur wenige erreichen die Reife und werden zur Trüffel.", video: { title: "La biologie de la truffe vaudoise", duration: "0:39" } },
@@ -924,29 +930,29 @@ class Component extends DCLogic {
       { num: 12, title: "Tuber uncinatum", short: "Die Burgundertrüffel, GIVT-Forschung", body: "Die Burgundertrüffel — auch Herbsttrüffel oder Bonvillars-Trüffel genannt — ist die herbstliche Variante der Sommertrüffel mit ausgeprägterem Aroma. Ein Forschungsprogramm mit der DGAV und dem GIVT untersucht die Sexualität ihres Myzels.", facts: [["Reife","15. September – Ende März"],["Genusswert","Ausgezeichneter Speisepilz"]],
         sections: [
           { title: "12a. Tuber uncinatum", imgId: "poste-12a", body: "Auch Herbst-, Bonvillars- oder Burgundertrüffel genannt, war sie lange bei Hofe gefragt — noch unter der Herrschaft von Franz I. Ihr Peridium ist oft grossprismatisch, die Gleba beige bis kastanienbraun bei voller Reife, manchmal marmoriert, die Form rundlich bis unregelmässig.\n\nGeschmacklich zeigt sie die typische Haselnuss- und Unterholznote, sehr sanft, mit einem Duft im perfekten Gleichgewicht zum Geschmack. Geerntet wird sie auf recht tiefgründigen, organisch reichen Böden, wo Licht und Schatten sich im Tagesverlauf abwechseln.\n\nEin ausgezeichneter Speisepilz, der es verdient, in unseren Breitengraden besser bekannt und besser zubereitet zu werden — sie wird zweifellos wieder zu Ehren kommen." },
-          { title: "12b. Forschung GIVT & DGAV", videoId: "zldIr_iYKnE" },
+          { title: "12b. Forschung GIVT & DGAV", videoId: "zldIr_iYKnE", speaker: "Christophe Corbaz" },
         ] },
       { num: 13, title: "Tuber magnatum pico", short: "Die weisse Alba-Trüffel, die teuerste der Welt", body: "Die weisse Alba-Trüffel ist die teuerste der Welt. Sie benötigt einen sehr alkalischen Boden und wird von Oktober bis Ende Januar geerntet — Vorsicht, sie wird oft mit der zehnmal günstigeren Borchii-Trüffel verwechselt.", facts: [["Reife","Oktober – Ende Januar"],["Habitat","Tiefer bis sandiger Boden"]], video: { title: "La tuber magnatum pico et borchii", duration: "1:20" } },
       { num: 14, title: "Tuber borchii", short: "Verwandte der Magnatum, günstiger", body: "Weniger prestigereich als die Magnatum pico, aber ebenso köstlich: Die Borchii-Trüffel toleriert vielfältigere Böden, teils sandig oder leicht sauer. Sie wird von Dezember bis Ende April geerntet.", facts: [["Reife","Dezember – Ende April"],["Genusswert","Guter Speisepilz"]], video: { title: "La tuber magnatum pico et borchii", duration: "1:20" } },
       { num: 15, title: "Gastronomie", short: "Roh und frisch: die goldenen Regeln", body: "Die Trüffel schmeckt immer am besten frisch, roh und in feine Scheiben geschnitten. Vermeiden Sie Temperaturen über 50°C, ausser bei der Mésentérique- und der Melanosporum-Trüffel, die Hitze gut vertragen.", video: { title: "Gastronomie", duration: "1:06" },
-        sections: [ { title: "B. Aufbewahrung frischer Trüffeln", videoId: "i0nQ5hUEux4" } ] },
+        sections: [ { title: "B. Aufbewahrung frischer Trüffeln", videoId: "i0nQ5hUEux4", speaker: "Rahman Dedic" } ] },
       { num: 16, title: "Kauf und Qualität", short: "Die Kontrollen vor dem Trüffelkauf", body: "Vor dem Kauf einer Trüffel prüfen: Saison, Sorte, Duft auf der ganzen Oberfläche, Gewicht im Verhältnis zum Preis, Festigkeit und Abwesenheit von Erde oder Reparaturen.", video: { title: "Acheter des truffes fraîches : qualité et bons réflexes", duration: "0:47" } },
       { num: 17, title: "Tuber brumale", short: "Die Wintertrüffel, robuste Cousine der Mélano", body: "Die Wintertrüffel ähnelt stark der Melanosporum, ihr Aroma ist jedoch milder, fast muskartig. Sie verträgt Feuchtigkeit besser und liebt Hasel- und Lindenbäume.", facts: [["Reife","Ende Oktober – März"],["Genusswert","Sehr gut"]], video: { title: "Tuber brumale : la truffe brumale", duration: "0:42" } },
       { num: 18, title: "Tuber mesentericum", short: "Phenol- und Bitumengeschmack, offenbart sich beim Kochen", body: "Ihr Geschmack, der an Phenol oder Bitumen erinnert, überrascht zunächst — offenbart aber Schokolade- und Haselnussnoten, sobald sie gekocht wird. Anspruchslos, wächst sie fast überall in Europa.", facts: [["Reife","Juli – März"],["Genusswert","Gut, als Gewürz oder Würzmittel"]], video: { title: "La tuber mesentericum", duration: "0:42" } },
-      { num: 19, title: "Tourismus", short: "Die Region rund um die Trüffelanlage entdecken", body: "Die Region Bonvillars lässt sich auch durch ihre Weinberge und das Waadtländer Terroir entdecken — eine natürliche Etappe nach dem Besuch der Trüffelanlage.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
+      { num: 19, title: "Tourismus", short: "Die Region rund um die Trüffelanlage entdecken", body: "Bonvillars liegt zwischen dem Neuenburgersee und den ersten Ausläufern des Jura, im Herzen eines seit Jahrhunderten terrassierten Weinbaugebiets. Die AOC Bonvillars, eine der ältesten Appellationen der Schweiz, bringt hier mineralische Chasselas und kräftige Rotweine (Pinot Noir, Gamaret) aus kalkhaltigen Böden hervor — denselben Böden, die auch die Trüffel hervorbringen. Zwischen Rebstöcken und Wäldern lässt sich die Region auch durch ihre Schlösser, Seeufer und Weinwanderwege entdecken: eine natürliche Etappe nach dem Besuch der Trüffelanlage.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
       { num: 20, title: "Touristisches Angebot", short: "Aktivitäten kombinierbar mit dem Rundgang", body: "Wanderungen, Degustationen, geführte Besichtigungen: Mehrere lokale Aktivitäten lassen sich mit dem Rundgang der didaktischen Trüffelanlage kombinieren.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
       { num: 21, title: "Trüffelmarkt", short: "Der grösste Markt des Landes, letzter Samstag im Oktober", body: "Seit 2009 versammelt der Markt von Bonvillars — der grösste des Landes — jeden letzten Samstag im Oktober tausende Besucher rund um die Tuber Uncinatum: Vorführungen der Trüffelsuche, Degustationen und Vorträge.", video: { title: "Marché aux Truffes de Bonvillars", duration: "0:38" } },
       { num: 22, title: "Verein APRTS", short: "Gegründet 2012, Motor des waadtländischen Trüffelanbaus", body: "Der 2012 gegründete Verein «Première Région Truffière de Suisse» rief 2014 die GIVT ins Leben, um den waadtländischen Trüffelanbau zu fördern — heute rund zwanzig Trüffelgärten auf über 25 Hektar.", video: { title: "l'APRTS : explications", duration: "0:56" } },
       { num: 23, title: "Compagnon Truffe Vaudoise", short: "Unterstützen Sie die Trüffelanlage, 1000.– pro Baum", body: "Für 1000 Franken werden Sie Compagnon und übernehmen die Patenschaft für einen Trüffelbaum. Ihre Unterstützung finanziert den Unterhalt der didaktischen Trüffelanlage und ihren Fortbestand.", video: { title: "Les Compagnons de la truffe vaudoise", duration: "0:27" } },
     ],
     en: [
-      { num: "1–3", title: "Welcome to the truffle ground", short: "Introduction, history and the truffle ground — grouped at the welcome point", body: "Three introductory panels, grouped at the course's welcome point.", video: { title: "La truffière didactique de Bonvillars", duration: "0:37" },
+      { num: "1–3", title: "Welcome to the truffle ground", short: "Introduction, history and the truffle ground — grouped at the welcome point", body: "Three introductory panels, grouped at the course's welcome point.",
         sections: [
           { title: "1. Introduction", body: "Welcome to the Bonvillars educational truffle ground, a 6,000 m² site designed to showcase every truffle variety cultivated in Europe. Each zone has been adapted to the specific needs of its variety — moisture, exposure, soil.", videoId: "HUAUCG9gHcQ" },
-          { title: "2. History", body: "The truffle has fascinated people since ancient Egypt. Theophrastus once explained its origin through autumn rains and thunder; later it was credited with aphrodisiac powers. In Vaudois patois, even the potato was long called « la trufyé ».", videoId: "uSTKxtMrl4Q" },
-          { title: "3. The truffle ground", body: "Inaugurated on 23 October 2020, it is Switzerland's first educational truffle ground, created by the Compagnons de la Truffe Vaudoise. It brings together every edible truffle species found in Europe and their host trees, on land with ideal soil qualities.", videoId: "yvlHRmZUJ7g" },
+          { title: "2. History", body: "The truffle has fascinated people since ancient Egypt. Theophrastus once explained its origin through autumn rains and thunder; later it was credited with aphrodisiac powers. In Vaudois patois, even the potato was long called « la trufyé ».", videoId: "uSTKxtMrl4Q", speaker: "Pierre-Yves Masson" },
+          { title: "3. The truffle ground", body: "Inaugurated on 23 October 2020, it is Switzerland's first educational truffle ground, created by the Compagnons de la Truffe Vaudoise. It brings together every edible truffle species found in Europe and their host trees, on land with ideal soil qualities.", videoId: "yvlHRmZUJ7g", speaker: "Pierre Pittet" },
         ] },
-      { num: 4, title: "Map", short: "The route and its 23 stops", body: "23 stops line the route, from the history of the truffle to harvesting techniques. The interactive map helps locate each stop on the ground." },
+      { num: 4, title: "Map", short: "The route and its 23 stops", body: "23 stops line the route, from the history of the truffle to harvesting techniques. The interactive map helps locate each stop on the ground.", noVideo: true },
       { num: 5, title: "Truffle growing", short: "Calcareous soil, planting, maintenance", body: "Truffle growing is the art of cultivating truffles: calcareous soil (pH ≥ 7), planting density suited to the variety, manual weeding, tree pruning. No chemicals are used — an organic, local practice supported by the Vaud GIVT.", video: { title: "La trufficulture : définition", duration: "0:39" },
         sections: [
           { title: "b. Irrigation: a challenge for the future", videoId: "3zqOtxvP_4Q", speaker: "Alain Jutzeler" },
@@ -954,8 +960,8 @@ class Component extends DCLogic {
           { title: "d. Tuber aestivum", videoId: "hAtf2W-vCkg", speaker: "Robert Pisu" },
           { title: "e. Truffle varieties", videoId: "wH_iE0Zi3a8", speaker: "Pierre-Yves Masson" },
         ] },
-      { num: 6, title: "Tuber melanosporum", short: "The Périgord truffle, the black diamond", body: "The Périgord truffle, the black diamond: it became the reference truffle from the Renaissance onward — Brillat-Savarin gave it that name.", facts: [["Taste / smell","Reference truffle aroma"],["Habitat","Sunny, calcareous soils"],["Season","December – March"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" },
-        sections: [ { title: "a. The Vaud truffle", videoId: "51g2yVXcTd0" } ] },
+      { num: 6, title: "Tuber melanosporum", short: "The Périgord truffle, the black diamond", body: "The Périgord truffle, the black diamond: it became the reference truffle from the Renaissance onward — Brillat-Savarin gave it that name.", facts: [["Taste / smell","Reference truffle aroma"],["Habitat","Sunny, calcareous soils"],["Season","December – March"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" } },
+      { num: "6a", title: "Presenting a truffle", short: "The Vaud truffle, up close", body: "The peridium, the skin: the truffle's outer protective layer. White, cream, brown, yellow, red, purple or black — its colour varies by species and maturity. Sometimes firmly attached, sometimes easily peeled, it is made of coarser or finer warts and can be smooth in some varieties.\n\nThe gleba, its flesh: the truffle's inner mass. It takes on colours typical of its species as it matures. It is made of two distinct parts: the white, sterile veins, which handle respiration, regulation and assimilation; and the darker veins, which contain the asci holding the spores.", video: { title: "La truffe vaudoise", duration: "0:41" } },
       { num: 7, title: "Host trees", short: "Downy oak, holm oak, sessile oak, hazel, beech…", body: "These trees struck a pact with the truffle over the course of their evolution. They must reach maturity before their mycorrhizae can produce truffles — ash, maple and wild cherry never bear any. Bonvillars plants: downy oak, holm oak, sessile oak, pedunculate oak, kermes oak, marsh oak, hazel, Turkish hazel, common beech, hop hornbeam and small-leaved lime.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
       { num: 8, title: "Soil and climate", short: "pH and active limestone content", body: "Soil pH and active limestone content determine which varieties develop. Climate change is reshaping the European truffle map — a shift that could, in time, favour our region.", video: { title: "Truffes suisses : comprendre les sols et le climat", duration: "0:41" } },
       { num: 9, title: "Truffle biology", short: "Hyphae, mycelium and primordium", body: "The truffle is an underground fungus living in symbiosis with a tree's roots. Two hyphae, male and female, meet to form a primordium; only a few reach maturity and become a truffle.", video: { title: "La biologie de la truffe vaudoise", duration: "0:39" } },
@@ -964,16 +970,16 @@ class Component extends DCLogic {
       { num: 12, title: "Tuber uncinatum", short: "The Burgundy truffle, GIVT research", body: "The Burgundy truffle — also called the autumn truffle or Bonvillars truffle — is the autumn variant of the summer truffle, with a more pronounced aroma. A research programme with the DGAV and the GIVT is studying the sexuality of its mycelium.", facts: [["Season","15 September – late March"],["Edibility","Excellent"]],
         sections: [
           { title: "12a. Tuber uncinatum", imgId: "poste-12a", body: "Also known as the Burgundy, autumn or Bonvillars truffle, it was long served at royal tables — even under the reign of Francis I. Its peridium is often coarsely warted, its gleba beige to chestnut-brown at full maturity, sometimes marbled, and its shape rounded to irregular.\n\nOn the palate, it reveals the well-known hazelnut and undergrowth flavour, wonderfully mild, with an aroma in perfect balance with its taste. It is harvested in fairly deep, organically rich soils, where light and shade alternate throughout the day.\n\nAn excellent edible truffle, it deserves to be better known and better cooked in our latitudes — it will surely reclaim its noble reputation." },
-          { title: "12b. GIVT & DGAV research", videoId: "zldIr_iYKnE" },
+          { title: "12b. GIVT & DGAV research", videoId: "zldIr_iYKnE", speaker: "Christophe Corbaz" },
         ] },
       { num: 13, title: "Tuber magnatum pico", short: "The white Alba truffle, the world's most expensive", body: "The Alba white truffle is the most expensive in the world. It needs highly alkaline soil and is harvested from October to late January — take care not to confuse it with its cousin the borchii, sold for a tenth of the price.", facts: [["Season","October – late January"],["Habitat","Deep to sandy soil"]], video: { title: "La tuber magnatum pico et borchii", duration: "1:20" } },
       { num: 14, title: "Tuber borchii", short: "Cousin of the magnatum, more affordable", body: "Less prestigious than the magnatum pico but just as delicious, the borchii truffle tolerates more varied soils, sometimes sandy or slightly acidic. It is harvested from December to late April.", facts: [["Season","December – late April"],["Edibility","Good"]], video: { title: "La tuber magnatum pico et borchii", duration: "1:20" } },
       { num: 15, title: "Gastronomy", short: "Raw and fresh: the golden rules", body: "Truffle always tastes best fresh, raw and thinly sliced. Avoid cooking above 50°C, except for the mesentericum and melanosporum truffles, which tolerate heat well.", video: { title: "Gastronomie", duration: "1:06" },
-        sections: [ { title: "B. Storing fresh truffles", videoId: "i0nQ5hUEux4" } ] },
+        sections: [ { title: "B. Storing fresh truffles", videoId: "i0nQ5hUEux4", speaker: "Rahman Dedic" } ] },
       { num: 16, title: "Buying and quality", short: "Checks to make before buying a truffle", body: "Before buying a truffle, check: the season, the species, the aroma across its whole surface, weight relative to price, firmness, and the absence of soil or repairs.", video: { title: "Acheter des truffes fraîches : qualité et bons réflexes", duration: "0:47" } },
       { num: 17, title: "Tuber brumale", short: "The winter truffle, hardy cousin of the mélano", body: "The winter truffle closely resembles the melanosporum, but its aroma is milder, almost musky. It tolerates moisture better and favours hazel and lime trees.", facts: [["Season","Late October – March"],["Edibility","Very good"]], video: { title: "Tuber brumale : la truffe brumale", duration: "0:42" } },
       { num: 18, title: "Tuber mesentericum", short: "Phenol and bitumen taste, revealed by cooking", body: "Its taste, close to phenol or bitumen, is surprising at first — but reveals notes of chocolate and hazelnut once cooked. Undemanding, it grows almost everywhere in Europe.", facts: [["Season","July – March"],["Edibility","Good, as a spice or condiment"]], video: { title: "La tuber mesentericum", duration: "0:42" } },
-      { num: 19, title: "Tourism", short: "Discover the region around the truffle ground", body: "The Bonvillars region can also be explored through its vineyards and Vaud terroir — a natural next step after visiting the truffle ground.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
+      { num: 19, title: "Tourism", short: "Discover the region around the truffle ground", body: "Bonvillars sits between Lake Neuchâtel and the first foothills of the Jura, at the heart of a vineyard shaped into terraces over centuries. The Bonvillars AOC, one of Switzerland's oldest appellations, produces mineral Chasselas whites and structured reds (Pinot Noir, Gamaret) from the same calcareous soils that grow the truffle. Between vines and forest, the region also reveals itself through its castles, lakeshore and wine trails — a natural next step after visiting the truffle ground.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
       { num: 20, title: "Tourist offer", short: "Activities to combine with the route", body: "Walks, tastings, guided tours: several local activities can be combined with the educational truffle ground route.", link: { label: "Yverdon-les-Bains Région", url: "www.yverdonlesbainsregion.ch" } },
       { num: 21, title: "Truffle market", short: "The country's largest market, last Saturday of October", body: "Since 2009, the Bonvillars market — the largest in the country — has drawn thousands of visitors every last Saturday of October around the Tuber Uncinatum: truffle-hunting demonstrations, tastings and talks.", video: { title: "Marché aux Truffes de Bonvillars", duration: "0:38" } },
       { num: 22, title: "APRTS Association", short: "Founded in 2012, driving force of Vaud truffle growing", body: "Founded in 2012, the Association Première Région Truffière de Suisse created the GIVT in 2014 to develop truffle growing in Vaud — today around twenty truffle orchards across more than 25 hectares.", video: { title: "l'APRTS : explications", duration: "0:56" } },
@@ -1155,7 +1161,7 @@ class Component extends DCLogic {
     const postesList = postesAll.map(p => ({ ...p, onOpen: () => this.setState({ screen: "poste", poste: p.num }) }));
     const chapterDefs = [
       { key: "bienvenue", nums: ["1–3", 4] },
-      { key: "terroir", nums: [5, 7, 8, 9] },
+      { key: "terroir", nums: ["6a", 5, 7, 8, 9] },
       { key: "especes", nums: [6, 12, 13, 14, 17, 18] },
       { key: "recolte", nums: [10, 11, 15, 16] },
       { key: "tourisme", nums: [19, 20] },
@@ -1163,13 +1169,22 @@ class Component extends DCLogic {
     ];
     const chapterOf = {};
     chapterDefs.forEach(c => c.nums.forEach(n => { chapterOf[n] = c.key; }));
-    const chapterOrder = chapterDefs.flatMap(c => c.nums);
+    const chapterOrder = ["1–3", 4, 5, 6, "6a", 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
     const posteChapterLabel = t['chapter_' + chapterOf[poste.num]];
     const chapIdx = chapterOrder.indexOf(this.state.poste);
     const gotoPrev = () => this.setState({ poste: chapterOrder[Math.max(0, chapIdx - 1)] });
     const gotoNext = () => this.setState({ poste: chapterOrder[Math.min(chapterOrder.length - 1, chapIdx + 1)] });
+    const hasPrevPoste = chapIdx > 0;
+    const hasNextPoste = chapIdx < chapterOrder.length - 1;
+    const isLastPoste = !hasNextPoste;
     const speakerFilter = this.state.speakerFilter || null;
-    const allSpeakers = [...new Set(Object.values(this.speakersByNum))];
+    const speakersOfPoste = (p) => {
+      const list = [];
+      if (this.speakersByNum[p.num]) list.push(this.speakersByNum[p.num]);
+      (p.sections || []).forEach(s => { if (s.speaker) list.push(s.speaker); });
+      return [...new Set(list)];
+    };
+    const allSpeakers = [...new Set(postesList.flatMap(speakersOfPoste))];
     const speakerChips = ["*ALL*", ...allSpeakers].map(name => ({
       label: name === "*ALL*" ? t.liste_all : name,
       cls: (speakerFilter === name || (name === "*ALL*" && !speakerFilter)) ? "tag-accent" : "tag-outline",
@@ -1177,8 +1192,8 @@ class Component extends DCLogic {
     }));
     const postesGrouped = chapterDefs.map(c => {
       const items = c.nums.map(n => postesList.find(p => p.num === n)).filter(Boolean)
-        .filter(p => !speakerFilter || this.speakersByNum[p.num] === speakerFilter)
-        .map(p => ({ ...p, speakerSuffix: this.speakersByNum[p.num] ? ` · ${this.speakersByNum[p.num]}` : "" }));
+        .filter(p => !speakerFilter || speakersOfPoste(p).includes(speakerFilter))
+        .map(p => { const sp = speakersOfPoste(p); return { ...p, speakerSuffix: sp.length ? ` · ${sp.join(", ")}` : "" }; });
       return { key: c.key, label: t['chapter_' + c.key], items, hasItems: items.length > 0 };
     });
     const posteSpeaker = this.speakersByNum[poste.num] || "";
@@ -1340,8 +1355,8 @@ class Component extends DCLogic {
           };
         });
       })(),
-      hasNoVideo: !hasVideo && !hasLink && !hasSections, video, link, videoEmbedUrl, posteChapterLabel, postesGrouped, speakerChips, posteSpeaker,
-      gotoPrev, gotoNext,
+      hasNoVideo: !hasVideo && !hasLink && !hasSections && !poste.noVideo, video, link, videoEmbedUrl, posteChapterLabel, postesGrouped, speakerChips, posteSpeaker,
+      gotoPrev, gotoNext, hasPrevPoste, hasNextPoste, isLastPoste,
       quizDone: this.state.quizDone, isQuizPlaying: !this.state.quizDone,
       quizQ, quizOptions, quizDots, quizScore, quizMessage,
       quizQuestionLabel: `${t.quiz_word} ${this.state.quizIndex + 1} / 10`,
