@@ -67,6 +67,14 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line><circle cx="12" cy="12" r="10"></circle></svg>
         <span style="font:600 13px var(--font-body)">{{ t.quiz_title }}</span>
       </div>
+      <div onClick="{{ goAromes }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v9l6 3"></path></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.aromes_title }}</span>
+      </div>
+      <div onClick="{{ goKamishibai }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.kamishibai_title }}</span>
+      </div>
       <div onClick="{{ goInfos }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px;grid-column:1/3">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
         <span style="font:600 13px var(--font-body)">{{ t.btn_infos }}</span>
@@ -359,6 +367,103 @@
   </div>
 </sc-if>
 
+<sc-if value="{{ isAromes }}">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:2px">
+      <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    </div>
+    <span class="screentitle">{{ t.aromes_title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content">
+    <p style="font:13px/1.55 var(--font-body);color:var(--color-neutral-700);margin:0 0 18px">{{ t.aromes_intro }}</p>
+    <div style="font:700 12px var(--font-heading);text-transform:uppercase;letter-spacing:.08em;color:var(--color-accent-700);border-bottom:2px solid var(--color-divider);padding-bottom:6px;margin-bottom:12px">{{ t.aromes_categories_title }}</div>
+    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:22px">
+      <sc-for list="{{ aromeCategories }}" as="c" hint-placeholder-count="3">
+        <div style="padding:12px 0;border-bottom:2px solid var(--color-divider)">
+          <div style="font:700 13px var(--font-body);margin-bottom:4px">{{ c.name }}</div>
+          <p style="font:13px/1.5 var(--font-body);margin:0;color:var(--color-neutral-700)">{{ c.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:11px var(--font-body);color:var(--color-neutral-600);margin-bottom:22px">{{ t.aromes_source }}</div>
+    <div style="font:700 12px var(--font-heading);text-transform:uppercase;letter-spacing:.08em;color:var(--color-accent-700);border-bottom:2px solid var(--color-divider);padding-bottom:6px;margin-bottom:12px">{{ t.aromes_criteres_title }}</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
+      <sc-for list="{{ aromeCriteres }}" as="cr" hint-placeholder-count="5">
+        <div><span style="font:700 13px var(--font-body)">{{ cr.name }} : </span><span style="font:13px/1.5 var(--font-body);color:var(--color-neutral-700)">{{ cr.desc }}</span></div>
+      </sc-for>
+    </div>
+    <sc-for list="{{ aromeSections }}" as="sec" hint-placeholder-count="3">
+      <div style="margin-bottom:22px">
+        <div style="font:700 12px var(--font-heading);text-transform:uppercase;letter-spacing:.08em;color:var(--color-accent-700);border-bottom:2px solid var(--color-divider);padding-bottom:6px;margin-bottom:12px">{{ sec.title }}</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ sec.items }}" as="it" hint-placeholder-count="6">
+            <div>
+              <div style="font:600 13px var(--font-body);margin-bottom:6px">{{ it.label }}</div>
+              <div style="display:flex;gap:4px">
+                <sc-for list="{{ it.scale }}" as="n" hint-placeholder-count="9">
+                  <div onClick="{{ n.select }}" style="{{ n.style }}">{{ n.val }}</div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <div style="margin-bottom:22px">
+      <div style="font:700 12px var(--font-heading);text-transform:uppercase;letter-spacing:.08em;color:var(--color-accent-700);border-bottom:2px solid var(--color-divider);padding-bottom:6px;margin-bottom:6px">{{ t.aromes_olfactifs_title }}</div>
+      <p style="font:12px/1.5 var(--font-body);color:var(--color-neutral-600);margin:0 0 4px;font-style:italic">{{ t.aromes_olfactifs_profile }}</p>
+      <div style="display:flex;justify-content:space-between;font:11px var(--font-body);color:var(--color-neutral-600);margin-bottom:10px">
+        <span>{{ t.aromes_olfactifs_absent }}</span>
+        <span>{{ t.aromes_olfactifs_intense }}</span>
+      </div>
+      <sc-for list="{{ aromeOlfactifs }}" as="grp" hint-placeholder-count="3">
+        <div style="margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="width:10px;height:10px;flex:none;background:{{ grp.barColor }}"></span>
+            <span style="font:700 12px var(--font-body)">{{ grp.group }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ grp.rows }}" as="row" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span style="font:12px var(--font-body);color:var(--color-neutral-800)">{{ row.label }}</span>
+                <div style="display:flex;gap:3px">
+                  <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="6">
+                    <div onClick="{{ c.select }}" style="{{ c.style }}">{{ c.val }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isKamishibai }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.kamishibai_title }}</span>
+    <span class="tag tag-neutral" style="font-size:11px">{{ kamiIndexLabel }}</span>
+  </div>
+  <div class="content" style="padding:0">
+    <image-slot id="{{ kamiPanel.imgId }}" shape="rect" placeholder="Illustration" style="width:100%;height:220px" fit="cover"></image-slot>
+    <div style="padding:18px 20px">
+      <p style="font:15px/1.6 var(--font-body);margin:0 0 14px;white-space:pre-line">{{ kamiPanel.text }}</p>
+      <sc-if value="{{ kamiPanel.hasQuestion }}">
+        <div style="padding:10px 12px;background:var(--color-neutral-100);border-left:2px solid var(--color-accent);margin-bottom:16px">
+          <p style="font:italic 13px/1.5 var(--font-body);margin:0;color:var(--color-accent-700)">{{ kamiPanel.question }}</p>
+        </div>
+      </sc-if>
+      <div style="display:flex;gap:10px">
+        <a class="btn btn-secondary" onClick="{{ kamiPrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
+        <a class="btn btn-secondary" onClick="{{ kamiNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
 <sc-if value="{{ isQuiz }}">
   <div class="topbar">
     <button class="backbtn" onClick="{{ goHome }}">‹</button>
@@ -430,7 +535,91 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr", quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false, especeIndex: 0 };
+  kamiPanels = [
+    { text: "Il était une fois, une forêt... Une forêt calme et paisible, pleine de fougères, de grands arbres, d'un beau chêne, de fleurs, et même de délicieuses fraises des bois. De nombreux animaux, grands et petits, y vivent au fil des saisons.\n\nMais il se passe aussi plein de choses sous la forêt, là, cachées sous la terre...", question: "Vous voyez des animaux qui se promènent dans la forêt ?" },
+    { text: "Sous la terre, vit une truffe. C'est un petit être vivant, comme vous, moi, une vache ou un pissenlit. Mais elle est spéciale : ce n'est ni une plante, comme le pissenlit, ni un animal, comme vous, moi ou une vache. Non, non, non, la truffe appartient à un règne bien à elle : celui des champignons !\n\nC'est une très très très grande famille, la truffe a plein de cousins et de cousines champignons. La truffe est un champignon très particulier, car elle vit et grandit bien cachée sous la terre. Mais elle n'est pas toute seule…", question: "Vous en connaissez d'autres champignons ?" },
+    { text: "Juste au-dessus d'elle, il y a son meilleur ami, le Chêne, avec qui elle vit en parfaite harmonie.\n\nChaque champignon a son arbre préféré, et pour la truffe, c'est le Chêne." },
+    { text: "Ils sont connectés par des petites racines invisibles, appelées mycorhizes. On dit qu'ils sont en symbiose, ce qui signifie qu'ils s'entraident comme de vrais amis !\n\nLes truffes créent de fins filaments blancs, le mycélium, qui se lient aux racines de son ami Chêne, comme s'ils se donnaient la main pour devenir les meilleurs amis du monde. Le Chêne envoie des nutriments (nourriture) aux truffes, et en retour, elles aident le Chêne à absorber l'eau et les minéraux du sol. Grâce à cette belle amitié, les truffes grandissent et se nourrissent sous la terre de la forêt !" },
+    { text: "Comme elles sont cachées sous la terre, nous ne pouvons pas les voir... Comment pourrions-nous les trouver ?\n\nAh oui, l'odorat ! Car en automne et en hiver, quand les truffes ont grossi et qu'elles sont pleines de spores, elles sentent très bon. Les spores sont de toutes petites graines qui vont donner naissance à de nouvelles truffes. Elles sont si petites qu'on ne peut les voir qu'au microscope, mais elles sont essentielles pour continuer la vie des truffes. Mais nos nez ne sont pas très performants…", question: "Quel sens pourrions-nous utiliser ?" },
+    { text: "Dans la forêt, il existe de super animaux, comme les sangliers, les blaireaux, les renards et même les chiens, qui ont un super nez avec un super flair ! Ils sont capables de sentir les truffes camouflées sous la terre.", question: "Et qu'est-ce que font ces animaux quand ils trouvent une truffe ?" },
+    { text: "Si les animaux les cherchent, c'est pour les manger ! Et quand ils vont faire caca plus loin, ils disséminent les spores.\n\nC'est gagnant-gagnant : les animaux se régalent et les truffes peuvent se multiplier. C'est un peu comme les oiseaux qui mangent des fruits et aident à planter des arbres en dispersant les graines." },
+    { text: "Ainsi, une nouvelle vie commence sous le sol de la forêt. Les jeunes spores trouvent leur chemin vers les racines de leur ami le Chêne. Une nouvelle symbiose se forme alors. Le Chêne nourrit les petites truffes avec les nutriments dont elles ont besoin pour grandir, et en retour, les truffes aident le Chêne à absorber l'eau et les minéraux du sol.\n\nC'est ainsi que les truffettes grandissent discrètement tout au long du printemps et de l'été. Plus elles sont grandes, plus elles sont pleines de spores et plus elles deviennent parfumées." },
+    { text: "Pendant toute une année, cachées sous la terre et sous la protection de leur ami le Chêne, les truffettes grandissent lentement.\n\nDe riquiqui spores au printemps, elles deviennent des truffettes en été, puis de belles grandes truffes en automne et enfin de magnifiques truffes lâchant plein de spores." },
+    { text: "Il était une fois, une forêt... Une forêt calme et paisible, pleine de fougères, de grands arbres et d'un chêne. C'est là qu'Emma et son chien Astor aiment se promener tout au long de l'année." },
+    { text: "Emma adore les truffes, c'est son champignon préféré, et Astor adore les trouver grâce à son super flair. Ensemble, ils forment une équipe du tonnerre !\n\nEmma observe les arbres et les oiseaux et Astor renifle le sol, à la recherche de précieuses truffes." },
+    { text: "Et bimmm ! Astor s'arrête tout à coup et commence à gratter le sol avec ses pattes. Emma sait tout de suite ce que ça veut dire : il a trouvé une truffe !\n\nElle s'approche avec un outil et tout tout doucement, elle déterre la truffe. Elle est ronde, noire et sent très fort. Emma est pleine de joie et félicite Astor, qui est tout fier de lui." },
+    { text: "Illico presto, elle décide d'inviter ses copines à venir manger. Tout le monde est ravi. Emma coupe la truffe en très très fines rondelles pendant que la cuisine se remplit d'une odeur incroyable. Miam-miam, ça sent tellement bon !\n\nGrâce au travail d'équipe des truffes et de son ami le Chêne, et celui d'Emma et d'Astor, elles dégustent un repas très spécial et savoureux.\n\nVive la forêt, vive la symbiose, vive les truffes ! Et… vive le museau d'Astor !" },
+    { text: "Et maintenant, toi aussi tu as envie de goûter une truffe ? Suis-moi à la cuisine !" },
+  ];
+  aromesByLang = {
+    fr: [
+      { title: "Vue", items: ["Couleur", "Sphéricité", "Régularité de la surface", "Dimension", "Propreté", "Intégrité"] },
+      { title: "Toucher", items: ["Consistance", "Agrément"] },
+      { title: "Olfaction", items: ["Intensité", "Fermenté", "Champignon", "Miel", "Foin", "Ail", "Épices", "Terre mouillée", "Ammoniac", "Force", "Finesse", "Franchise", "Richesse", "Jugement"] },
+    ],
+    _categories_fr: [
+      { name: "Catégorie « Extra »", desc: "Truffes de qualité supérieure, sphériques ou légèrement lobées, sans défauts visibles, fermes et à l'arôme puissant et complexe." },
+      { name: "Catégorie I", desc: "Truffes présentant de légères irrégularités ou fissures superficielles, conservant d'excellentes qualités organoleptiques et destinées au marché frais et à la transformation haut de gamme (huiles, sauces, conserves)." },
+      { name: "Catégorie II", desc: "Truffes aux défauts plus marqués, forme irrégulière ou partiellement abîmées, à l'arôme parfois atténué, utilisées pour la transformation (purées et beurres de truffe)." },
+    ],
+    _olfactifs_fr: [
+      { group: "Catégorie Extra/A+", zone: "good", descriptors: ["Champignon", "Sous-bois", "Beurre-lacté", "Terreux", "Noisette", "Miel", "Feuille morte-humus", "Boisé-réglisse", "Empyreumatique-torréfié"] },
+      { group: "Cuisine", zone: "neutral", descriptors: ["Végétal-herbacé", "Humidité-cave", "Fumé"] },
+      { group: "Retour au sol", zone: "reject", descriptors: ["Réduction-soufré", "Fromage trop mâture", "Moisissure", "Viande rassie - rance - graisse maturée", "Métallique-sang", "Ammoniac"] },
+    ],
+    _criteres_fr: [
+      { name: "Intégrité", desc: "Truffes entières, bien que de légères coupures superficielles ne soient pas considérées comme des défauts majeurs." },
+      { name: "Fermeté", desc: "Les truffes doivent être assez fermes pour supporter le transport et la manutention sans se détériorer." },
+      { name: "Propreté", desc: "Absence de toute matière étrangère visible, avec un taux de terre résiduelle ne dépassant pas 5 % du poids total." },
+      { name: "Absence de parasites", desc: "et de toute attaque parasitaire." },
+      { name: "Absence de dommage", desc: "causé par le gel, de signe d'humidité extérieure anormale, d'odeur ou de saveur étrangère." },
+    ],
+    de: [
+      { title: "Aussehen", items: ["Farbe", "Sphärizität", "Oberflächenregelmässigkeit", "Grösse", "Sauberkeit", "Unversehrtheit"] },
+      { title: "Tastsinn", items: ["Konsistenz", "Angenehmheit"] },
+      { title: "Geruch", items: ["Intensität", "Fermentiert", "Pilz", "Honig", "Heu", "Knoblauch", "Gewürze", "Feuchte Erde", "Ammoniak", "Stärke", "Feinheit", "Klarheit", "Fülle", "Gesamturteil"] },
+    ],
+    _categories_de: [
+      { name: "Kategorie «Extra»", desc: "Trüffeln höchster Qualität, kugelförmig oder leicht gelappt, ohne sichtbare Mängel, fest und mit kräftigem, komplexem Aroma." },
+      { name: "Kategorie I", desc: "Trüffeln mit leichten Unregelmässigkeiten oder oberflächlichen Rissen, die ausgezeichnete organoleptische Eigenschaften behalten und für den Frischmarkt sowie hochwertige Verarbeitung (Öle, Saucen, Konserven) bestimmt sind." },
+      { name: "Kategorie II", desc: "Trüffeln mit ausgeprägteren Mängeln, unregelmässiger Form oder teilweise beschädigt, mit teils abgeschwächtem Aroma, verwendet für die Verarbeitung (Trüffelpüree und -butter)." },
+    ],
+    _olfactifs_de: [
+      { group: "Kategorie Extra/A+", zone: "good", descriptors: ["Pilz", "Unterholz", "Butter-milchig", "Erdig", "Haselnuss", "Honig", "Laub-Humus", "Holzig-Lakritz", "Empyreumatisch-geröstet"] },
+      { group: "Küche", zone: "neutral", descriptors: ["Pflanzlich-krautig", "Feuchte Kellernote", "Geräuchert"] },
+      { group: "Rückweisung", zone: "reject", descriptors: ["Schwefelige Reduktion", "Überreifer Käse", "Schimmel", "Abgehangenes Fleisch - ranzig - gereiftes Fett", "Metallisch-blutig", "Ammoniak"] },
+    ],
+    _criteres_de: [
+      { name: "Unversehrtheit", desc: "Ganze Trüffeln, wobei leichte oberflächliche Schnitte nicht als schwere Mängel gelten." },
+      { name: "Festigkeit", desc: "Die Trüffeln müssen fest genug sein, um Transport und Handhabung ohne Qualitätsverlust zu überstehen." },
+      { name: "Sauberkeit", desc: "Keine sichtbaren Fremdstoffe, mit einem Erdanteil von höchstens 5 % des Gesamtgewichts." },
+      { name: "Keine Schädlinge", desc: "und kein Schädlingsbefall." },
+      { name: "Kein Schaden", desc: "durch Frost, keine ungewöhnliche äussere Feuchtigkeit, kein fremder Geruch oder Geschmack." },
+    ],
+    en: [
+      { title: "Sight", items: ["Colour", "Sphericity", "Surface regularity", "Size", "Cleanliness", "Integrity"] },
+      { title: "Touch", items: ["Firmness", "Pleasantness"] },
+      { title: "Smell", items: ["Intensity", "Fermented", "Mushroom", "Honey", "Hay", "Garlic", "Spices", "Wet earth", "Ammonia", "Strength", "Finesse", "Clarity", "Richness", "Overall judgment"] },
+    ],
+    _categories_en: [
+      { name: "Category \"Extra\"", desc: "Top-quality truffles, spherical or slightly lobed, with no visible defects, firm, with a powerful and complex aroma." },
+      { name: "Category I", desc: "Truffles with slight irregularities or surface cracks, retaining excellent organoleptic qualities, intended for the fresh market and high-end processing (oils, sauces, preserves)." },
+      { name: "Category II", desc: "Truffles with more pronounced defects, irregular shape or partly damaged, sometimes with a diminished aroma, used for processing (truffle purées and butters)." },
+    ],
+    _olfactifs_en: [
+      { group: "Extra/A+ grade", zone: "good", descriptors: ["Mushroom", "Undergrowth", "Buttery-milky", "Earthy", "Hazelnut", "Honey", "Dead leaves-humus", "Woody-liquorice", "Empyreumatic-roasted"] },
+      { group: "Cuisine grade", zone: "neutral", descriptors: ["Vegetal-herbaceous", "Cellar dampness", "Smoky"] },
+      { group: "Reject", zone: "reject", descriptors: ["Sulphurous reduction", "Over-ripe cheese", "Mould", "Stale meat - rancid - aged fat", "Metallic-bloody", "Ammonia"] },
+    ],
+    _criteres_en: [
+      { name: "Integrity", desc: "Whole truffles, though minor surface cuts are not considered major defects." },
+      { name: "Firmness", desc: "Truffles must be firm enough to withstand transport and handling without deteriorating." },
+      { name: "Cleanliness", desc: "No visible foreign matter, with residual soil not exceeding 5% of total weight." },
+      { name: "No pests", desc: "and no pest damage." },
+      { name: "No damage", desc: "from frost, no abnormal external moisture, no foreign odour or flavour." },
+    ],
+  };
+  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr", quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false, aromeRatings: {}, kamiIndex: 0, especeIndex: 0 };
   quizByLang = {
     fr: [
       { question: "Avec quel arbre la truffe aime-t-elle le plus vivre ?", options: ["Le chêne", "Le pin", "Le bouleau"], correct: 0 },
@@ -539,7 +728,11 @@ class Component extends DCLogic {
       quiz_title:"Quiz enfants", quiz_word:"Question", quiz_next:"Suivant →", quiz_finish:"Voir mon score →",
       quiz_score_label:"Ton score", quiz_restart:"Recommencer", quiz_home:"Retour à l'accueil",
       quiz_msg_great:"Bravo, expert(e) de la truffe !", quiz_msg_good:"Très bien, tu connais bien la truffe !", quiz_msg_ok:"Pas mal, continue à apprendre !", quiz_msg_low:"Retente ta chance après une visite du parcours !",
-      cuisine_title:"Cuisine de la truffe", tab_conseils:"Conseils", tab_especes:"Espèces", tab_recettes:"Recettes", especes_recolte:"Récolte",
+      cuisine_title:"Cuisine de la truffe", tab_conseils:"Conseils", tab_especes:"Espèces", tab_recettes:"Recettes", tab_aromes:"Arômes", especes_recolte:"Récolte",
+      aromes_title:"Fiche de dégustation", aromes_intro:"Notez chaque critère de 1 à 9, comme sur une fiche de dégustation professionnelle.",
+      aromes_olfactifs_title:"Grille olfactive détaillée", aromes_olfactifs_profile:"Truffe d'été/automne, bonne maturité, cavage de moins de 5 jours", aromes_olfactifs_absent:"Absent", aromes_olfactifs_intense:"Très intense",
+      aromes_categories_title:"Catégories de qualité", aromes_source:"Source : Commission économique pour l'Europe des Nations-Unies, 2016", aromes_criteres_title:"Critères de qualité obligatoires",
+      kamishibai_title:"Kamishibai des enfants",
       cuisine_quote:"« Le parfum de la truffe fraîche est unique — pas besoin d'être un grand chef pour la sublimer : quelques règles simples suffisent à vivre une belle expérience culinaire. »",
       recette_ingredients:"Ingrédients", recette_steps:"Préparation", recette_note:"À noter",
       especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 8 espèces", especes_plants:"Plantés à Bonvillars", especes_zone:"Zone de plantation",
@@ -559,7 +752,11 @@ class Component extends DCLogic {
       quiz_title:"Kinderquiz", quiz_word:"Frage", quiz_next:"Weiter →", quiz_finish:"Ergebnis anzeigen →",
       quiz_score_label:"Dein Ergebnis", quiz_restart:"Neu starten", quiz_home:"Zurück zur Startseite",
       quiz_msg_great:"Bravo, du bist ein Trüffel-Experte!", quiz_msg_good:"Sehr gut, du kennst die Trüffel gut!", quiz_msg_ok:"Nicht schlecht, lerne weiter!", quiz_msg_low:"Versuch's nach dem Rundgang noch einmal!",
-      cuisine_title:"Trüffelküche", tab_conseils:"Tipps", tab_especes:"Arten", tab_recettes:"Rezepte", especes_recolte:"Ernte",
+      cuisine_title:"Trüffelküche", tab_conseils:"Tipps", tab_especes:"Arten", tab_recettes:"Rezepte", tab_aromes:"Aromen", especes_recolte:"Ernte",
+      aromes_title:"Verkostungsbogen", aromes_intro:"Bewerten Sie jedes Kriterium von 1 bis 9, wie auf einem professionellen Verkostungsbogen.",
+      aromes_olfactifs_title:"Detailliertes Geruchsraster", aromes_olfactifs_profile:"Sommer-/Herbsttrüffel, gute Reife, weniger als 5 Tage nach der Ernte", aromes_olfactifs_absent:"Abwesend", aromes_olfactifs_intense:"Sehr intensiv",
+      aromes_categories_title:"Qualitätskategorien", aromes_source:"Quelle: Wirtschaftskommission für Europa der Vereinten Nationen, 2016", aromes_criteres_title:"Verbindliche Qualitätskriterien",
+      kamishibai_title:"Kamishibai für Kinder",
       cuisine_quote:"« Der Duft der frischen Trüffel ist einzigartig — man muss kein Spitzenkoch sein, um sie zur Geltung zu bringen: ein paar einfache Regeln reichen für ein schönes kulinarisches Erlebnis. »",
       recette_ingredients:"Zutaten", recette_steps:"Zubereitung", recette_note:"Zu beachten",
       especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 8 Arten", especes_plants:"Gepflanzt in Bonvillars", especes_zone:"Pflanzzone",
@@ -579,7 +776,11 @@ class Component extends DCLogic {
       quiz_title:"Kids' quiz", quiz_word:"Question", quiz_next:"Next →", quiz_finish:"See my score →",
       quiz_score_label:"Your score", quiz_restart:"Restart", quiz_home:"Back to home",
       quiz_msg_great:"Bravo, you're a truffle expert!", quiz_msg_good:"Well done, you know your truffles!", quiz_msg_ok:"Not bad, keep learning!", quiz_msg_low:"Try again after the tour!",
-      cuisine_title:"Truffle cuisine", tab_conseils:"Tips", tab_especes:"Species", tab_recettes:"Recipes", especes_recolte:"Harvest",
+      cuisine_title:"Truffle cuisine", tab_conseils:"Tips", tab_especes:"Species", tab_recettes:"Recipes", tab_aromes:"Aromas", especes_recolte:"Harvest",
+      aromes_title:"Tasting sheet", aromes_intro:"Rate each criterion from 1 to 9, like on a professional tasting sheet.",
+      aromes_olfactifs_title:"Detailed aroma grid", aromes_olfactifs_profile:"Summer/autumn truffle, good maturity, less than 5 days since harvest", aromes_olfactifs_absent:"None", aromes_olfactifs_intense:"Very intense",
+      aromes_categories_title:"Quality categories", aromes_source:"Source: United Nations Economic Commission for Europe, 2016", aromes_criteres_title:"Mandatory quality criteria",
+      kamishibai_title:"Children's Kamishibai",
       cuisine_quote:"“The aroma of a fresh truffle is unique — you don't need to be a great chef to make the most of it: a few simple rules are enough for a wonderful culinary experience.”",
       recette_ingredients:"Ingredients", recette_steps:"Method", recette_note:"Note",
       especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 8 species", especes_plants:"Planted at Bonvillars", especes_zone:"Planting zone",
@@ -962,6 +1163,58 @@ class Component extends DCLogic {
       setTabConseils: () => this.setState({ cuisineTab: "conseils" }),
       setTabEspeces: () => this.setState({ cuisineTab: "especes" }),
       setTabRecettes: () => this.setState({ cuisineTab: "recettes" }),
+      goAromes: () => this.setState({ screen: "aromes" }),
+      isAromes: screen === "aromes",
+      aromeCategories: this.aromesByLang["_categories_" + lang],
+      aromeCriteres: this.aromesByLang["_criteres_" + lang],
+      goKamishibai: () => this.setState({ screen: "kamishibai", kamiIndex: 0 }),
+      isKamishibai: screen === "kamishibai",
+      kamiPanel: (() => { const p = this.kamiPanels[this.state.kamiIndex]; return { ...p, imgId: `kami-${this.state.kamiIndex}`, hasQuestion: !!p.question }; })(),
+      kamiIndexLabel: `${this.state.kamiIndex + 1} / ${this.kamiPanels.length}`,
+      kamiPrev: () => this.setState(s => ({ kamiIndex: Math.max(0, s.kamiIndex - 1) })),
+      kamiNext: () => this.setState(s => ({ kamiIndex: Math.min(this.kamiPanels.length - 1, s.kamiIndex + 1) })),
+      aromeSections: this.aromesByLang[lang].map(sec => ({
+        title: sec.title,
+        items: sec.items.map(label => {
+          const key = sec.title + "|" + label;
+          const current = this.state.aromeRatings[key];
+          return {
+            label,
+            scale: [1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => {
+              const on = current === n;
+              return {
+                val: n,
+                select: () => this.setState(s => ({ aromeRatings: { ...s.aromeRatings, [key]: n } })),
+                style: { width: "22px", height: "22px", flex: "none", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", cursor: "pointer", border: "1.5px solid var(--color-divider)", background: on ? "var(--color-accent)" : "transparent", color: on ? "#fff" : "var(--color-text)", borderColor: on ? "var(--color-accent)" : "var(--color-divider)" },
+              };
+            }),
+          };
+        }),
+      })),
+      aromeOlfactifs: this.aromesByLang["_olfactifs_" + lang].map(grp => {
+        const barColor = grp.zone === "good" ? "#8fb84d" : grp.zone === "neutral" ? "#e2a8cf" : "var(--color-accent)";
+        return {
+          group: grp.group, barColor,
+          rows: grp.descriptors.map(label => {
+            const key = "olf|" + grp.group + "|" + label;
+            const current = this.state.aromeRatings[key];
+            return {
+              label,
+              cells: [0, 1, 2, 3, 4, 5].map(n => {
+                const inGoodZone = grp.zone === "good" ? n >= 3 : grp.zone === "neutral" ? n <= 2 : n === 0;
+                const bg = grp.zone === "reject" ? (n === 0 ? "transparent" : "var(--color-accent)") : (inGoodZone ? "#8fb84d" : "#ecd1e4");
+                const fg = grp.zone === "reject" ? (n === 0 ? "var(--color-text)" : "#fff") : (inGoodZone ? "#fff" : "var(--color-text)");
+                const on = current === n;
+                return {
+                  val: n,
+                  select: () => this.setState(s => ({ aromeRatings: { ...s.aromeRatings, [key]: n } })),
+                  style: { width: "22px", height: "22px", flex: "none", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", cursor: "pointer", background: bg, color: fg, border: on ? "2px solid var(--color-text)" : "1px solid rgba(0,0,0,.15)", fontWeight: on ? 700 : 400 },
+                };
+              }),
+            };
+          }),
+        };
+      }),
       postes: postesList,
       poste, facts, hasFacts: facts.length > 0, hasVideo, hasVideoId, hasVideoNoId, hasLink, hasSections,
       sections: poste.sections || [],
