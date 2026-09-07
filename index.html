@@ -67,7 +67,7 @@
     <span class="tag {{ editTagClass }}" style="font-size:11px;cursor:pointer" onClick="{{ toggleEdit }}">{{ editLabel }}</span>
   </div>
   <div ref="{{ mapRef }}" style="position:relative;flex:1;background:#eeece5;overflow:hidden">
-    <image-slot id="course-map" src="assets/plan-map-crop.png" shape="rect" placeholder="Plan de la truffière didactique" style="width:100%;height:100%" fit="cover"></image-slot>
+    <image-slot id="course-map" src="assets/plan-map-crop.png" shape="rect" placeholder="Plan de la truffière didactique" style="width:100%;height:100%" fit="contain"></image-slot>
     <sc-for list="{{ stations }}" as="st" hint-placeholder-count="21">
       <div onClick="{{ st.onSelect }}" onPointerDown="{{ st.onDragStart }}" title="{{ st.title }}" style="position:absolute;left:{{ st.x }}%;top:{{ st.y }}%;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);color:#fff;background:{{ st.bg }};box-shadow:{{ st.ring }}">{{ st.num }}</div>
     </sc-for>
@@ -152,7 +152,7 @@
       </sc-if>
       <div style="display:flex;gap:10px">
         <a class="btn btn-secondary" onClick="{{ gotoPrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
-        <a class="btn btn-primary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+        <a class="btn btn-secondary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
       </div>
     </div>
   </div>
@@ -202,8 +202,7 @@
     <div style="padding:18px 20px">
       <p style="font:15px/1.6 var(--font-body);margin:0 0 18px">{{ t.truffe_intro }}</p>
       <div style="display:flex;flex-direction:column;gap:0;margin-bottom:24px">
-        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_arbre }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_arbre_val }}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:12px 0"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_recherche }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_recherche_val }}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 0"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_arbre }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_arbre_val }}</span></div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
         <span style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em">{{ t.especes_title }}</span>
@@ -226,12 +225,19 @@
             <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_gleba }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ especeActive.gleba }}</span></div>
             <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_peridium }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ especeActive.peridium }}</span></div>
             <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_recolte }}</span><span style="font:600 12px var(--font-body)">{{ especeActive.season }}</span></div>
+            <sc-if value="{{ especeActive.plants }}">
+              <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_plants }}</span><span style="font:600 12px var(--font-body)">{{ especeActive.plants }}</span></div>
+            </sc-if>
+          </div>
+          <div style="padding:0 14px 14px">
+            <div style="font:12px var(--font-body);color:var(--color-neutral-600);margin-bottom:6px">{{ t.especes_zone }}</div>
+            <image-slot id="{{ especeActive.zoneImgId }}" shape="rect" placeholder="Plan de plantation" style="width:100%;aspect-ratio:1/1" fit="cover"></image-slot>
           </div>
         </div>
       </div>
       <div style="display:flex;gap:10px">
         <a class="btn btn-secondary" onClick="{{ especePrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
-        <a class="btn btn-primary" onClick="{{ especeNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+        <a class="btn btn-secondary" onClick="{{ especeNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
       </div>
     </div>
   </div>
@@ -288,6 +294,13 @@
                 <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_gleba }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ e.gleba }}</span></div>
                 <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_peridium }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ e.peridium }}</span></div>
                 <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_recolte }}</span><span style="font:600 12px var(--font-body)">{{ e.season }}</span></div>
+                <sc-if value="{{ e.plants }}">
+                  <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_plants }}</span><span style="font:600 12px var(--font-body)">{{ e.plants }}</span></div>
+                </sc-if>
+              </div>
+              <div style="margin-top:12px">
+                <div style="font:12px var(--font-body);color:var(--color-neutral-600);margin-bottom:6px">{{ t.especes_zone }}</div>
+                <image-slot id="{{ e.zoneImgId }}" shape="rect" placeholder="Plan de plantation" style="width:100%;aspect-ratio:1/1" fit="cover"></image-slot>
               </div>
             </div>
           </div>
@@ -449,11 +462,26 @@ class Component extends DCLogic {
   };
   mapRef = React.createRef();
   componentDidMount() {
+    this._computeRect = () => {
+      if (!this.mapRef.current) return;
+      const cw = this.mapRef.current.clientWidth, ch = this.mapRef.current.clientHeight;
+      if (!cw || !ch) return;
+      const imgRatio = 975 / 1080;
+      let w, h, ox, oy;
+      if (cw / ch > imgRatio) { h = ch; w = ch * imgRatio; ox = (cw - w) / 2; oy = 0; }
+      else { w = cw; h = cw / imgRatio; ox = 0; oy = (ch - h) / 2; }
+      this.setState({ mapRect: { cw, ch, w, h, ox, oy } });
+    };
+    this._ro = new ResizeObserver(() => this._computeRect());
+    if (this.mapRef.current) this._ro.observe(this.mapRef.current);
+    this._computeRect();
     this._onMove = (e) => {
-      if (this.state.dragNum == null || !this.mapRef.current) return;
+      if (this.state.dragNum == null || !this.mapRef.current || !this.state.mapRect) return;
       const rect = this.mapRef.current.getBoundingClientRect();
-      const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-      const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+      const mr = this.state.mapRect;
+      const px = e.clientX - rect.left - mr.ox, py = e.clientY - rect.top - mr.oy;
+      const x = Math.max(0, Math.min(100, (px / mr.w) * 100));
+      const y = Math.max(0, Math.min(100, (py / mr.h) * 100));
       const positions = { ...(this.state.positions || {}), [this.state.dragNum]: { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10 } };
       this.setState({ positions });
     };
@@ -464,6 +492,17 @@ class Component extends DCLogic {
   componentWillUnmount() {
     window.removeEventListener('pointermove', this._onMove);
     window.removeEventListener('pointerup', this._onUp);
+    if (this._ro) this._ro.disconnect();
+  }
+  componentDidUpdate() {
+    if (this.state.screen === "map" && this.mapRef.current && !this._observedEl) {
+      this._observedEl = this.mapRef.current;
+      this._ro.observe(this._observedEl);
+      this._computeRect();
+    } else if (this.state.screen !== "map" && this._observedEl) {
+      this._ro.unobserve(this._observedEl);
+      this._observedEl = null;
+    }
   }
   T = {
     fr: { home_kicker:"Truffière didactique · Bonvillars", home_line1:"Truffière didactique", home_line2:"de Bonvillars",
@@ -474,15 +513,15 @@ class Component extends DCLogic {
       infos_title:"Infos pratiques", infos_horaires:"Horaires", infos_access_libre:"Accès libre", infos_access_libre_val:"Non disponible",
       infos_visite_org:"Visite organisée", infos_visite_org_val:"Sur inscription", infos_visite_indiv:"Visite individuelle", infos_visite_indiv_val:"Sur rendez-vous",
       infos_parcours:"Parcours", infos_parcours_val:"env. 1h30", infos_acces:"Accès", infos_maps_btn:"Ouvrir dans Google Maps", infos_contact:"Contact",
-      truffe_title:"La truffe", truffe_intro:"La truffe est un champignon souterrain qui vit en symbiose avec les racines des arbres. À Bonvillars, deux espèces poussent en sol calcaire sous chênes et noisetiers.",
-      truffe_espece:"Espèce", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Maturité", truffe_maturite_val:"Juin – septembre", truffe_arbre:"Arbre hôte", truffe_arbre_val:"Chêne, noisetier", truffe_recherche:"Recherche", truffe_recherche_val:"au chien truffier",
+      truffe_title:"La truffe", truffe_intro:"La truffe est un champignon souterrain qui vit en symbiose avec les racines des arbres. À Bonvillars, 7 espèces poussent en sol calcaire sous 14 essences d'arbres hôtes différentes.",
+      truffe_espece:"Espèce", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Maturité", truffe_maturite_val:"Juin – septembre", truffe_arbre:"Arbres hôtes", truffe_arbre_val:"14 essences (chênes, noisetiers, hêtre, tilleul…)", truffe_recherche:"Recherche", truffe_recherche_val:"au chien truffier",
       quiz_title:"Quiz enfants", quiz_word:"Question", quiz_next:"Suivant →", quiz_finish:"Voir mon score →",
       quiz_score_label:"Ton score", quiz_restart:"Recommencer", quiz_home:"Retour à l'accueil",
       quiz_msg_great:"Bravo, expert(e) de la truffe !", quiz_msg_good:"Très bien, tu connais bien la truffe !", quiz_msg_ok:"Pas mal, continue à apprendre !", quiz_msg_low:"Retente ta chance après une visite du parcours !",
       cuisine_title:"Cuisine de la truffe", tab_conseils:"Conseils", tab_especes:"Espèces", tab_recettes:"Recettes", especes_recolte:"Récolte",
       cuisine_quote:"« Le parfum de la truffe fraîche est unique — pas besoin d'être un grand chef pour la sublimer : quelques règles simples suffisent à vivre une belle expérience culinaire. »",
       recette_ingredients:"Ingrédients", recette_steps:"Préparation", recette_note:"À noter",
-      especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 8 espèces",
+      especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 8 espèces", especes_plants:"Plantés à Bonvillars", especes_zone:"Zone de plantation",
       liste_title:"Les 23 postes", liste_search:"Rechercher un poste…",
       chapter_bienvenue:"Bienvenue", chapter_terroir:"Terroir & biologie", chapter_especes:"Espèces de truffes", chapter_recolte:"Récolte & gastronomie", chapter_tourisme:"Tourisme", chapter_association:"Association",
       liste_all:"Tous", poste_speaker:"Intervenant" },
@@ -494,15 +533,15 @@ class Component extends DCLogic {
       infos_title:"Praktische Infos", infos_horaires:"Öffnungszeiten", infos_access_libre:"Freier Zugang", infos_access_libre_val:"Nicht verfügbar",
       infos_visite_org:"Organisierte Besichtigung", infos_visite_org_val:"Auf Anmeldung", infos_visite_indiv:"Individuelle Besichtigung", infos_visite_indiv_val:"Nach Vereinbarung",
       infos_parcours:"Rundgang", infos_parcours_val:"ca. 1.5 Std.", infos_acces:"Zugang", infos_maps_btn:"In Google Maps öffnen", infos_contact:"Kontakt",
-      truffe_title:"Die Trüffel", truffe_intro:"Die Trüffel ist ein unterirdischer Pilz, der in Symbiose mit den Wurzeln von Bäumen lebt. In Bonvillars wachsen zwei Arten auf Kalkboden unter Eichen und Haseln.",
-      truffe_espece:"Art", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Reife", truffe_maturite_val:"Juni – September", truffe_arbre:"Wirtsbaum", truffe_arbre_val:"Eiche, Hasel", truffe_recherche:"Suche", truffe_recherche_val:"mit dem Trüffelhund",
+      truffe_title:"Die Trüffel", truffe_intro:"Die Trüffel ist ein unterirdischer Pilz, der in Symbiose mit den Wurzeln von Bäumen lebt. In Bonvillars wachsen 7 Arten auf Kalkboden unter 14 verschiedenen Wirtsbaumarten.",
+      truffe_espece:"Art", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Reife", truffe_maturite_val:"Juni – September", truffe_arbre:"Wirtsbäume", truffe_arbre_val:"14 Arten (Eichen, Hasel, Buche, Linde…)", truffe_recherche:"Suche", truffe_recherche_val:"mit dem Trüffelhund",
       quiz_title:"Kinderquiz", quiz_word:"Frage", quiz_next:"Weiter →", quiz_finish:"Ergebnis anzeigen →",
       quiz_score_label:"Dein Ergebnis", quiz_restart:"Neu starten", quiz_home:"Zurück zur Startseite",
       quiz_msg_great:"Bravo, du bist ein Trüffel-Experte!", quiz_msg_good:"Sehr gut, du kennst die Trüffel gut!", quiz_msg_ok:"Nicht schlecht, lerne weiter!", quiz_msg_low:"Versuch's nach dem Rundgang noch einmal!",
       cuisine_title:"Trüffelküche", tab_conseils:"Tipps", tab_especes:"Arten", tab_recettes:"Rezepte", especes_recolte:"Ernte",
       cuisine_quote:"« Der Duft der frischen Trüffel ist einzigartig — man muss kein Spitzenkoch sein, um sie zur Geltung zu bringen: ein paar einfache Regeln reichen für ein schönes kulinarisches Erlebnis. »",
       recette_ingredients:"Zutaten", recette_steps:"Zubereitung", recette_note:"Zu beachten",
-      especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 8 Arten",
+      especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 8 Arten", especes_plants:"Gepflanzt in Bonvillars", especes_zone:"Pflanzzone",
       liste_title:"Die 23 Stationen", liste_search:"Station suchen…",
       chapter_bienvenue:"Willkommen", chapter_terroir:"Terroir & Biologie", chapter_especes:"Trüffelarten", chapter_recolte:"Ernte & Gastronomie", chapter_tourisme:"Tourismus", chapter_association:"Verein",
       liste_all:"Alle", poste_speaker:"Sprecher" },
@@ -514,15 +553,15 @@ class Component extends DCLogic {
       infos_title:"Practical info", infos_horaires:"Opening hours", infos_access_libre:"Free access", infos_access_libre_val:"Not available",
       infos_visite_org:"Guided visit", infos_visite_org_val:"By registration", infos_visite_indiv:"Individual visit", infos_visite_indiv_val:"By appointment",
       infos_parcours:"Route", infos_parcours_val:"approx. 1h30", infos_acces:"Access", infos_maps_btn:"Open in Google Maps", infos_contact:"Contact",
-      truffe_title:"The truffle", truffe_intro:"The truffle is an underground fungus that lives in symbiosis with tree roots. In Bonvillars, two species grow in calcareous soil beneath oaks and hazels.",
-      truffe_espece:"Species", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Season", truffe_maturite_val:"June – September", truffe_arbre:"Host tree", truffe_arbre_val:"Oak, hazel", truffe_recherche:"Search method", truffe_recherche_val:"with a truffle dog",
+      truffe_title:"The truffle", truffe_intro:"The truffle is an underground fungus that lives in symbiosis with tree roots. In Bonvillars, 7 species grow in calcareous soil beneath 14 different host tree varieties.",
+      truffe_espece:"Species", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Season", truffe_maturite_val:"June – September", truffe_arbre:"Host trees", truffe_arbre_val:"14 varieties (oaks, hazels, beech, lime…)", truffe_recherche:"Search method", truffe_recherche_val:"with a truffle dog",
       quiz_title:"Kids' quiz", quiz_word:"Question", quiz_next:"Next →", quiz_finish:"See my score →",
       quiz_score_label:"Your score", quiz_restart:"Restart", quiz_home:"Back to home",
       quiz_msg_great:"Bravo, you're a truffle expert!", quiz_msg_good:"Well done, you know your truffles!", quiz_msg_ok:"Not bad, keep learning!", quiz_msg_low:"Try again after the tour!",
       cuisine_title:"Truffle cuisine", tab_conseils:"Tips", tab_especes:"Species", tab_recettes:"Recipes", especes_recolte:"Harvest",
       cuisine_quote:"“The aroma of a fresh truffle is unique — you don't need to be a great chef to make the most of it: a few simple rules are enough for a wonderful culinary experience.”",
       recette_ingredients:"Ingredients", recette_steps:"Method", recette_note:"Note",
-      especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 8 species",
+      especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 8 species", especes_plants:"Planted at Bonvillars", especes_zone:"Planting zone",
       liste_title:"The 23 stops", liste_search:"Search a stop…",
       chapter_bienvenue:"Welcome", chapter_terroir:"Terroir & biology", chapter_especes:"Truffle species", chapter_recolte:"Harvest & gastronomy", chapter_tourisme:"Tourism", chapter_association:"Association",
       liste_all:"All", poste_speaker:"Speaker" },
@@ -549,7 +588,7 @@ class Component extends DCLogic {
       { num: 4, title: "Plan", short: "Le parcours et ses 23 postes", body: "23 postes jalonnent le parcours, de l'histoire de la truffe aux techniques de récolte. La carte interactive permet de repérer chaque poste sur le terrain.", video: { title: "Truffière didactique de Bonvillars (vue drone)", duration: "1:36" } },
       { num: 5, title: "Trufficulture", short: "Sol calcaire, plantation, entretien", body: "La trufficulture est l'art de cultiver la truffe : sol calcaire (pH ≥ 7), densité de plantation adaptée à la variété, désherbage manuel, taille des arbres. Aucun produit chimique n'est utilisé — une culture biologique et locale, soutenue par le GIVT vaudois.", video: { title: "La trufficulture : définition", duration: "0:39" } },
       { num: 6, title: "Tuber melanosporum", short: "La périgourdine, le diamant noir", body: "La périgourdine, le diamant noir : c'est à partir de la Renaissance qu'elle devient la truffe de référence — Brillat-Savarin la surnomme ainsi.", facts: [["Goût / odeur","Référence de l'arôme truffe"],["Habitat","Ensoleillé, sols calcaires"],["Maturité","Décembre – mars"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" } },
-      { num: 7, title: "Les arbres hôtes", short: "Chêne, noisetier, hêtre, tilleul", body: "Chêne, noisetier, hêtre, tilleul : ces arbres ont noué un pacte avec la truffe au fil de leur évolution. Ils doivent atteindre l'âge adulte avant que leurs mycorhizes puissent produire des truffes — frênes, érables et merisiers n'en portent jamais.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
+      { num: 7, title: "Les arbres hôtes", short: "Chêne pubescent, vert, sessile, noisetier, hêtre…", body: "Ces arbres ont noué un pacte avec la truffe au fil de leur évolution. Ils doivent atteindre l'âge adulte avant que leurs mycorhizes puissent produire des truffes — frênes, érables et merisiers n'en portent jamais. À Bonvillars, la truffière plante : chêne pubescent, chêne vert, chêne sessile (rouvre), chêne pédonculé, chêne kermès, chêne des marais, noisetier, noisetier turc (de Byzance), hêtre commun, charme-houblon et tilleul à petites feuilles.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
       { num: 8, title: "Sol et climat", short: "pH et teneur en calcaire actif", body: "Le pH et la teneur en calcaire actif du sol déterminent quelles variétés s'y développent. Le changement climatique redessine la carte européenne de la truffe — une évolution qui pourrait, à terme, avantager nos régions.", video: { title: "Truffes suisses : comprendre les sols et le climat", duration: "0:41" } },
       { num: 9, title: "Biologie de la truffe", short: "Thale, hyphe et primordium", body: "La truffe est un champignon souterrain qui vit en symbiose avec les racines d'un arbre. Deux hyphes, mâle et femelle, se rencontrent pour former un primordium ; seuls quelques-uns arriveront à maturité et deviendront une truffe.", video: { title: "La biologie de la truffe vaudoise", duration: "0:39" } },
       { num: 10, title: "Production", short: "400 tonnes produites chaque année en Europe", body: "L'Europe produit environ 400 tonnes de truffes par an, dont la moitié exportée vers le Japon, la Chine, les États-Unis et la Russie. En Suisse, une centaine d'hectares de truffières sont aujourd'hui plantés.", video: { title: "Production de la truffe dans le monde", duration: "0:41" } },
@@ -577,7 +616,7 @@ class Component extends DCLogic {
       { num: 4, title: "Plan", short: "Der Rundgang und seine 23 Stationen", body: "23 Stationen führen entlang des Rundgangs, von der Geschichte der Trüffel bis zu den Erntetechniken. Die interaktive Karte hilft, jede Station im Gelände zu finden.", video: { title: "Truffière didactique de Bonvillars (vue drone)", duration: "1:36" } },
       { num: 5, title: "Trüffelanbau", short: "Kalkboden, Pflanzung, Pflege", body: "Trüffelanbau ist die Kunst, die Trüffel zu kultivieren: kalkhaltiger Boden (pH ≥ 7), an die Sorte angepasste Pflanzdichte, manuelles Unkrautjäten, Baumschnitt. Es werden keine Chemikalien verwendet — ein biologischer, lokaler Anbau, unterstützt vom waadtländischen GIVT.", video: { title: "La trufficulture : définition", duration: "0:39" } },
       { num: 6, title: "Tuber melanosporum", short: "Die Périgord-Trüffel, der schwarze Diamant", body: "Die Périgord-Trüffel, der schwarze Diamant: Erst seit der Renaissance gilt sie als Referenztrüffel — Brillat-Savarin gab ihr diesen Namen.", facts: [["Geschmack / Geruch","Referenzaroma der Trüffel"],["Habitat","Sonnig, kalkhaltige Böden"],["Reife","Dezember – März"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" } },
-      { num: 7, title: "Die Wirtsbäume", short: "Eiche, Hasel, Buche, Linde", body: "Eiche, Hasel, Buche, Linde: Diese Bäume sind im Laufe ihrer Entwicklung einen Pakt mit der Trüffel eingegangen. Sie müssen das Erwachsenenalter erreichen, bevor ihre Mykorrhizen Trüffeln bilden können — Eschen, Ahorn und Vogelkirschen tragen nie welche.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
+      { num: 7, title: "Die Wirtsbäume", short: "Flaumeiche, Steineiche, Traubeneiche, Hasel, Buche…", body: "Diese Bäume sind im Laufe ihrer Entwicklung einen Pakt mit der Trüffel eingegangen. Sie müssen das Erwachsenenalter erreichen, bevor ihre Mykorrhizen Trüffeln bilden können — Eschen, Ahorn und Vogelkirschen tragen nie welche. In Bonvillars wachsen: Flaumeiche, Steineiche, Traubeneiche, Stieleiche, Kermeseiche, Sumpfeiche, Hasel, Baumhasel (Türkische Hasel), Rotbuche, Hopfenbuche und Winterlinde.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
       { num: 8, title: "Boden und Klima", short: "pH-Wert und aktiver Kalkgehalt", body: "Der pH-Wert und der Anteil an aktivem Kalk im Boden bestimmen, welche Sorten sich entwickeln. Der Klimawandel verändert die europäische Trüffelkarte — eine Entwicklung, die unseren Regionen langfristig zugutekommen könnte.", video: { title: "Truffes suisses : comprendre les sols et le climat", duration: "0:41" } },
       { num: 9, title: "Biologie der Trüffel", short: "Hyphen, Myzel und Primordium", body: "Die Trüffel ist ein unterirdischer Pilz, der in Symbiose mit den Wurzeln eines Baumes lebt. Zwei Hyphen, männlich und weiblich, treffen sich und bilden ein Primordium; nur wenige erreichen die Reife und werden zur Trüffel.", video: { title: "La biologie de la truffe vaudoise", duration: "0:39" } },
       { num: 10, title: "Produktion", short: "400 Tonnen jährliche Produktion in Europa", body: "Europa produziert jährlich rund 400 Tonnen Trüffeln, wovon die Hälfte nach Japan, China, in die USA und nach Russland exportiert wird. In der Schweiz sind heute rund hundert Hektar Trüffelanlagen bepflanzt.", video: { title: "Production de la truffe dans le monde", duration: "0:41" } },
@@ -605,7 +644,7 @@ class Component extends DCLogic {
       { num: 4, title: "Map", short: "The route and its 23 stops", body: "23 stops line the route, from the history of the truffle to harvesting techniques. The interactive map helps locate each stop on the ground.", video: { title: "Truffière didactique de Bonvillars (vue drone)", duration: "1:36" } },
       { num: 5, title: "Truffle growing", short: "Calcareous soil, planting, maintenance", body: "Truffle growing is the art of cultivating truffles: calcareous soil (pH ≥ 7), planting density suited to the variety, manual weeding, tree pruning. No chemicals are used — an organic, local practice supported by the Vaud GIVT.", video: { title: "La trufficulture : définition", duration: "0:39" } },
       { num: 6, title: "Tuber melanosporum", short: "The Périgord truffle, the black diamond", body: "The Périgord truffle, the black diamond: it became the reference truffle from the Renaissance onward — Brillat-Savarin gave it that name.", facts: [["Taste / smell","Reference truffle aroma"],["Habitat","Sunny, calcareous soils"],["Season","December – March"]], video: { title: "La truffe Melanosporum à la truffière didactique", duration: "0:41" } },
-      { num: 7, title: "Host trees", short: "Oak, hazel, beech, lime", body: "Oak, hazel, beech, lime: these trees struck a pact with the truffle over the course of their evolution. They must reach maturity before their mycorrhizae can produce truffles — ash, maple and wild cherry never bear any.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
+      { num: 7, title: "Host trees", short: "Downy oak, holm oak, sessile oak, hazel, beech…", body: "These trees struck a pact with the truffle over the course of their evolution. They must reach maturity before their mycorrhizae can produce truffles — ash, maple and wild cherry never bear any. Bonvillars plants: downy oak, holm oak, sessile oak, pedunculate oak, kermes oak, marsh oak, hazel, Turkish hazel, common beech, hop hornbeam and small-leaved lime.", video: { title: "Les arbres truffiers : les alliés de la truffe", duration: "0:38" } },
       { num: 8, title: "Soil and climate", short: "pH and active limestone content", body: "Soil pH and active limestone content determine which varieties develop. Climate change is reshaping the European truffle map — a shift that could, in time, favour our region.", video: { title: "Truffes suisses : comprendre les sols et le climat", duration: "0:41" } },
       { num: 9, title: "Truffle biology", short: "Hyphae, mycelium and primordium", body: "The truffle is an underground fungus living in symbiosis with a tree's roots. Two hyphae, male and female, meet to form a primordium; only a few reach maturity and become a truffle.", video: { title: "La biologie de la truffe vaudoise", duration: "0:39" } },
       { num: 10, title: "Production", short: "400 tonnes produced yearly in Europe", body: "Europe produces around 400 tonnes of truffles a year, half of which is exported to Japan, China, the United States and Russia. Switzerland now has around a hundred hectares of planted truffle grounds.", video: { title: "Production de la truffe dans le monde", duration: "0:41" } },
@@ -652,34 +691,31 @@ class Component extends DCLogic {
   };
   especesByLang = {
     fr: [
-      { name: "Truffe d'été — Tuber aestivum", temp: "40° max", taste: "Parfum léger d'humus et de champignon de Paris, goût de noisette et sous-bois.", season: "Juin – août", gleba: "Ferme et blanche, légèrement striée", peridium: "Noir, prisme large et bien marqué" },
-      { name: "Truffe d'automne — Bourgogne", temp: "60° max", taste: "Goût de noisette et sous-bois en douceur, parfaitement équilibré.", season: "Sept. – fin mars", gleba: "Beige à brun marron à pleine maturité", peridium: "Noir, souvent à gros prisme" },
-      { name: "Truffe d'hiver — Tuber brumale", temp: "80° max", taste: "Arôme puissant, notes musquées et épicées rappelant le cacao ou la réglisse.", season: "Nov. – mars", gleba: "Marron foncé, marbrures blanches contrastées", peridium: "Noir, prisme finement marqué" },
-      { name: "Truffe noire lisse — Tuber macrosporum", temp: "60° max", taste: "Parfum intense rappelant l'ail et le fromage, notes épicées et terreuses.", season: "Sept. – déc.", gleba: "Brun clair à brun foncé, veines blanches", peridium: "Noir, lisse ou très finement verruqueux" },
-      { name: "Truffe du Périgord — Tuber melanosporum", temp: "80° max", taste: "Parfum complexe : sous-bois, cacao, musc et fumé ; goût raffiné et persistant.", season: "Déc. – mars", gleba: "Brun foncé à noir, veines blanches fines", peridium: "Noir, verruqueux, pyramides à 6 faces" },
-      { name: "Truffe blanche d'Alba — Tuber magnatum pico", temp: "40° max, crue", taste: "Arôme très puissant, notes d'ail, de fromage et de soufre. Ne supporte pas la cuisson.", season: "Oct. – déc.", gleba: "Marbrée, blanc à brun rougeâtre", peridium: "Lisse, jaune pâle à ocre" },
-      { name: "Truffe de printemps — Tuber borchii", temp: "60° max", taste: "Arôme intense rappelant l'ail, épicé et terreux, notes d'acétone et de citron.", season: "Janv. – avril", gleba: "Blanc crème à brun rougeâtre, veines blanches", peridium: "Lisse, beige à brun clair" },
-      { name: "Truffe mésentérique — Tuber mesentericum", temp: "supporte la cuisson", taste: "Parfum phénolique, note de goudron ou d'amande amère, légère amertume marquée.", season: "Sept. – déc.", gleba: "Brun foncé à noir, veines blanches marquées", peridium: "Noir, verruqueux, aspérités marquées" },
+      { name: "Truffe d'été — Tuber aestivum", temp: "40° max", taste: "Parfum léger d'humus et de champignon de Paris, goût de noisette et sous-bois.", season: "Juin – août", gleba: "Ferme et blanche, légèrement striée", peridium: "Noir, prisme large et bien marqué", plants: "9 plants", zone: { cx: 88, cy: 94, count: 9 } },
+      { name: "Truffe d'automne — Bourgogne", temp: "60° max", taste: "Goût de noisette et sous-bois en douceur, parfaitement équilibré.", season: "Sept. – fin mars", gleba: "Beige à brun marron à pleine maturité", peridium: "Noir, souvent à gros prisme", plants: "49 plants", zone: { cx: 48, cy: 13, count: 20, wide: true } },
+      { name: "Truffe d'hiver — Tuber brumale", temp: "80° max", taste: "Arôme puissant, notes musquées et épicées rappelant le cacao ou la réglisse.", season: "Nov. – mars", gleba: "Marron foncé, marbrures blanches contrastées", peridium: "Noir, prisme finement marqué", plants: "9 plants", zone: { cx: 53, cy: 34, count: 9 } },
+      { name: "Truffe du Périgord — Tuber melanosporum", temp: "80° max", taste: "Parfum complexe : sous-bois, cacao, musc et fumé ; goût raffiné et persistant.", season: "Déc. – mars", gleba: "Brun foncé à noir, veines blanches fines", peridium: "Noir, verruqueux, pyramides à 6 faces", plants: "138 plants", zone: { cx: 60, cy: 55, count: 32, wide: true } },
+      { name: "Truffe blanche d'Alba — Tuber magnatum pico", temp: "40° max, crue", taste: "Arôme très puissant, notes d'ail, de fromage et de soufre. Ne supporte pas la cuisson.", season: "Oct. – déc.", gleba: "Marbrée, blanc à brun rougeâtre", peridium: "Lisse, jaune pâle à ocre", plants: "7 plants (avec borchii)", zone: { cx: 20, cy: 16, count: 7 } },
+      { name: "Truffe de printemps — Tuber borchii", temp: "60° max", taste: "Arôme intense rappelant l'ail, épicé et terreux, notes d'acétone et de citron.", season: "Janv. – avril", gleba: "Blanc crème à brun rougeâtre, veines blanches", peridium: "Lisse, beige à brun clair", plants: "7 plants (avec magnatum pico)", zone: { cx: 20, cy: 16, count: 7 } },
+      { name: "Truffe mésentérique — Tuber mesentericum", temp: "supporte la cuisson", taste: "Parfum phénolique, note de goudron ou d'amande amère, légère amertume marquée.", season: "Sept. – déc.", gleba: "Brun foncé à noir, veines blanches marquées", peridium: "Noir, verruqueux, aspérités marquées", plants: "13 plants", zone: { cx: 72, cy: 70, count: 13 } },
     ],
     de: [
-      { name: "Sommertrüffel — Tuber aestivum", temp: "40° max", taste: "Leichtes Aroma nach Humus und Champignon, Geschmack nach Haselnuss und Unterholz.", season: "Juni – August", gleba: "Fest und weiss, leicht geriffelt", peridium: "Schwarz, breites, deutliches Prisma" },
-      { name: "Herbsttrüffel — Burgunder", temp: "60° max", taste: "Sanfter Haselnuss- und Unterholzgeschmack, perfekt ausgewogen.", season: "Sept. – Ende März", gleba: "Beige bis braun bei voller Reife", peridium: "Schwarz, oft grobes Prisma" },
-      { name: "Wintertrüffel — Tuber brumale", temp: "80° max", taste: "Kräftiges Aroma mit muskartigen, würzigen Noten, erinnert an Kakao oder Süssholz.", season: "Nov. – März", gleba: "Dunkelbraun, kontrastreiche weisse Adern", peridium: "Schwarz, fein markiertes Prisma" },
-      { name: "Glatte schwarze Trüffel — Tuber macrosporum", temp: "60° max", taste: "Intensives Aroma nach Knoblauch und Käse, würzige, erdige Noten.", season: "Sept. – Dez.", gleba: "Hell- bis dunkelbraun, weisse Adern", peridium: "Schwarz, glatt oder sehr fein warzig" },
-      { name: "Périgord-Trüffel — Tuber melanosporum", temp: "80° max", taste: "Komplexes Aroma: Unterholz, Kakao, Musk und Rauch; raffinierter, anhaltender Geschmack.", season: "Dez. – März", gleba: "Dunkelbraun bis schwarz, feine weisse Adern", peridium: "Schwarz, warzig, sechseckige Pyramiden" },
-      { name: "Weisse Alba-Trüffel — Tuber magnatum pico", temp: "40° max, roh", taste: "Sehr kräftiges Aroma, Noten von Knoblauch, Käse und Schwefel. Verträgt keine Hitze.", season: "Okt. – Dez.", gleba: "Marmoriert, weiss bis rötlich-braun", peridium: "Glatt, blassgelb bis ockerfarben" },
-      { name: "Frühlingstrüffel — Tuber borchii", temp: "60° max", taste: "Intensives, knoblauchartiges Aroma, würzig und erdig, Noten von Aceton und Zitrone.", season: "Jan. – April", gleba: "Cremeweiss bis rötlich-braun, weisse Adern", peridium: "Glatt, beige bis hellbraun" },
-      { name: "Mesentericum-Trüffel", temp: "verträgt Hitze", taste: "Phenolischer Duft, Note von Teer oder Bittermandel, deutliche leichte Bitterkeit.", season: "Sept. – Dez.", gleba: "Dunkelbraun bis schwarz, deutliche weisse Adern", peridium: "Schwarz, warzig, deutliche Rauheit" },
+      { name: "Sommertrüffel — Tuber aestivum", temp: "40° max", taste: "Leichtes Aroma nach Humus und Champignon, Geschmack nach Haselnuss und Unterholz.", season: "Juni – August", gleba: "Fest und weiss, leicht geriffelt", peridium: "Schwarz, breites, deutliches Prisma", plants: "9 Pflanzen" },
+      { name: "Herbsttrüffel — Burgunder", temp: "60° max", taste: "Sanfter Haselnuss- und Unterholzgeschmack, perfekt ausgewogen.", season: "Sept. – Ende März", gleba: "Beige bis braun bei voller Reife", peridium: "Schwarz, oft grobes Prisma", plants: "49 Pflanzen" },
+      { name: "Wintertrüffel — Tuber brumale", temp: "80° max", taste: "Kräftiges Aroma mit muskartigen, würzigen Noten, erinnert an Kakao oder Süssholz.", season: "Nov. – März", gleba: "Dunkelbraun, kontrastreiche weisse Adern", peridium: "Schwarz, fein markiertes Prisma", plants: "9 Pflanzen" },
+      { name: "Périgord-Trüffel — Tuber melanosporum", temp: "80° max", taste: "Komplexes Aroma: Unterholz, Kakao, Musk und Rauch; raffinierter, anhaltender Geschmack.", season: "Dez. – März", gleba: "Dunkelbraun bis schwarz, feine weisse Adern", peridium: "Schwarz, warzig, sechseckige Pyramiden", plants: "138 Pflanzen" },
+      { name: "Weisse Alba-Trüffel — Tuber magnatum pico", temp: "40° max, roh", taste: "Sehr kräftiges Aroma, Noten von Knoblauch, Käse und Schwefel. Verträgt keine Hitze.", season: "Okt. – Dez.", gleba: "Marmoriert, weiss bis rötlich-braun", peridium: "Glatt, blassgelb bis ockerfarben", plants: "7 Pflanzen (mit borchii)" },
+      { name: "Frühlingstrüffel — Tuber borchii", temp: "60° max", taste: "Intensives, knoblauchartiges Aroma, würzig und erdig, Noten von Aceton und Zitrone.", season: "Jan. – April", gleba: "Cremeweiss bis rötlich-braun, weisse Adern", peridium: "Glatt, beige bis hellbraun", plants: "7 Pflanzen (mit magnatum pico)" },
+      { name: "Mesentericum-Trüffel", temp: "verträgt Hitze", taste: "Phenolischer Duft, Note von Teer oder Bittermandel, deutliche leichte Bitterkeit.", season: "Sept. – Dez.", gleba: "Dunkelbraun bis schwarz, deutliche weisse Adern", peridium: "Schwarz, warzig, deutliche Rauheit", plants: "13 Pflanzen" },
     ],
     en: [
-      { name: "Summer truffle — Tuber aestivum", temp: "40° max", taste: "Light aroma of humus and button mushroom, hazelnut and woodland taste.", season: "June – August", gleba: "Firm and white, lightly streaked", peridium: "Black, broad well-marked warts" },
-      { name: "Autumn truffle — Burgundy", temp: "60° max", taste: "Soft hazelnut and woodland flavour, perfectly balanced.", season: "Sept. – late March", gleba: "Beige to brown at full maturity", peridium: "Black, often coarse warts" },
-      { name: "Winter truffle — Tuber brumale", temp: "80° max", taste: "Powerful aroma with musky, spicy notes reminiscent of cocoa or liquorice.", season: "Nov. – March", gleba: "Dark brown, sharply contrasted white veins", peridium: "Black, finely marked warts" },
-      { name: "Smooth black truffle — Tuber macrosporum", temp: "60° max", taste: "Intense aroma of garlic and cheese, spicy earthy notes.", season: "Sept. – Dec.", gleba: "Light to dark brown, white veins", peridium: "Black, smooth or very finely warty" },
-      { name: "Périgord truffle — Tuber melanosporum", temp: "80° max", taste: "Complex aroma: woodland, cocoa, musk and smoke; refined, lingering taste.", season: "Dec. – March", gleba: "Dark brown to black, fine white veins", peridium: "Black, warty, six-sided pyramids" },
-      { name: "White Alba truffle — Tuber magnatum pico", temp: "40° max, raw", taste: "Very powerful aroma, notes of garlic, cheese and sulphur. Does not tolerate cooking.", season: "Oct. – Dec.", gleba: "Marbled, white to reddish-brown", peridium: "Smooth, pale yellow to ochre" },
-      { name: "Spring truffle — Tuber borchii", temp: "60° max", taste: "Intense garlicky aroma, spicy and earthy, notes of acetone and lemon.", season: "Jan. – April", gleba: "Creamy white to reddish-brown, white veins", peridium: "Smooth, beige to light brown" },
-      { name: "Mesentericum truffle", temp: "tolerates cooking", taste: "Phenolic aroma, hints of tar or bitter almond, marked light bitterness.", season: "Sept. – Dec.", gleba: "Dark brown to black, marked white veins", peridium: "Black, warty, marked roughness" },
+      { name: "Summer truffle — Tuber aestivum", temp: "40° max", taste: "Light aroma of humus and button mushroom, hazelnut and woodland taste.", season: "June – August", gleba: "Firm and white, lightly streaked", peridium: "Black, broad well-marked warts", plants: "9 plants" },
+      { name: "Autumn truffle — Burgundy", temp: "60° max", taste: "Soft hazelnut and woodland flavour, perfectly balanced.", season: "Sept. – late March", gleba: "Beige to brown at full maturity", peridium: "Black, often coarse warts", plants: "49 plants" },
+      { name: "Winter truffle — Tuber brumale", temp: "80° max", taste: "Powerful aroma with musky, spicy notes reminiscent of cocoa or liquorice.", season: "Nov. – March", gleba: "Dark brown, sharply contrasted white veins", peridium: "Black, finely marked warts", plants: "9 plants" },
+      { name: "Périgord truffle — Tuber melanosporum", temp: "80° max", taste: "Complex aroma: woodland, cocoa, musk and smoke; refined, lingering taste.", season: "Dec. – March", gleba: "Dark brown to black, fine white veins", peridium: "Black, warty, six-sided pyramids", plants: "138 plants" },
+      { name: "White Alba truffle — Tuber magnatum pico", temp: "40° max, raw", taste: "Very powerful aroma, notes of garlic, cheese and sulphur. Does not tolerate cooking.", season: "Oct. – Dec.", gleba: "Marbled, white to reddish-brown", peridium: "Smooth, pale yellow to ochre", plants: "7 plants (with borchii)" },
+      { name: "Spring truffle — Tuber borchii", temp: "60° max", taste: "Intense garlicky aroma, spicy and earthy, notes of acetone and lemon.", season: "Jan. – April", gleba: "Creamy white to reddish-brown, white veins", peridium: "Smooth, beige to light brown", plants: "7 plants (with magnatum pico)" },
+      { name: "Mesentericum truffle", temp: "tolerates cooking", taste: "Phenolic aroma, hints of tar or bitter almond, marked light bitterness.", season: "Sept. – Dec.", gleba: "Dark brown to black, marked white veins", peridium: "Black, warty, marked roughness", plants: "13 plants" },
     ],
   };
   recettesByLang = {
@@ -753,11 +789,17 @@ class Component extends DCLogic {
     const positions = this.state.positions || {};
     const findPoste = (num) => postesAll.find(p => p.num === num) || postesAll[0];
     const selectedPoste = findPoste(this.state.selected);
+    const mr = this.state.mapRect;
+    const project = (px, py) => {
+      if (!mr) return { x: px, y: py };
+      return { x: ((mr.ox + (px / 100) * mr.w) / mr.cw) * 100, y: ((mr.oy + (py / 100) * mr.h) / mr.ch) * 100 };
+    };
     const pins = this.stationPos.map(s => {
       const p = positions[s.num] || s;
       const info = findPoste(s.num);
+      const pr = project(p.x, p.y);
       return {
-        num: s.num, x: p.x, y: p.y, title: info.title, short: info.short,
+        num: s.num, x: pr.x, y: pr.y, title: info.title, short: info.short,
         bg: s.num === this.state.selected ? 'var(--color-accent)' : 'var(--color-text)',
         ring: s.num === this.state.selected ? '0 0 0 4px rgba(236,48,19,0.28)' : 'none',
         onSelect: () => { if (!this.state.editMode) this.setState({ selected: s.num }); },
@@ -822,10 +864,23 @@ class Component extends DCLogic {
       return { key: c.key, label: t['chapter_' + c.key], items, hasItems: items.length > 0 };
     });
     const posteSpeaker = this.speakersByNum[poste.num] || "";
-    const especeActive = especesList[this.state.especeIndex] || especesList[0];
-    const especeIndexLabel = `${this.state.especeIndex + 1} / ${especesList.length}`;
+    const zonePoints = (z) => {
+      if (!z) return [];
+      const pts = [];
+      for (let i = 0; i < z.count; i++) {
+        const a = i * 2.399963;
+        const spreadX = z.wide ? 22 : 8, spreadY = z.wide ? 6 : 8;
+        const dx = Math.cos(a) * (i % 5) * (spreadX / 5) * 0.3;
+        const dy = Math.sin(a) * (i % 4) * (spreadY / 4) * 0.5;
+        pts.push({ x: Math.max(2, Math.min(98, z.cx + dx)), y: Math.max(2, Math.min(98, z.cy + dy)) });
+      }
+      return pts;
+    };
+    const especesWithZones = especesList.map((e, idx) => ({ ...e, zonePoints: zonePoints(e.zone), hasZone: !!e.zone, zoneImgId: `espece-zone-${idx}` }));
+    const especeActive = especesWithZones[this.state.especeIndex] || especesWithZones[0];
+    const especeIndexLabel = `${this.state.especeIndex + 1} / ${especesWithZones.length}`;
     const especePrev = () => this.setState(s => ({ especeIndex: Math.max(0, s.especeIndex - 1) }));
-    const especeNext = () => this.setState(s => ({ especeIndex: Math.min(especesList.length - 1, s.especeIndex + 1) }));
+    const especeNext = () => this.setState(s => ({ especeIndex: Math.min(especesWithZones.length - 1, s.especeIndex + 1) }));
     const quizList = this.quizByLang[lang];
     const quizQ = quizList[this.state.quizIndex] || quizList[0];
     const quizSel = this.state.quizSelected;
@@ -874,7 +929,7 @@ class Component extends DCLogic {
       logCoords, coordsText: this.state.coordsText || "", hasCoordsText: !!this.state.coordsText,
       selectCoordsText: (e) => e.target.select(),
       conseils: this.conseilsByLang[lang],
-      especes: especesList,
+      especes: especesWithZones,
       recettes: recettesList,
       lightboxId: this.state.lightboxId, closeLightbox, openLightboxHome, openLightboxTruffle, openLightboxAccess, openLightboxCuisine, openLightboxPoste,
       especeActive, especeIndexLabel, especePrev, especeNext,
