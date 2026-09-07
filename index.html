@@ -38,7 +38,10 @@
     </div>
   </div>
   <div style="padding:18px 20px 0">
-    <image-slot id="home-hero" shape="rect" placeholder="Photo : entrée de la truffière" style="width:100%;height:180px" fit="cover"></image-slot>
+    <div style="position:relative">
+      <image-slot id="home-hero" shape="rect" placeholder="Photo : entrée de la truffière" style="width:100%;height:180px" fit="cover"></image-slot>
+      <button onClick="{{ openLightboxHome }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
+    </div>
   </div>
   <div class="content" style="padding-top:16px">
     <p style="font:15px/1.5 var(--font-body);margin:0 0 16px">{{ t.home_intro }}</p>
@@ -66,11 +69,15 @@
   <div ref="{{ mapRef }}" style="position:relative;flex:1;background:#eeece5;overflow:hidden">
     <image-slot id="course-map" src="assets/plan-map-crop.png" shape="rect" placeholder="Plan de la truffière didactique" style="width:100%;height:100%" fit="cover"></image-slot>
     <sc-for list="{{ stations }}" as="st" hint-placeholder-count="21">
-      <div onClick="{{ st.onSelect }}" onPointerDown="{{ st.onDragStart }}" style="position:absolute;left:{{ st.x }}%;top:{{ st.y }}%;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);color:#fff;background:{{ st.bg }};box-shadow:{{ st.ring }}">{{ st.num }}</div>
+      <div onClick="{{ st.onSelect }}" onPointerDown="{{ st.onDragStart }}" title="{{ st.title }}" style="position:absolute;left:{{ st.x }}%;top:{{ st.y }}%;width:26px;height:26px;transform:translate(-50%,-50%);border-radius:50%;cursor:grab;touch-action:none;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);color:#fff;background:{{ st.bg }};box-shadow:{{ st.ring }}">{{ st.num }}</div>
     </sc-for>
   </div>
   <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}">
     <div style="padding:6px 18px;font:11px var(--font-body);color:var(--color-neutral-700);background:var(--color-neutral-100);border-top:2px solid var(--color-divider)">{{ t.map_hint }} · <a onClick="{{ logCoords }}" style="cursor:pointer">{{ t.map_copy }}</a></div>
+  </sc-if>
+  <sc-if value="{{ hasCoordsText }}">
+    <textarea readOnly="{{ true }}" value="{{ coordsText }}" onClick="{{ selectCoordsText }}" style="margin:8px 18px;padding:10px;font:11px monospace;height:100px;border:2px solid var(--color-text);background:var(--color-neutral-100)"></textarea>
+    <div style="padding:0 18px 8px;font:11px var(--font-body);color:var(--color-neutral-700)">Touche le texte, sélectionne tout, copie, puis colle-le dans le chat.</div>
   </sc-if>
   <div class="content" style="flex:0 0 auto">
     <div style="display:flex;align-items:center;gap:12px;padding:4px 0 12px">
@@ -83,14 +90,23 @@
 
 <sc-if value="{{ isPoste }}">
   <div class="topbar">
-    <button class="backbtn" onClick="{{ goMap }}">‹</button>
+    <div style="display:flex;align-items:center;gap:2px">
+      <button class="backbtn" onClick="{{ goMap }}">‹</button>
+      <button class="backbtn" onClick="{{ goHome }}" title="Accueil" style="font-size:15px">⌂</button>
+    </div>
     <span class="screentitle">{{ poste.title }}</span>
     <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
   </div>
   <div class="content" style="padding:0">
-    <image-slot id="poste-{{ poste.num }}" shape="rect" placeholder="Photo panneau" style="width:100%;height:180px" fit="cover"></image-slot>
+    <div style="position:relative">
+      <image-slot id="poste-{{ poste.num }}" shape="rect" placeholder="Photo panneau" style="width:100%;height:180px" fit="cover"></image-slot>
+      <button onClick="{{ openLightboxPoste }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
+    </div>
     <div style="padding:18px 20px">
-      <span class="kicker">{{ t.poste_label }} {{ poste.num }} {{ t.poste_of }}</span>
+      <span class="kicker">{{ posteChapterLabel }} · {{ t.poste_label }} {{ poste.num }} {{ t.poste_of }}</span>
+      <sc-if value="{{ posteSpeaker }}">
+        <div style="font:12px var(--font-body);color:var(--color-neutral-600);margin-top:4px">{{ t.poste_speaker }} : {{ posteSpeaker }}</div>
+      </sc-if>
       <h2 style="font:700 22px var(--font-heading);margin:6px 0 14px">{{ poste.title }}</h2>
       <sc-if value="{{ hasVideoId }}" hint-placeholder-val="{{ false }}">
         <div class="card elev-sm" style="padding:0;margin-bottom:16px;overflow:hidden">
@@ -135,8 +151,8 @@
         </div>
       </sc-if>
       <div style="display:flex;gap:10px">
-        <a class="btn btn-ghost" onClick="{{ gotoPrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
-        <a class="btn btn-secondary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+        <a class="btn btn-secondary" onClick="{{ gotoPrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
+        <a class="btn btn-primary" onClick="{{ gotoNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
       </div>
     </div>
   </div>
@@ -161,11 +177,14 @@
     </table>
     <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_acces }}</div>
     <div class="card elev-sm" style="padding:0;margin-bottom:24px;overflow:hidden">
-      <image-slot id="access-map" shape="rect" placeholder="Extrait de carte / accès" style="width:100%;height:130px" fit="cover"></image-slot>
+      <div style="position:relative">
+        <image-slot id="access-map" shape="rect" placeholder="Extrait de carte / accès" style="width:100%;height:130px" fit="cover"></image-slot>
+        <button onClick="{{ openLightboxAccess }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
+      </div>
       <a href="https://maps.app.goo.gl/EimvH8V2UT94YVrCA" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="border-radius:0;text-decoration:none">{{ t.infos_maps_btn }}</a>
     </div>
     <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_contact }}</div>
-    <p style="font:14px/1.6 var(--font-body);margin:0">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffe-vaudoise.ch</p>
+    <p style="font:14px/1.6 var(--font-body);margin:0">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffevaudoise.ch</p>
   </div>
 </sc-if>
 
@@ -176,14 +195,43 @@
     <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
   </div>
   <div class="content" style="padding:0">
-    <image-slot id="truffle-photo" shape="rect" placeholder="Photo : truffe et chêne" style="width:100%;height:170px" fit="cover"></image-slot>
+    <div style="position:relative">
+      <image-slot id="truffle-photo" shape="rect" placeholder="Photo : truffe et chêne" style="width:100%;height:170px" fit="cover"></image-slot>
+      <button onClick="{{ openLightboxTruffle }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
+    </div>
     <div style="padding:18px 20px">
       <p style="font:15px/1.6 var(--font-body);margin:0 0 18px">{{ t.truffe_intro }}</p>
-      <div style="display:flex;flex-direction:column;gap:0">
-        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_espece }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_espece_val }}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_maturite }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_maturite_val }}</span></div>
+      <div style="display:flex;flex-direction:column;gap:0;margin-bottom:24px">
         <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid var(--color-divider)"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_arbre }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_arbre_val }}</span></div>
         <div style="display:flex;justify-content:space-between;padding:12px 0"><span style="font:13px var(--font-body);color:var(--color-neutral-700)">{{ t.truffe_recherche }}</span><span style="font:600 13px var(--font-body)">{{ t.truffe_recherche_val }}</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+        <span style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em">{{ t.especes_title }}</span>
+        <span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ especeIndexLabel }}</span>
+      </div>
+      <div class="card elev-sm" style="padding:0;overflow:hidden;margin-bottom:12px">
+        <div style="display:flex;gap:0">
+          <div style="position:relative;width:96px;height:96px;flex:none">
+            <image-slot id="{{ especeActive.imgId }}" shape="rect" placeholder="Coupe / gleba" style="width:100%;height:100%" fit="cover"></image-slot>
+            <button onClick="{{ especeActive.onExpand }}" style="position:absolute;bottom:2px;right:2px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 11px var(--font-body);padding:0">⤢</button>
+          </div>
+          <div style="padding:10px 12px;flex:1;min-width:0">
+            <span style="font:700 14px var(--font-heading);display:block;margin-bottom:4px">{{ especeActive.name }}</span>
+            <span class="tag tag-neutral" style="font-size:10px">{{ especeActive.temp }}</span>
+          </div>
+        </div>
+        <div style="padding:12px 14px">
+          <p style="font:13px/1.5 var(--font-body);margin:0 0 10px;color:var(--color-neutral-700)">{{ especeActive.taste }}</p>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_gleba }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ especeActive.gleba }}</span></div>
+            <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_peridium }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ especeActive.peridium }}</span></div>
+            <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_recolte }}</span><span style="font:600 12px var(--font-body)">{{ especeActive.season }}</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <a class="btn btn-secondary" onClick="{{ especePrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
+        <a class="btn btn-primary" onClick="{{ especeNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
       </div>
     </div>
   </div>
@@ -195,12 +243,21 @@
     <span class="screentitle">{{ t.cuisine_title }}</span>
     <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
   </div>
-  <div class="content" style="padding-top:12px">
-    <div class="seg" style="width:100%;margin-bottom:18px">
+  <div class="content" style="padding:0">
+    <div style="position:relative">
+      <image-slot id="cuisine-hero" shape="rect" placeholder="Photo : plat à la truffe" style="width:100%;height:160px" fit="cover"></image-slot>
+      <button onClick="{{ openLightboxCuisine }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
+    </div>
+    <div style="padding:16px 18px 0">
+      <p style="font:italic 15px/1.6 var(--font-heading);margin:0 0 18px;padding-left:14px;border-left:2px solid var(--color-accent)">{{ t.cuisine_quote }}</p>
+    </div>
+    <div class="seg" style="width:100%;margin-bottom:18px;margin-left:18px;margin-right:18px;width:calc(100% - 36px)">
       <div class="seg-opt" onClick="{{ setTabConseils }}" style="{{ tabConseilsStyle }}">{{ t.tab_conseils }}</div>
       <div class="seg-opt" onClick="{{ setTabEspeces }}" style="{{ tabEspecesStyle }}">{{ t.tab_especes }}</div>
       <div class="seg-opt" onClick="{{ setTabRecettes }}" style="{{ tabRecettesStyle }}">{{ t.tab_recettes }}</div>
     </div>
+    <div style="padding:0 18px 18px">
+
     <sc-if value="{{ isConseils }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;flex-direction:column;gap:0">
         <sc-for list="{{ conseils }}" as="c" hint-placeholder-count="4">
@@ -214,28 +271,60 @@
     <sc-if value="{{ isEspeces }}">
       <div style="display:flex;flex-direction:column;gap:14px">
         <sc-for list="{{ especes }}" as="e" hint-placeholder-count="4">
-          <div class="card elev-sm" style="padding:14px">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
-              <span style="font:700 15px var(--font-heading)">{{ e.name }}</span>
-              <span class="tag tag-neutral" style="font-size:10px">{{ e.temp }}</span>
+          <div class="card elev-sm" style="padding:0;overflow:hidden">
+            <div style="display:flex;gap:0">
+              <div style="position:relative;width:96px;height:96px;flex:none">
+                <image-slot id="{{ e.imgId }}" shape="rect" placeholder="Coupe / gleba" style="width:100%;height:100%" fit="cover"></image-slot>
+                <button onClick="{{ e.onExpand }}" style="position:absolute;bottom:2px;right:2px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 11px var(--font-body);padding:0">⤢</button>
+              </div>
+              <div style="padding:10px 12px;flex:1;min-width:0">
+                <span style="font:700 14px var(--font-heading);display:block;margin-bottom:4px">{{ e.name }}</span>
+                <span class="tag tag-neutral" style="font-size:10px">{{ e.temp }}</span>
+              </div>
             </div>
-            <p style="font:13px/1.5 var(--font-body);margin:0 0 8px;color:var(--color-neutral-700)">{{ e.taste }}</p>
-            <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_recolte }}</span><span style="font:600 12px var(--font-body)">{{ e.season }}</span></div>
+            <div style="padding:12px 14px">
+              <p style="font:13px/1.5 var(--font-body);margin:0 0 10px;color:var(--color-neutral-700)">{{ e.taste }}</p>
+              <div style="display:flex;flex-direction:column;gap:0">
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_gleba }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ e.gleba }}</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_peridium }}</span><span style="font:600 12px var(--font-body);text-align:right">{{ e.peridium }}</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:2px solid var(--color-divider)"><span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.especes_recolte }}</span><span style="font:600 12px var(--font-body)">{{ e.season }}</span></div>
+              </div>
+            </div>
           </div>
         </sc-for>
       </div>
     </sc-if>
     <sc-if value="{{ isRecettes }}">
-      <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;flex-direction:column;gap:18px">
         <sc-for list="{{ recettes }}" as="r" hint-placeholder-count="5">
-          <div class="card elev-sm" style="padding:14px">
-            <div style="font:700 15px var(--font-heading);margin-bottom:6px">{{ r.title }}</div>
-            <p style="font:13px/1.5 var(--font-body);margin:0 0 8px;color:var(--color-neutral-700)">{{ r.desc }}</p>
-            <span class="tag tag-accent" style="font-size:10px">{{ r.truffe }}</span>
+          <div class="card elev-sm" style="padding:0;overflow:hidden">
+            <div style="position:relative">
+              <image-slot id="{{ r.imgId }}" shape="rect" placeholder="Photo du plat" style="width:100%;height:140px" fit="cover"></image-slot>
+              <button onClick="{{ r.onExpand }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
+            </div>
+            <div style="padding:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px">
+                <span style="font:700 16px var(--font-heading)">{{ r.title }}</span>
+                <span class="tag tag-accent" style="font-size:10px;flex:none">{{ r.truffe }}</span>
+              </div>
+              <div style="font:700 11px var(--font-heading);text-transform:uppercase;letter-spacing:.06em;color:var(--color-accent-700);margin-bottom:4px">{{ t.recette_ingredients }}</div>
+              <p style="font:13px/1.5 var(--font-body);margin:0 0 12px;color:var(--color-neutral-700)">{{ r.ingredients }}</p>
+              <div style="font:700 11px var(--font-heading);text-transform:uppercase;letter-spacing:.06em;color:var(--color-accent-700);margin-bottom:6px">{{ t.recette_steps }}</div>
+              <ol style="margin:0 0 12px;padding-left:18px;display:flex;flex-direction:column;gap:4px">
+                <sc-for list="{{ r.steps }}" as="s" hint-placeholder-count="3">
+                  <li style="font:13px/1.5 var(--font-body)">{{ s }}</li>
+                </sc-for>
+              </ol>
+              <div style="padding:10px 12px;background:var(--color-neutral-100);border-left:2px solid var(--color-accent)">
+                <span style="font:700 11px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;color:var(--color-accent-700)">{{ t.recette_note }}</span>
+                <p style="font:12px/1.5 var(--font-body);margin:4px 0 0;color:var(--color-neutral-700)">{{ r.tip }}</p>
+              </div>
+            </div>
           </div>
         </sc-for>
       </div>
     </sc-if>
+    </div>
   </div>
 </sc-if>
 
@@ -280,12 +369,28 @@
     <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
   </div>
   <div class="content" style="padding-top:12px">
-    <input class="input" placeholder="{{ t.liste_search }}" style="width:100%;margin-bottom:16px;box-sizing:border-box">
-    <div style="display:flex;flex-direction:column">
-      <sc-for list="{{ postes }}" as="p" hint-placeholder-count="21">
-        <div onClick="{{ p.onOpen }}" style="display:flex;gap:12px;padding:12px 0;border-bottom:2px solid var(--color-divider);cursor:pointer"><span class="tag tag-neutral" style="flex:none">{{ p.num }}</span><div><div style="font:600 14px var(--font-body)">{{ p.title }}</div><div style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ p.short }}</div></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+      <sc-for list="{{ speakerChips }}" as="c" hint-placeholder-count="5">
+        <span class="tag {{ c.cls }}" onClick="{{ c.onClick }}" style="cursor:pointer">{{ c.label }}</span>
       </sc-for>
     </div>
+    <sc-for list="{{ postesGrouped }}" as="g" hint-placeholder-count="6">
+      <sc-if value="{{ g.hasItems }}" hint-placeholder-val="{{ true }}">
+        <div style="font:700 12px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;color:var(--color-accent-700);margin:18px 0 6px">{{ g.label }}</div>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ g.items }}" as="p" hint-placeholder-count="4">
+            <div onClick="{{ p.onOpen }}" style="display:flex;gap:12px;padding:12px 0;border-bottom:2px solid var(--color-divider);cursor:pointer"><span class="tag tag-neutral" style="flex:none">{{ p.num }}</span><div><div style="font:600 14px var(--font-body)">{{ p.title }}</div><div style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ p.short }}{{ p.speakerSuffix }}</div></div></div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </sc-for>
+  </div>
+</sc-if>
+
+<sc-if value="{{ lightboxId }}">
+  <div onClick="{{ closeLightbox }}" style="position:fixed;inset:0;background:rgba(32,30,29,.92);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px">
+    <image-slot id="{{ lightboxId }}" shape="rect" style="width:100%;max-width:480px;height:80vh" fit="contain"></image-slot>
+    <button onClick="{{ closeLightbox }}" style="position:absolute;top:20px;right:20px;width:36px;height:36px;border-radius:50%;background:#fff;border:none;font:700 18px var(--font-body);cursor:pointer">×</button>
   </div>
 </sc-if>
 
@@ -294,7 +399,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr", quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false };
+  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr", quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false, especeIndex: 0 };
   quizByLang = {
     fr: [
       { question: "Avec quel arbre la truffe aime-t-elle le plus vivre ?", options: ["Le chêne", "Le pin", "Le bouleau"], correct: 0 },
@@ -333,6 +438,15 @@ class Component extends DCLogic {
       { question: "What do people do with truffles in cooking?", options: ["Wear them as jewellery", "Plant them like seeds", "Grate them over dishes"], correct: 2 },
     ],
   };
+  speakersByNum = {
+    "1–3": "Pierre-Yves Masson", 4: "Pierre-Yves Masson", 5: "Pierre-Yves Masson", 13: "Pierre-Yves Masson", 14: "Pierre-Yves Masson",
+    6: "Pierre Pittet", 9: "Pierre Pittet", 18: "Pierre Pittet", 22: "Pierre Pittet", 23: "Pierre Pittet",
+    7: "Alain Jutzeler", 8: "Alain Jutzeler",
+    10: "Frank Siffert", 15: "Frank Siffert", 21: "Frank Siffert",
+    12: "Christophe Corbaz",
+    11: "Rahman Dedic",
+    16: "Robert Pisu", 17: "Robert Pisu",
+  };
   mapRef = React.createRef();
   componentDidMount() {
     this._onMove = (e) => {
@@ -352,7 +466,7 @@ class Component extends DCLogic {
     window.removeEventListener('pointerup', this._onUp);
   }
   T = {
-    fr: { home_kicker:"Truffière didactique · Bonvillars", home_line1:"École de la", home_line2:"truffe",
+    fr: { home_kicker:"Truffière didactique · Bonvillars", home_line1:"Truffière didactique", home_line2:"de Bonvillars",
       home_intro:"Bienvenue à la truffière didactique. 23 postes jalonnent librement le terrain — panneaux et courtes vidéos expliquent le sol, l'arbre et le champignon.",
       tag_postes:"23 postes", tag_parcours:"Parcours libre", btn_carte:"Ouvrir la carte →", btn_liste:"Liste des postes", btn_infos:"Infos pratiques", btn_truffe:"La truffe", btn_cuisine:"Cuisine de la truffe",
       map_title:"Carte", map_edit:"Modifier", map_done:"Terminer", map_hint:"Glissez une pastille pour la repositionner", map_copy:"copier les coordonnées", map_open_poste:"Ouvrir la fiche du poste",
@@ -366,7 +480,12 @@ class Component extends DCLogic {
       quiz_score_label:"Ton score", quiz_restart:"Recommencer", quiz_home:"Retour à l'accueil",
       quiz_msg_great:"Bravo, expert(e) de la truffe !", quiz_msg_good:"Très bien, tu connais bien la truffe !", quiz_msg_ok:"Pas mal, continue à apprendre !", quiz_msg_low:"Retente ta chance après une visite du parcours !",
       cuisine_title:"Cuisine de la truffe", tab_conseils:"Conseils", tab_especes:"Espèces", tab_recettes:"Recettes", especes_recolte:"Récolte",
-      liste_title:"Les 23 postes", liste_search:"Rechercher un poste…" },
+      cuisine_quote:"« Le parfum de la truffe fraîche est unique — pas besoin d'être un grand chef pour la sublimer : quelques règles simples suffisent à vivre une belle expérience culinaire. »",
+      recette_ingredients:"Ingrédients", recette_steps:"Préparation", recette_note:"À noter",
+      especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 8 espèces",
+      liste_title:"Les 23 postes", liste_search:"Rechercher un poste…",
+      chapter_bienvenue:"Bienvenue", chapter_terroir:"Terroir & biologie", chapter_especes:"Espèces de truffes", chapter_recolte:"Récolte & gastronomie", chapter_tourisme:"Tourisme", chapter_association:"Association",
+      liste_all:"Tous", poste_speaker:"Intervenant" },
     de: { home_kicker:"Didaktische Trüffelanlage · Bonvillars", home_line1:"Schule der", home_line2:"Trüffel",
       home_intro:"Willkommen an der didaktischen Trüffelanlage. 23 Stationen führen frei über das Gelände — Tafeln und kurze Videos erklären Boden, Baum und Pilz.",
       tag_postes:"23 Stationen", tag_parcours:"Freier Rundgang", btn_carte:"Karte öffnen →", btn_liste:"Stationsliste", btn_infos:"Praktische Infos", btn_truffe:"Die Trüffel", btn_cuisine:"Trüffelküche",
@@ -381,7 +500,12 @@ class Component extends DCLogic {
       quiz_score_label:"Dein Ergebnis", quiz_restart:"Neu starten", quiz_home:"Zurück zur Startseite",
       quiz_msg_great:"Bravo, du bist ein Trüffel-Experte!", quiz_msg_good:"Sehr gut, du kennst die Trüffel gut!", quiz_msg_ok:"Nicht schlecht, lerne weiter!", quiz_msg_low:"Versuch's nach dem Rundgang noch einmal!",
       cuisine_title:"Trüffelküche", tab_conseils:"Tipps", tab_especes:"Arten", tab_recettes:"Rezepte", especes_recolte:"Ernte",
-      liste_title:"Die 23 Stationen", liste_search:"Station suchen…" },
+      cuisine_quote:"« Der Duft der frischen Trüffel ist einzigartig — man muss kein Spitzenkoch sein, um sie zur Geltung zu bringen: ein paar einfache Regeln reichen für ein schönes kulinarisches Erlebnis. »",
+      recette_ingredients:"Zutaten", recette_steps:"Zubereitung", recette_note:"Zu beachten",
+      especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 8 Arten",
+      liste_title:"Die 23 Stationen", liste_search:"Station suchen…",
+      chapter_bienvenue:"Willkommen", chapter_terroir:"Terroir & Biologie", chapter_especes:"Trüffelarten", chapter_recolte:"Ernte & Gastronomie", chapter_tourisme:"Tourismus", chapter_association:"Verein",
+      liste_all:"Alle", poste_speaker:"Sprecher" },
     en: { home_kicker:"Educational truffle ground · Bonvillars", home_line1:"The truffle", home_line2:"school",
       home_intro:"Welcome to the educational truffle ground. 23 stops are freely scattered across the site — panels and short videos explain the soil, the tree and the fungus.",
       tag_postes:"23 stops", tag_parcours:"Free route", btn_carte:"Open the map →", btn_liste:"List of stops", btn_infos:"Practical info", btn_truffe:"The truffle", btn_cuisine:"Truffle cuisine",
@@ -396,7 +520,12 @@ class Component extends DCLogic {
       quiz_score_label:"Your score", quiz_restart:"Restart", quiz_home:"Back to home",
       quiz_msg_great:"Bravo, you're a truffle expert!", quiz_msg_good:"Well done, you know your truffles!", quiz_msg_ok:"Not bad, keep learning!", quiz_msg_low:"Try again after the tour!",
       cuisine_title:"Truffle cuisine", tab_conseils:"Tips", tab_especes:"Species", tab_recettes:"Recipes", especes_recolte:"Harvest",
-      liste_title:"The 23 stops", liste_search:"Search a stop…" },
+      cuisine_quote:"“The aroma of a fresh truffle is unique — you don't need to be a great chef to make the most of it: a few simple rules are enough for a wonderful culinary experience.”",
+      recette_ingredients:"Ingredients", recette_steps:"Method", recette_note:"Note",
+      especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 8 species",
+      liste_title:"The 23 stops", liste_search:"Search a stop…",
+      chapter_bienvenue:"Welcome", chapter_terroir:"Terroir & biology", chapter_especes:"Truffle species", chapter_recolte:"Harvest & gastronomy", chapter_tourisme:"Tourism", chapter_association:"Association",
+      liste_all:"All", poste_speaker:"Speaker" },
   };
   videoIds = {
     "1–3": "HUAUCG9gHcQ", 4: "yvlHRmZUJ7g", 5: "VIoNE0SejCE", 6: "jSUZtq6mWWo", 7: "ndQ93YCW9R8", 8: "hPRJHYot4So",
@@ -404,10 +533,10 @@ class Component extends DCLogic {
     15: "WRVMx-4ya0U", 16: "MxJ6M_JBK7s", 17: "MmyMxbowge8", 18: "Ud3crTExIAo", 21: "ES1kimcUeKM", 22: "MbhQJfc6SiE", 23: "b7VTAAYwTe0",
   };
   stationPos = [
-    { num: "1–3", x: 77, y: 89 }, { num: 4, x: 64, y: 87 }, { num: 5, x: 64, y: 84 }, { num: 6, x: 67, y: 74 },
-    { num: 7, x: 58, y: 36 }, { num: 8, x: 66, y: 25 }, { num: 9, x: 61, y: 19 }, { num: 10, x: 58, y: 14 }, { num: 11, x: 64, y: 13 },
-    { num: 12, x: 30, y: 17 }, { num: 13, x: 9, y: 27 }, { num: 14, x: 5, y: 22 }, { num: 15, x: 9, y: 20 }, { num: 16, x: 35, y: 39 },
-    { num: 17, x: 62, y: 39 }, { num: 18, x: 66, y: 58 }, { num: 19, x: 81, y: 91 }, { num: 20, x: 84, y: 93 }, { num: 21, x: 88, y: 95 },
+    { num: "1–3", x: 85, y: 87.4 }, { num: 4, x: 84.6, y: 82.9 }, { num: 5, x: 84.3, y: 79.3 }, { num: 6, x: 87.7, y: 68.8 },
+    { num: 7, x: 78.4, y: 36.5 }, { num: 8, x: 80, y: 15.2 }, { num: 9, x: 61, y: 19 }, { num: 10, x: 56.7, y: 18.7 }, { num: 11, x: 52.9, y: 20.6 },
+    { num: 12, x: 49.7, y: 18.2 }, { num: 13, x: 34.5, y: 13.6 }, { num: 14, x: 24.2, y: 14.4 }, { num: 15, x: 20.9, y: 25.3 }, { num: 16, x: 35, y: 39 },
+    { num: 17, x: 53.2, y: 33.5 }, { num: 18, x: 71.9, y: 44.8 }, { num: 19, x: 73, y: 69.5 }, { num: 20, x: 72.4, y: 80.4 }, { num: 21, x: 73.3, y: 83.9 },
   ];
   postesByLang = {
     fr: [
@@ -523,54 +652,96 @@ class Component extends DCLogic {
   };
   especesByLang = {
     fr: [
-      { name: "Truffe d'été — Tuber aestivum", temp: "40° max", taste: "Parfum léger d'humus et de champignon de Paris, goût de noisette et sous-bois.", season: "Juin – août" },
-      { name: "Truffe d'automne — Bourgogne", temp: "60° max", taste: "Goût de noisette et sous-bois en douceur, parfaitement équilibré.", season: "Sept. – fin mars" },
-      { name: "Truffe d'hiver — Tuber brumale", temp: "80° max", taste: "Arôme puissant, notes musquées et épicées rappelant le cacao ou la réglisse.", season: "Nov. – mars" },
-      { name: "Truffe du Périgord — Tuber melanosporum", temp: "80° max", taste: "Parfum complexe : sous-bois, cacao, musc et fumé ; goût raffiné et persistant.", season: "Déc. – mars" },
-      { name: "Truffe blanche d'Alba", temp: "40° max, crue", taste: "Arôme très puissant, notes d'ail, de fromage et de soufre. Ne supporte pas la cuisson.", season: "Oct. – déc." },
-      { name: "Truffe mésentérique", temp: "supporte la cuisson", taste: "Parfum phénolique, note de goudron ou d'amande amère, légère amertume marquée.", season: "Sept. – déc." },
+      { name: "Truffe d'été — Tuber aestivum", temp: "40° max", taste: "Parfum léger d'humus et de champignon de Paris, goût de noisette et sous-bois.", season: "Juin – août", gleba: "Ferme et blanche, légèrement striée", peridium: "Noir, prisme large et bien marqué" },
+      { name: "Truffe d'automne — Bourgogne", temp: "60° max", taste: "Goût de noisette et sous-bois en douceur, parfaitement équilibré.", season: "Sept. – fin mars", gleba: "Beige à brun marron à pleine maturité", peridium: "Noir, souvent à gros prisme" },
+      { name: "Truffe d'hiver — Tuber brumale", temp: "80° max", taste: "Arôme puissant, notes musquées et épicées rappelant le cacao ou la réglisse.", season: "Nov. – mars", gleba: "Marron foncé, marbrures blanches contrastées", peridium: "Noir, prisme finement marqué" },
+      { name: "Truffe noire lisse — Tuber macrosporum", temp: "60° max", taste: "Parfum intense rappelant l'ail et le fromage, notes épicées et terreuses.", season: "Sept. – déc.", gleba: "Brun clair à brun foncé, veines blanches", peridium: "Noir, lisse ou très finement verruqueux" },
+      { name: "Truffe du Périgord — Tuber melanosporum", temp: "80° max", taste: "Parfum complexe : sous-bois, cacao, musc et fumé ; goût raffiné et persistant.", season: "Déc. – mars", gleba: "Brun foncé à noir, veines blanches fines", peridium: "Noir, verruqueux, pyramides à 6 faces" },
+      { name: "Truffe blanche d'Alba — Tuber magnatum pico", temp: "40° max, crue", taste: "Arôme très puissant, notes d'ail, de fromage et de soufre. Ne supporte pas la cuisson.", season: "Oct. – déc.", gleba: "Marbrée, blanc à brun rougeâtre", peridium: "Lisse, jaune pâle à ocre" },
+      { name: "Truffe de printemps — Tuber borchii", temp: "60° max", taste: "Arôme intense rappelant l'ail, épicé et terreux, notes d'acétone et de citron.", season: "Janv. – avril", gleba: "Blanc crème à brun rougeâtre, veines blanches", peridium: "Lisse, beige à brun clair" },
+      { name: "Truffe mésentérique — Tuber mesentericum", temp: "supporte la cuisson", taste: "Parfum phénolique, note de goudron ou d'amande amère, légère amertume marquée.", season: "Sept. – déc.", gleba: "Brun foncé à noir, veines blanches marquées", peridium: "Noir, verruqueux, aspérités marquées" },
     ],
     de: [
-      { name: "Sommertrüffel — Tuber aestivum", temp: "40° max", taste: "Leichtes Aroma nach Humus und Champignon, Geschmack nach Haselnuss und Unterholz.", season: "Juni – August" },
-      { name: "Herbsttrüffel — Burgunder", temp: "60° max", taste: "Sanfter Haselnuss- und Unterholzgeschmack, perfekt ausgewogen.", season: "Sept. – Ende März" },
-      { name: "Wintertrüffel — Tuber brumale", temp: "80° max", taste: "Kräftiges Aroma mit muskartigen, würzigen Noten, erinnert an Kakao oder Süssholz.", season: "Nov. – März" },
-      { name: "Périgord-Trüffel — Tuber melanosporum", temp: "80° max", taste: "Komplexes Aroma: Unterholz, Kakao, Musk und Rauch; raffinierter, anhaltender Geschmack.", season: "Dez. – März" },
-      { name: "Weisse Alba-Trüffel", temp: "40° max, roh", taste: "Sehr kräftiges Aroma, Noten von Knoblauch, Käse und Schwefel. Verträgt keine Hitze.", season: "Okt. – Dez." },
-      { name: "Mesentericum-Trüffel", temp: "verträgt Hitze", taste: "Phenolischer Duft, Note von Teer oder Bittermandel, deutliche leichte Bitterkeit.", season: "Sept. – Dez." },
+      { name: "Sommertrüffel — Tuber aestivum", temp: "40° max", taste: "Leichtes Aroma nach Humus und Champignon, Geschmack nach Haselnuss und Unterholz.", season: "Juni – August", gleba: "Fest und weiss, leicht geriffelt", peridium: "Schwarz, breites, deutliches Prisma" },
+      { name: "Herbsttrüffel — Burgunder", temp: "60° max", taste: "Sanfter Haselnuss- und Unterholzgeschmack, perfekt ausgewogen.", season: "Sept. – Ende März", gleba: "Beige bis braun bei voller Reife", peridium: "Schwarz, oft grobes Prisma" },
+      { name: "Wintertrüffel — Tuber brumale", temp: "80° max", taste: "Kräftiges Aroma mit muskartigen, würzigen Noten, erinnert an Kakao oder Süssholz.", season: "Nov. – März", gleba: "Dunkelbraun, kontrastreiche weisse Adern", peridium: "Schwarz, fein markiertes Prisma" },
+      { name: "Glatte schwarze Trüffel — Tuber macrosporum", temp: "60° max", taste: "Intensives Aroma nach Knoblauch und Käse, würzige, erdige Noten.", season: "Sept. – Dez.", gleba: "Hell- bis dunkelbraun, weisse Adern", peridium: "Schwarz, glatt oder sehr fein warzig" },
+      { name: "Périgord-Trüffel — Tuber melanosporum", temp: "80° max", taste: "Komplexes Aroma: Unterholz, Kakao, Musk und Rauch; raffinierter, anhaltender Geschmack.", season: "Dez. – März", gleba: "Dunkelbraun bis schwarz, feine weisse Adern", peridium: "Schwarz, warzig, sechseckige Pyramiden" },
+      { name: "Weisse Alba-Trüffel — Tuber magnatum pico", temp: "40° max, roh", taste: "Sehr kräftiges Aroma, Noten von Knoblauch, Käse und Schwefel. Verträgt keine Hitze.", season: "Okt. – Dez.", gleba: "Marmoriert, weiss bis rötlich-braun", peridium: "Glatt, blassgelb bis ockerfarben" },
+      { name: "Frühlingstrüffel — Tuber borchii", temp: "60° max", taste: "Intensives, knoblauchartiges Aroma, würzig und erdig, Noten von Aceton und Zitrone.", season: "Jan. – April", gleba: "Cremeweiss bis rötlich-braun, weisse Adern", peridium: "Glatt, beige bis hellbraun" },
+      { name: "Mesentericum-Trüffel", temp: "verträgt Hitze", taste: "Phenolischer Duft, Note von Teer oder Bittermandel, deutliche leichte Bitterkeit.", season: "Sept. – Dez.", gleba: "Dunkelbraun bis schwarz, deutliche weisse Adern", peridium: "Schwarz, warzig, deutliche Rauheit" },
     ],
     en: [
-      { name: "Summer truffle — Tuber aestivum", temp: "40° max", taste: "Light aroma of humus and button mushroom, hazelnut and woodland taste.", season: "June – August" },
-      { name: "Autumn truffle — Burgundy", temp: "60° max", taste: "Soft hazelnut and woodland flavour, perfectly balanced.", season: "Sept. – late March" },
-      { name: "Winter truffle — Tuber brumale", temp: "80° max", taste: "Powerful aroma with musky, spicy notes reminiscent of cocoa or liquorice.", season: "Nov. – March" },
-      { name: "Périgord truffle — Tuber melanosporum", temp: "80° max", taste: "Complex aroma: woodland, cocoa, musk and smoke; refined, lingering taste.", season: "Dec. – March" },
-      { name: "White Alba truffle", temp: "40° max, raw", taste: "Very powerful aroma, notes of garlic, cheese and sulphur. Does not tolerate cooking.", season: "Oct. – Dec." },
-      { name: "Mesentericum truffle", temp: "tolerates cooking", taste: "Phenolic aroma, hints of tar or bitter almond, marked light bitterness.", season: "Sept. – Dec." },
+      { name: "Summer truffle — Tuber aestivum", temp: "40° max", taste: "Light aroma of humus and button mushroom, hazelnut and woodland taste.", season: "June – August", gleba: "Firm and white, lightly streaked", peridium: "Black, broad well-marked warts" },
+      { name: "Autumn truffle — Burgundy", temp: "60° max", taste: "Soft hazelnut and woodland flavour, perfectly balanced.", season: "Sept. – late March", gleba: "Beige to brown at full maturity", peridium: "Black, often coarse warts" },
+      { name: "Winter truffle — Tuber brumale", temp: "80° max", taste: "Powerful aroma with musky, spicy notes reminiscent of cocoa or liquorice.", season: "Nov. – March", gleba: "Dark brown, sharply contrasted white veins", peridium: "Black, finely marked warts" },
+      { name: "Smooth black truffle — Tuber macrosporum", temp: "60° max", taste: "Intense aroma of garlic and cheese, spicy earthy notes.", season: "Sept. – Dec.", gleba: "Light to dark brown, white veins", peridium: "Black, smooth or very finely warty" },
+      { name: "Périgord truffle — Tuber melanosporum", temp: "80° max", taste: "Complex aroma: woodland, cocoa, musk and smoke; refined, lingering taste.", season: "Dec. – March", gleba: "Dark brown to black, fine white veins", peridium: "Black, warty, six-sided pyramids" },
+      { name: "White Alba truffle — Tuber magnatum pico", temp: "40° max, raw", taste: "Very powerful aroma, notes of garlic, cheese and sulphur. Does not tolerate cooking.", season: "Oct. – Dec.", gleba: "Marbled, white to reddish-brown", peridium: "Smooth, pale yellow to ochre" },
+      { name: "Spring truffle — Tuber borchii", temp: "60° max", taste: "Intense garlicky aroma, spicy and earthy, notes of acetone and lemon.", season: "Jan. – April", gleba: "Creamy white to reddish-brown, white veins", peridium: "Smooth, beige to light brown" },
+      { name: "Mesentericum truffle", temp: "tolerates cooking", taste: "Phenolic aroma, hints of tar or bitter almond, marked light bitterness.", season: "Sept. – Dec.", gleba: "Dark brown to black, marked white veins", peridium: "Black, warty, marked roughness" },
     ],
   };
   recettesByLang = {
     fr: [
-      { title: "Beurre de truffe", desc: "200 g de beurre ramolli, truffe râpée selon l'espèce, fleur de sel. Mélanger jusqu'à consistance uniforme ; se congèle en boudin.", truffe: "Toutes espèces" },
-      { title: "Œufs truffés", desc: "Placer les œufs avec la truffe dans une boîte hermétique 24 à 72 h au réfrigérateur : le jaune s'imprègne de l'arôme.", truffe: "Toutes espèces" },
-      { title: "Baguette truffée", desc: "Quelques tranches de truffe fraîche, du pain blanc, une pincée de fleur de sel — le plus simple des plaisirs.", truffe: "Périgord, automne" },
-      { title: "Pesto noix & truffe", desc: "Râper truffe et noix, ajouter du sel et de l'huile de colza jusqu'à texture crémeuse. Idéal sur pâtes ou carpaccio.", truffe: "Automne (60 g)" },
-      { title: "Tagliatelle al tartufo", desc: "Pâtes al dente mélangées au beurre de truffe et au parmesan, puis généreusement recouvertes de truffe fraîche tranchée.", truffe: "Selon disponibilité" },
-      { title: "Tomme à la truffe", desc: "Insérer des lamelles de truffe dans une tomme coupée en deux, laisser affiner 48–72 h au réfrigérateur.", truffe: "Périgord, hiver, automne" },
+      { title: "Beurre de truffe", truffe: "Toutes espèces", ingredients: "200 g de beurre de laiterie, truffe râpée selon l'espèce (60 g automne / 20 g blanche / 40 g noire / 30 g mésentérique), 1,5 g de fleur de sel.",
+        steps: ["Faire ramollir le beurre en pommade à température ambiante.", "Râper la truffe sur le beurre, ajouter la fleur de sel.", "Mélanger jusqu'à consistance et couleur uniformes.", "Congeler en boudin ou en moules à glaçons pour l'année."],
+        tip: "Vérifiez que le beurre de truffe acheté est sans arôme artificiel et contient une bonne proportion de truffe." },
+      { title: "Œufs truffés", truffe: "Toutes espèces", ingredients: "Œufs frais, truffe selon l'espèce (20 g automne/été, 5 g blanche, 10 g noire).",
+        steps: ["Placer les œufs et la truffe sur papier absorbant dans une boîte hermétique.", "Réfrigérer 24 à 72 h entre 2° et 6°.", "Utiliser les œufs aromatisés pour vos préparations."],
+        tip: "Le blanc peut se transformer en meringues parfumées à la truffe." },
+      { title: "Baguette truffée", truffe: "Périgord, automne", ingredients: "Truffe fraîche, pain blanc, fleur de sel, beurre de truffe (option).",
+        steps: ["Trancher finement la truffe.", "Déposer sur le pain avec une pincée de fleur de sel.", "Ajouter un peu de beurre de truffe pour sublimer."],
+        tip: "À déguster aussitôt : la truffe fraîche perd vite son parfum." },
+      { title: "Pesto noix & truffe", truffe: "Automne (60 g)", ingredients: "60 g truffe d'automne, 30 g noix, 1 dl huile de colza, 1/2 c. à café de sel.",
+        steps: ["Râper finement la truffe et les noix.", "Ajouter le sel.", "Mélanger avec l'huile jusqu'à texture crémeuse."],
+        tip: "Se conserve 2 jours au frigo, ou congelez en petite quantité." },
+      { title: "Tagliatelle al tartufo", truffe: "Selon disponibilité", ingredients: "350 g tagliatelles, 80 g beurre de truffe, 40 g parmesan ou gruyère, truffe fraîche.",
+        steps: ["Cuire les pâtes al dente.", "Égoutter et mélanger immédiatement au beurre de truffe.", "Ajouter le parmesan râpé.", "Terminer avec une généreuse quantité de truffe fraîche tranchée."],
+        tip: "Servez dans des assiettes chaudes pour préserver l'arôme." },
+      { title: "Tomme à la truffe", truffe: "Périgord, hiver, automne", ingredients: "1 tomme (100 g), truffe selon l'espèce (10 g Périgord / 15 g hiver / 25 g automne), beurre de truffe (option).",
+        steps: ["Couper la tomme en deux dans l'épaisseur.", "Insérer les lamelles de truffe (et le beurre truffé).", "Refermer et affiner 48 à 72 h au frigo, enveloppé dans du papier sulfurisé.", "Sortir 30 min avant dégustation."],
+        tip: "Remplacez le beurre truffé par un filet de miel de forêt pour une touche surprenante." },
     ],
     de: [
-      { title: "Trüffelbutter", desc: "200 g weiche Butter, geriebene Trüffel je nach Sorte, Fleur de Sel. Zu einer einheitlichen Masse verrühren; lässt sich als Rolle einfrieren.", truffe: "Alle Sorten" },
-      { title: "Trüffeleier", desc: "Eier mit der Trüffel 24–72 Std. luftdicht im Kühlschrank aufbewahren: Das Eigelb nimmt das Aroma auf.", truffe: "Alle Sorten" },
-      { title: "Trüffelbaguette", desc: "Ein paar Scheiben frischer Trüffel, Weissbrot, eine Prise Fleur de Sel — der einfachste aller Genüsse.", truffe: "Périgord, Herbst" },
-      { title: "Walnuss-Trüffel-Pesto", desc: "Trüffel und Walnüsse reiben, Salz und Rapsöl zugeben bis zur cremigen Textur. Ideal zu Pasta oder Carpaccio.", truffe: "Herbst (60 g)" },
-      { title: "Tagliatelle al tartufo", desc: "Al dente gekochte Pasta mit Trüffelbutter und Parmesan vermengt, grosszügig mit frisch geschnittener Trüffel bedeckt.", truffe: "Je nach Verfügbarkeit" },
-      { title: "Tomme mit Trüffel", desc: "Trüffelscheiben in eine halbierte Tomme einlegen, 48–72 Std. im Kühlschrank reifen lassen.", truffe: "Périgord, Winter, Herbst" },
+      { title: "Trüffelbutter", truffe: "Alle Sorten", ingredients: "200 g Rahmbutter, geriebene Trüffel je nach Sorte (60 g Herbst / 20 g weiss / 40 g schwarz / 30 g Mesentericum), 1,5 g Fleur de Sel.",
+        steps: ["Butter bei Raumtemperatur weich werden lassen.", "Trüffel über die Butter reiben, Fleur de Sel zugeben.", "Zu einer einheitlichen Masse verrühren.", "Als Rolle oder in Eiswürfelform einfrieren."],
+        tip: "Achten Sie darauf, dass gekaufte Trüffelbutter ohne künstliches Aroma ist und einen hohen Trüffelanteil hat." },
+      { title: "Trüffeleier", truffe: "Alle Sorten", ingredients: "Frische Eier, Trüffel je nach Sorte (20 g Herbst/Sommer, 5 g weiss, 10 g schwarz).",
+        steps: ["Eier und Trüffel auf Küchenpapier in eine luftdichte Box legen.", "24–72 Std. bei 2–6° kühlen.", "Die aromatisierten Eier weiterverarbeiten."],
+        tip: "Aus dem Eiweiss lassen sich duftende Trüffel-Meringues machen." },
+      { title: "Trüffelbaguette", truffe: "Périgord, Herbst", ingredients: "Frische Trüffel, Weissbrot, Fleur de Sel, Trüffelbutter (optional).",
+        steps: ["Trüffel fein aufschneiden.", "Auf das Brot legen, mit Fleur de Sel bestreuen.", "Etwas Trüffelbutter für mehr Aroma zugeben."],
+        tip: "Sofort geniessen — frische Trüffel verliert schnell ihr Aroma." },
+      { title: "Walnuss-Trüffel-Pesto", truffe: "Herbst (60 g)", ingredients: "60 g Herbsttrüffel, 30 g Walnüsse, 1 dl Rapsöl, 1/2 TL Salz.",
+        steps: ["Trüffel und Walnüsse fein reiben.", "Salz zugeben.", "Mit Öl zu einer cremigen Textur verrühren."],
+        tip: "2 Tage im Kühlschrank haltbar, oder in kleinen Mengen einfrieren." },
+      { title: "Tagliatelle al tartufo", truffe: "Je nach Verfügbarkeit", ingredients: "350 g Tagliatelle, 80 g Trüffelbutter, 40 g Parmesan oder Gruyère, frische Trüffel.",
+        steps: ["Pasta al dente kochen.", "Abtropfen und sofort mit Trüffelbutter mischen.", "Parmesan darüber reiben.", "Mit reichlich frisch geschnittener Trüffel abschliessen."],
+        tip: "Auf vorgewärmten Tellern servieren, um das Aroma zu bewahren." },
+      { title: "Tomme mit Trüffel", truffe: "Périgord, Winter, Herbst", ingredients: "1 Tomme (100 g), Trüffel je nach Sorte (10 g Périgord / 15 g Winter / 25 g Herbst), Trüffelbutter (optional).",
+        steps: ["Tomme der Dicke nach halbieren.", "Trüffelscheiben (und Trüffelbutter) einlegen.", "Verschliessen, in Backpapier gewickelt 48–72 Std. im Kühlschrank reifen lassen.", "30 Min. vor dem Servieren herausnehmen."],
+        tip: "Ersetzen Sie die Trüffelbutter durch Waldhonig für eine überraschende Note." },
     ],
     en: [
-      { title: "Truffle butter", desc: "200 g softened butter, truffle grated according to species, fleur de sel. Mix until smooth and even; freezes well as a log.", truffe: "All species" },
-      { title: "Truffle-infused eggs", desc: "Store eggs with truffle in an airtight box for 24–72 h in the fridge: the yolk absorbs the aroma.", truffe: "All species" },
-      { title: "Truffle baguette", desc: "A few slices of fresh truffle, white bread, a pinch of fleur de sel — the simplest of pleasures.", truffe: "Périgord, autumn" },
-      { title: "Walnut & truffle pesto", desc: "Grate truffle and walnuts, add salt and rapeseed oil until creamy. Ideal on pasta or carpaccio.", truffe: "Autumn (60 g)" },
-      { title: "Tagliatelle al tartufo", desc: "Al dente pasta tossed with truffle butter and parmesan, generously topped with freshly sliced truffle.", truffe: "Depending on availability" },
-      { title: "Tomme cheese with truffle", desc: "Insert truffle slices into a halved tomme cheese, let mature 48–72 h in the fridge.", truffe: "Périgord, winter, autumn" },
+      { title: "Truffle butter", truffe: "All species", ingredients: "200 g dairy butter, truffle grated by species (60 g autumn / 20 g white / 40 g black / 30 g mesentericum), 1.5 g fleur de sel.",
+        steps: ["Let butter soften to room temperature.", "Grate truffle over the butter, add fleur de sel.", "Mix until smooth and evenly coloured.", "Freeze as a log or in ice-cube trays for the year."],
+        tip: "Check that bought truffle butter has no artificial aroma and a good proportion of real truffle." },
+      { title: "Truffle-infused eggs", truffe: "All species", ingredients: "Fresh eggs, truffle by species (20 g autumn/summer, 5 g white, 10 g black).",
+        steps: ["Place eggs and truffle on absorbent paper in an airtight box.", "Refrigerate 24–72h at 2–6°.", "Use the infused eggs in your recipes."],
+        tip: "The egg whites make delicious truffle-scented meringues." },
+      { title: "Truffle baguette", truffe: "Périgord, autumn", ingredients: "Fresh truffle, white bread, fleur de sel, truffle butter (optional).",
+        steps: ["Slice the truffle thinly.", "Lay onto the bread with a pinch of fleur de sel.", "Add a little truffle butter to enhance."],
+        tip: "Eat right away — fresh truffle loses its aroma quickly." },
+      { title: "Walnut & truffle pesto", truffe: "Autumn (60 g)", ingredients: "60 g autumn truffle, 30 g walnuts, 1 dl rapeseed oil, 1/2 tsp salt.",
+        steps: ["Finely grate the truffle and walnuts.", "Add the salt.", "Mix with oil until creamy."],
+        tip: "Keeps 2 days in the fridge, or freeze in small portions." },
+      { title: "Tagliatelle al tartufo", truffe: "Depending on availability", ingredients: "350 g tagliatelle, 80 g truffle butter, 40 g parmesan or gruyère, fresh truffle.",
+        steps: ["Cook the pasta al dente.", "Drain and toss immediately with truffle butter.", "Add grated parmesan.", "Finish with a generous amount of freshly sliced truffle."],
+        tip: "Serve on warmed plates to preserve the aroma." },
+      { title: "Tomme cheese with truffle", truffe: "Périgord, winter, autumn", ingredients: "1 tomme (100 g), truffle by species (10 g Périgord / 15 g winter / 25 g autumn), truffle butter (optional).",
+        steps: ["Cut the tomme in half through its thickness.", "Insert truffle slices (and truffle butter).", "Close and let mature 48–72h in the fridge, wrapped in parchment.", "Remove 30 min before serving."],
+        tip: "Swap the truffle butter for a drizzle of forest honey for a surprising twist." },
     ],
   };
   renderVals() {
@@ -597,6 +768,7 @@ class Component extends DCLogic {
       const lines = this.stationPos.map(s => { const p = positions[s.num] || s; return `{ num: ${JSON.stringify(s.num)}, x: ${p.x}, y: ${p.y} }`; }).join(',\n');
       console.log(lines);
       if (navigator.clipboard) navigator.clipboard.writeText(lines).catch(() => {});
+      this.setState({ coordsText: lines });
     };
     const i = postesAll.findIndex(p => p.num === this.state.poste);
     const poste = postesAll[i];
@@ -612,7 +784,48 @@ class Component extends DCLogic {
     const videoEmbedUrl = vid ? `https://www.youtube-nocookie.com/embed/${vid}?cc_load_policy=1&cc_lang_pref=${lang}&hl=${lang}&modestbranding=1&rel=0` : "";
     const segBase = { padding: "8px", fontSize: "12px", textAlign: "center" };
     const segOn = { ...segBase, background: "var(--color-text)", color: "#fff" };
+    const especesList = this.especesByLang[lang].map((e, idx) => { const imgId = `espece-${idx}`; return { ...e, imgId, onExpand: () => this.setState({ lightboxId: imgId }) }; });
+    const recettesList = this.recettesByLang[lang].map((r, idx) => { const imgId = `recette-${idx}`; return { ...r, imgId, onExpand: () => this.setState({ lightboxId: imgId }) }; });
+    const closeLightbox = () => this.setState({ lightboxId: null });
+    const openLightboxHome = () => this.setState({ lightboxId: 'home-hero' });
+    const openLightboxTruffle = () => this.setState({ lightboxId: 'truffle-photo' });
+    const openLightboxAccess = () => this.setState({ lightboxId: 'access-map' });
+    const openLightboxCuisine = () => this.setState({ lightboxId: 'cuisine-hero' });
+    const openLightboxPoste = () => this.setState({ lightboxId: 'poste-' + poste.num });
     const postesList = postesAll.map(p => ({ ...p, onOpen: () => this.setState({ screen: "poste", poste: p.num }) }));
+    const chapterDefs = [
+      { key: "bienvenue", nums: ["1–3", 4] },
+      { key: "terroir", nums: [5, 7, 8, 9] },
+      { key: "especes", nums: [6, 12, 13, 14, 17, 18] },
+      { key: "recolte", nums: [10, 11, 15, 16] },
+      { key: "tourisme", nums: [19, 20] },
+      { key: "association", nums: [21, 22, 23] },
+    ];
+    const chapterOf = {};
+    chapterDefs.forEach(c => c.nums.forEach(n => { chapterOf[n] = c.key; }));
+    const chapterOrder = chapterDefs.flatMap(c => c.nums);
+    const posteChapterLabel = t['chapter_' + chapterOf[poste.num]];
+    const chapIdx = chapterOrder.indexOf(this.state.poste);
+    const gotoPrev = () => this.setState({ poste: chapterOrder[Math.max(0, chapIdx - 1)] });
+    const gotoNext = () => this.setState({ poste: chapterOrder[Math.min(chapterOrder.length - 1, chapIdx + 1)] });
+    const speakerFilter = this.state.speakerFilter || null;
+    const allSpeakers = [...new Set(Object.values(this.speakersByNum))];
+    const speakerChips = ["*ALL*", ...allSpeakers].map(name => ({
+      label: name === "*ALL*" ? t.liste_all : name,
+      cls: (speakerFilter === name || (name === "*ALL*" && !speakerFilter)) ? "tag-accent" : "tag-outline",
+      onClick: () => this.setState({ speakerFilter: name === "*ALL*" ? null : name }),
+    }));
+    const postesGrouped = chapterDefs.map(c => {
+      const items = c.nums.map(n => postesList.find(p => p.num === n)).filter(Boolean)
+        .filter(p => !speakerFilter || this.speakersByNum[p.num] === speakerFilter)
+        .map(p => ({ ...p, speakerSuffix: this.speakersByNum[p.num] ? ` · ${this.speakersByNum[p.num]}` : "" }));
+      return { key: c.key, label: t['chapter_' + c.key], items, hasItems: items.length > 0 };
+    });
+    const posteSpeaker = this.speakersByNum[poste.num] || "";
+    const especeActive = especesList[this.state.especeIndex] || especesList[0];
+    const especeIndexLabel = `${this.state.especeIndex + 1} / ${especesList.length}`;
+    const especePrev = () => this.setState(s => ({ especeIndex: Math.max(0, s.especeIndex - 1) }));
+    const especeNext = () => this.setState(s => ({ especeIndex: Math.min(especesList.length - 1, s.especeIndex + 1) }));
     const quizList = this.quizByLang[lang];
     const quizQ = quizList[this.state.quizIndex] || quizList[0];
     const quizSel = this.state.quizSelected;
@@ -658,8 +871,13 @@ class Component extends DCLogic {
       editLabel: this.state.editMode ? t.map_done : t.map_edit,
       editTagClass: this.state.editMode ? "tag-accent" : "tag-outline",
       toggleEdit: () => this.setState(s => ({ editMode: !s.editMode })),
-      logCoords,
-      conseils: this.conseilsByLang[lang], especes: this.especesByLang[lang], recettes: this.recettesByLang[lang],
+      logCoords, coordsText: this.state.coordsText || "", hasCoordsText: !!this.state.coordsText,
+      selectCoordsText: (e) => e.target.select(),
+      conseils: this.conseilsByLang[lang],
+      especes: especesList,
+      recettes: recettesList,
+      lightboxId: this.state.lightboxId, closeLightbox, openLightboxHome, openLightboxTruffle, openLightboxAccess, openLightboxCuisine, openLightboxPoste,
+      especeActive, especeIndexLabel, especePrev, especeNext,
       isConseils: this.state.cuisineTab === "conseils", isEspeces: this.state.cuisineTab === "especes", isRecettes: this.state.cuisineTab === "recettes",
       tabConseilsStyle: this.state.cuisineTab === "conseils" ? segOn : segBase,
       tabEspecesStyle: this.state.cuisineTab === "especes" ? segOn : segBase,
@@ -670,9 +888,8 @@ class Component extends DCLogic {
       postes: postesList,
       poste, facts, hasFacts: facts.length > 0, hasVideo, hasVideoId, hasVideoNoId, hasLink, hasSections,
       sections: poste.sections || [],
-      hasNoVideo: !hasVideo && !hasLink, video, link, videoEmbedUrl,
-      gotoPrev: () => this.setState(s => ({ poste: this.postesByLang[s.lang][Math.max(0, i - 1)].num })),
-      gotoNext: () => this.setState(s => ({ poste: this.postesByLang[s.lang][Math.min(postesAll.length - 1, i + 1)].num })),
+      hasNoVideo: !hasVideo && !hasLink, video, link, videoEmbedUrl, posteChapterLabel, postesGrouped, speakerChips, posteSpeaker,
+      gotoPrev, gotoNext,
       quizDone: this.state.quizDone, isQuizPlaying: !this.state.quizDone,
       quizQ, quizOptions, quizDots, quizScore, quizMessage,
       quizQuestionLabel: `${t.quiz_word} ${this.state.quizIndex + 1} / 10`,
@@ -686,4 +903,3 @@ class Component extends DCLogic {
 </script>
 </body>
 </html>
-
