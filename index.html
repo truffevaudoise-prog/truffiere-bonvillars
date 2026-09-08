@@ -75,9 +75,13 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path></svg>
         <span style="font:600 13px var(--font-body)">{{ t.kamishibai_title }}</span>
       </div>
+      <div onClick="{{ goLivret }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+        <span style="font:600 13px var(--font-body)">{{ t.livret_title }}</span>
+      </div>
       <div onClick="{{ goInfos }}" style="cursor:pointer;background:var(--color-surface);padding:16px 14px;display:flex;flex-direction:column;gap:10px;grid-column:1/3">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-        <span style="font:600 13px var(--font-body)">{{ t.btn_infos }}</span>
+        <span style="font:600 13px var(--font-body)">{{ t.btn_infos }} · {{ t.btn_partenaires }} · {{ t.btn_credits }}</span>
       </div>
     </div>
   </div>
@@ -238,6 +242,10 @@
     <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_contact }}</div>
     <p style="font:14px/1.6 var(--font-body);margin:0 0 14px">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffevaudoise.ch</p>
     <a href="https://www.truffevaudoise.ch" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="text-decoration:none">{{ t.infos_site_btn }} →</a>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin:24px 0 10px;border-top:2px solid var(--color-divider);padding-top:20px">{{ t.infos_sponsors }}</div>
+    <image-slot id="sponsors" shape="rect" placeholder="Logos partenaires" style="width:100%;aspect-ratio:780/2000;border:2px solid var(--color-divider)"></image-slot>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin:24px 0 10px;border-top:2px solid var(--color-divider);padding-top:20px">{{ t.infos_credits }}</div>
+    <p style="font:13px/1.6 var(--font-body);margin:0;color:var(--color-neutral-700);white-space:pre-line">{{ t.infos_credits_text }}</p>
   </div>
 </sc-if>
 
@@ -507,6 +515,82 @@
   </div>
 </sc-if>
 
+<sc-if value="{{ isLivret }}">
+  <div class="topbar">
+    <button class="backbtn" onClick="{{ goHome }}">‹</button>
+    <span class="screentitle">{{ t.livret_title }}</span>
+    <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
+  </div>
+  <div class="content">
+    <image-slot id="livret-hero" shape="rect" placeholder="Illustration : découvre l'univers des truffes" style="width:100%;height:320px;margin-bottom:16px" fit="contain"></image-slot>
+    <image-slot id="livret-season" shape="rect" placeholder="Illustration du cycle des saisons" style="width:100%;height:320px;margin-bottom:16px" fit="contain"></image-slot>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.livret_seasons_title }}</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+      <sc-for list="{{ livretSeasons }}" as="s" hint-placeholder-count="4">
+        <div onClick="{{ s.onSelect }}" style="{{ s.style }}">{{ s.label }}</div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ livretSeasonText }}">
+      <p style="font:14px/1.6 var(--font-body);margin:0 0 24px;background:var(--color-neutral-100);padding:12px 14px">{{ livretSeasonText }}</p>
+    </sc-if>
+
+    <div class="hr" style="margin:0 0 20px"></div>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.livret_maze_title }}</div>
+    <sc-if value="{{ !livretMazeDone }}" hint-placeholder-val="{{ true }}">
+      <p style="font:12px var(--font-body);margin:0 0 10px;color:var(--color-neutral-600)">{{ livretMazeStepLabel }}</p>
+      <div style="position:relative;margin-bottom:14px">
+        <image-slot id="livret-maze" shape="rect" placeholder="Illustration du labyrinthe chêne-truffe" style="width:100%;height:320px" fit="cover"></image-slot>
+        <div style="position:absolute;width:18px;height:18px;border-radius:50%;background:var(--color-accent);box-shadow:0 0 0 3px #fff,0 2px 6px rgba(0,0,0,.3);transition:left .6s ease,top .6s ease;left:{{ livretMazeDotX }}%;top:{{ livretMazeDotY }}%;transform:translate(-50%,-50%)"></div>
+      </div>
+      <p style="font:16px/1.5 var(--font-body);margin:0 0 14px;font-weight:600">{{ livretMazePrompt }}</p>
+      <div style="display:flex;gap:12px;margin-bottom:10px">
+        <a class="btn btn-secondary" onClick="{{ mazeLeft }}" style="justify-content:center;flex:1;cursor:pointer;padding:18px 10px;font-size:20px">← {{ t.livret_maze_left }}</a>
+        <a class="btn btn-secondary" onClick="{{ mazeRight }}" style="justify-content:center;flex:1;cursor:pointer;padding:18px 10px;font-size:20px">{{ t.livret_maze_right }} →</a>
+      </div>
+      <sc-if value="{{ livretMazeMsg }}">
+        <p style="font:600 14px var(--font-body);margin:0 0 20px;color:var(--color-accent-700)">{{ livretMazeMsg }}</p>
+      </sc-if>
+    </sc-if>
+    <sc-if value="{{ livretMazeDone }}" hint-placeholder-val="{{ false }}">
+      <div class="card elev-sm" style="padding:14px;margin-bottom:20px">
+        <image-slot id="livret-maze-success" shape="rect" placeholder="Le chêne retrouve la truffe" style="width:100%;height:140px;margin-bottom:10px" fit="cover"></image-slot>
+        <p style="font:700 15px var(--font-body);margin:0 0 10px">🎉 {{ t.livret_maze_success }}</p>
+        <a class="btn btn-secondary btn-block" onClick="{{ mazeRetry }}" style="cursor:pointer">{{ t.livret_maze_retry }}</a>
+      </div>
+    </sc-if>
+
+    <div class="hr" style="margin:0 0 20px"></div>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">{{ t.livret_animals_title }}</div>
+    <p style="font:13px/1.5 var(--font-body);margin:0 0 12px;color:var(--color-neutral-700)">{{ t.livret_animals_instruction }}</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px" hint-placeholder-count="10">
+      <sc-for list="{{ livretAnimals }}" as="a" hint-placeholder-count="7">
+        <div onClick="{{ a.onToggle }}" style="{{ a.style }}">
+          <image-slot id="{{ a.imgId }}" shape="rect" placeholder="{{ a.label }}" style="width:100%;height:70px" fit="contain"></image-slot>
+          <span style="font:600 11px var(--font-body);padding:6px 4px 0;display:block;text-align:center">{{ a.label }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ livretAnimalsFeedback }}">
+      <p style="font:13px var(--font-body);margin:0 0 20px;color:var(--color-accent-700)">{{ livretAnimalsFeedback }}</p>
+    </sc-if>
+
+    <div class="hr" style="margin:0 0 20px"></div>
+    <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.livret_rebus_title }}</div>
+    <div class="card elev-sm" style="padding:14px;margin-bottom:20px">
+      <image-slot id="livret-rebus" shape="rect" placeholder="beau · nappe · petit" style="width:100%;height:180px;margin-bottom:10px" fit="contain"></image-slot>
+      <sc-if value="{{ !livretRebusOpen }}" hint-placeholder-val="{{ true }}">
+        <a class="btn btn-secondary btn-block" onClick="{{ toggleRebus }}" style="cursor:pointer">{{ t.livret_rebus_reveal }}</a>
+      </sc-if>
+      <sc-if value="{{ livretRebusOpen }}" hint-placeholder-val="{{ false }}">
+        <p style="font:700 15px var(--font-heading);margin:0">{{ t.livret_rebus_answer }}</p>
+      </sc-if>
+    </div>
+
+    <div class="hr" style="margin:0 0 20px"></div>
+    <p style="font:11px var(--font-body);color:var(--color-neutral-600);margin:0">{{ t.livret_credits }}</p>
+  </div>
+</sc-if>
+
 <sc-if value="{{ isQuiz }}">
   <div class="topbar">
     <button class="backbtn" onClick="{{ goHome }}">‹</button>
@@ -696,7 +780,69 @@ class Component extends DCLogic {
       { name: "No damage", desc: "from frost, no abnormal external moisture, no foreign odour or flavour." },
     ],
   };
-  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr", quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false, aromeRatings: {}, kamiIndex: 0, especeIndex: 0 };
+  livretSeasonsByLang = {
+    fr: [
+      { key: "printemps", label: "Printemps", text: "La truffe commence à se former sous terre à partir du mycélium, un réseau de filaments vivant en symbiose avec les racines des arbres. À ce stade, elle est encore très petite et invisible." },
+      { key: "ete", label: "Été", text: "La truffe grandit, mais elle n'est pas encore adulte. Elle a besoin de chaleur et surtout d'humidité. Si l'été est trop sec, elle peut mal se développer." },
+      { key: "automne", label: "Automne", text: "La truffe continue de grossir et commence à dégager son célèbre parfum. Elle se prépare à être prête pour l'hiver." },
+      { key: "hiver", label: "Hiver", text: "La truffe est enfin mature, bien parfumée et prête à être récoltée. Les trufficulteurs la recherchent sous terre avec l'aide de chiens." },
+    ],
+    de: [
+      { key: "printemps", label: "Frühling", text: "Die Trüffel beginnt sich unter der Erde aus dem Mycel zu bilden, einem Fadennetz, das in Symbiose mit den Baumwurzeln lebt. In diesem Stadium ist sie noch sehr klein und unsichtbar." },
+      { key: "ete", label: "Sommer", text: "Die Trüffel wächst, ist aber noch nicht ausgewachsen. Sie braucht Wärme und vor allem Feuchtigkeit. Ist der Sommer zu trocken, kann sie sich schlecht entwickeln." },
+      { key: "automne", label: "Herbst", text: "Die Trüffel wächst weiter und beginnt ihren berühmten Duft zu verströmen. Sie bereitet sich auf den Winter vor." },
+      { key: "hiver", label: "Winter", text: "Die Trüffel ist endlich reif, duftend und bereit zur Ernte. Die Trüffelbauern suchen sie mit Hilfe von Hunden unter der Erde." },
+    ],
+    en: [
+      { key: "printemps", label: "Spring", text: "The truffle begins to form underground from the mycelium, a network of threads living in symbiosis with tree roots. At this stage, it is still very small and invisible." },
+      { key: "ete", label: "Summer", text: "The truffle grows, but is not yet mature. It needs warmth and, above all, moisture. If summer is too dry, it may not develop well." },
+      { key: "automne", label: "Autumn", text: "The truffle keeps growing and starts to release its famous aroma. It's getting ready for winter." },
+      { key: "hiver", label: "Winter", text: "The truffle is finally mature, fragrant and ready to harvest. Truffle growers search for it underground with the help of dogs." },
+    ],
+  };
+  livretAnimalsByLang = {
+    fr: [
+      { key: "sanglier", label: "Sanglier", correct: true }, { key: "renard", label: "Renard", correct: true }, { key: "chien", label: "Chien", correct: true },
+      { key: "chat", label: "Chat", correct: false }, { key: "oiseau", label: "Oiseau", correct: false },
+      { key: "poule", label: "Poule", correct: false }, { key: "herisson", label: "Hérisson", correct: false },
+    ],
+    de: [
+      { key: "sanglier", label: "Wildschwein", correct: true }, { key: "renard", label: "Fuchs", correct: true }, { key: "chien", label: "Hund", correct: true },
+      { key: "chat", label: "Katze", correct: false }, { key: "oiseau", label: "Vogel", correct: false },
+      { key: "poule", label: "Henne", correct: false }, { key: "herisson", label: "Igel", correct: false },
+    ],
+    en: [
+      { key: "sanglier", label: "Wild boar", correct: true }, { key: "renard", label: "Fox", correct: true }, { key: "chien", label: "Dog", correct: true },
+      { key: "chat", label: "Cat", correct: false }, { key: "oiseau", label: "Bird", correct: false },
+      { key: "poule", label: "Hen", correct: false }, { key: "herisson", label: "Hedgehog", correct: false },
+    ],
+  };
+  livretTreesByLang = {
+    fr: [
+      { key: "chene", label: "Chêne", fact: "L'arbre préféré de la truffe : la plupart des truffes de Bonvillars poussent sous des chênes." },
+      { key: "tilleul", label: "Tilleul", fact: "Le tilleul peut aussi accueillir des truffes, un peu plus rarement que le chêne." },
+      { key: "pin", label: "Pin", fact: "Certains pins forment aussi une symbiose avec la truffe, notamment pour la truffe blanche." },
+      { key: "noisetier", label: "Noisetier", fact: "Le noisetier est un excellent ami de la truffe, souvent planté en bordure des truffières." },
+    ],
+    de: [
+      { key: "chene", label: "Eiche", fact: "Der Lieblingsbaum der Trüffel: Die meisten Trüffeln in Bonvillars wachsen unter Eichen." },
+      { key: "tilleul", label: "Linde", fact: "Auch die Linde kann Trüffeln beherbergen, etwas seltener als die Eiche." },
+      { key: "pin", label: "Kiefer", fact: "Manche Kiefern bilden ebenfalls eine Symbiose mit der Trüffel, besonders für die weisse Trüffel." },
+      { key: "noisetier", label: "Hasel", fact: "Die Hasel ist eine hervorragende Freundin der Trüffel, oft am Rand der Trüffelplantagen gepflanzt." },
+    ],
+    en: [
+      { key: "chene", label: "Oak", fact: "The truffle's favourite tree: most truffles at Bonvillars grow beneath oaks." },
+      { key: "tilleul", label: "Lime tree", fact: "The lime tree can also host truffles, a bit more rarely than the oak." },
+      { key: "pin", label: "Pine", fact: "Some pines also form a symbiosis with truffles, notably for the white truffle." },
+      { key: "noisetier", label: "Hazel", fact: "The hazel is an excellent friend of the truffle, often planted at the edge of truffle orchards." },
+    ],
+  };
+  livretMazeSteps = [
+    { fr: "Le chêne cherche son amie la truffe. Premier chemin : gauche ou droite ?", de: "Die Eiche sucht ihre Freundin, die Trüffel. Erster Weg: links oder rechts?", en: "The oak is looking for its friend the truffle. First path: left or right?", correct: "right" },
+    { fr: "Bien joué ! Et maintenant ?", de: "Gut gemacht! Und jetzt?", en: "Well done! And now?", correct: "left" },
+    { fr: "Presque arrivé, dernier choix !", de: "Fast da, letzte Wahl!", en: "Almost there, last choice!", correct: "right" },
+  ];
+  state = { screen: "home", selected: 6, poste: 6, cuisineTab: "conseils", editMode: false, dragNum: null, positions: null, lang: "fr", quizIndex: 0, quizAnswers: [], quizSelected: null, quizDone: false, aromeRatings: {}, kamiIndex: 0, especeIndex: 0, livretSeason: null, livretMazeStep: 0, livretMazeDone: false, livretMazeMsg: "", livretAnimalsSel: [], livretRebusOpen: false, livretTreeSel: null, livretRecipe: "" };
   quizByLang = {
     fr: [
       { question: "Avec quel arbre la truffe aime-t-elle le plus vivre ?", options: ["Le chêne", "Le pin", "Le bouleau"], correct: 0 },
@@ -746,6 +892,38 @@ class Component extends DCLogic {
   mapRef = React.createRef();
   mapOuterRef = React.createRef();
   componentDidMount() {
+    try { const saved = localStorage.getItem("truffe-livret-recipe"); if (saved) this.setState({ livretRecipe: saved }); } catch (e) {}
+    this._mazeChoose = (dir) => {
+      const step = this.livretMazeSteps[this.state.livretMazeStep];
+      const lang = this.state.lang;
+      if (dir === step.correct) {
+        const next = this.state.livretMazeStep + 1;
+        if (next >= this.livretMazeSteps.length) this.setState({ livretMazeDone: true, livretMazeMsg: "" });
+        else this.setState({ livretMazeStep: next, livretMazeMsg: "" });
+      } else {
+        const retry = { fr: "Oups, essaie l'autre chemin !", de: "Hoppla, versuch den anderen Weg!", en: "Oops, try the other path!" };
+        this.setState({ livretMazeMsg: retry[lang] });
+      }
+    };
+    this._toggleAnimal = (key) => {
+      this.setState(s => {
+        const has = s.livretAnimalsSel.includes(key);
+        if (has) return { livretAnimalsSel: s.livretAnimalsSel.filter(k => k !== key) };
+        if (s.livretAnimalsSel.length >= 3) return {};
+        return { livretAnimalsSel: [...s.livretAnimalsSel, key] };
+      });
+    };
+    this._livretAnimalsFeedback = (lang) => {
+      const sel = this.state.livretAnimalsSel;
+      if (sel.length < 3) return null;
+      const animals = this.livretAnimalsByLang[lang];
+      const allCorrect = sel.every(k => animals.find(a => a.key === k).correct);
+      const msgs = {
+        ok: { fr: "Bravo, tu as trouvé les 3 super flairs !", de: "Bravo, du hast alle 3 Spürnasen gefunden!", en: "Well done, you found all 3 super sniffers!" },
+        no: { fr: "Pas tout à fait — réessaie !", de: "Nicht ganz — versuch's noch mal!", en: "Not quite — try again!" },
+      };
+      return allCorrect ? msgs.ok[lang] : msgs.no[lang];
+    };
     this._computeRect = () => {
       if (!this.mapOuterRef.current) return;
       const cw = this.mapOuterRef.current.clientWidth, ch = this.mapOuterRef.current.clientHeight;
@@ -798,7 +976,7 @@ class Component extends DCLogic {
       poste_label:"Poste", poste_of:"/ 23", poste_video_soon:"Vidéo à venir · TruffeVaudoise-APRTS", poste_prev:"← Précédent", poste_next:"Suivant →", poste_feedback:"Laisser un commentaire",
       infos_title:"Infos pratiques", infos_horaires:"Horaires", infos_access_libre:"Accès libre", infos_access_libre_val:"Non disponible",
       infos_visite_org:"Visite organisée", infos_visite_org_val:"Sur inscription", infos_visite_indiv:"Visite individuelle", infos_visite_indiv_val:"Sur rendez-vous",
-      infos_parcours:"Parcours", infos_parcours_val:"env. 1h30", infos_acces:"Accès", infos_maps_btn:"Ouvrir dans Google Maps", infos_contact:"Contact", infos_site_btn:"Réserver une visite · truffevaudoise.ch",
+      infos_parcours:"Parcours", infos_parcours_val:"env. 1h30", infos_acces:"Accès", infos_maps_btn:"Ouvrir dans Google Maps", infos_contact:"Contact", infos_site_btn:"Réserver une visite · truffevaudoise.ch", infos_sponsors:"Partenaires", infos_credits:"Crédits", infos_credits_text:"Photos de la truffière didactique, vidéos et drone : Florian Bloesch — Photographie et Productions visuelles (photoflo.ch, holographe.ch)\n\nKamishibai : Morgane Ischer & Alice Perritaz (morganeischer.ch, destination27.ch)\n\nRecettes : Isabelle Ravet\n\nApplication développée pour l'APRTS.", btn_partenaires:"Partenaires", btn_credits:"Crédits photos",
       truffe_title:"La truffe", truffe_intro:"La truffe est un champignon souterrain qui vit en symbiose avec les racines des arbres. À Bonvillars, 7 espèces poussent en sol calcaire sous 14 essences d'arbres hôtes différentes.",
       truffe_espece:"Espèce", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Maturité", truffe_maturite_val:"Juin – septembre", truffe_arbre:"Arbres hôtes", truffe_arbre_val:"14 essences (chênes, noisetiers, hêtre, tilleul…)", truffe_recherche:"Recherche", truffe_recherche_val:"au chien truffier",
       quiz_title:"Quiz enfants", quiz_word:"Question", quiz_next:"Suivant →", quiz_finish:"Voir mon score →",
@@ -808,7 +986,7 @@ class Component extends DCLogic {
       aromes_title:"Fiche de dégustation", aromes_intro:"Notez chaque critère de 1 à 9, comme sur une fiche de dégustation professionnelle.",
       aromes_olfactifs_title:"Grille olfactive détaillée", aromes_olfactifs_profile:"Truffe d'été/automne, bonne maturité, cavage de moins de 5 jours", aromes_olfactifs_absent:"Absent", aromes_olfactifs_intense:"Très intense",
       aromes_categories_title:"Catégories de qualité", aromes_source:"Source : Commission économique pour l'Europe des Nations-Unies, 2016", aromes_criteres_title:"Critères de qualité obligatoires",
-      kamishibai_title:"Kamishibai des enfants", kami_finish:"Terminer — vers la cuisine !",
+      kamishibai_title:"Kamishibai", kami_finish:"Terminer — vers la cuisine !", livret_title:"Livret jeux", livret_seasons_title:"Le cycle des saisons", livret_maze_title:"Aide le chêne à retrouver la truffe", livret_maze_left:"← Gauche", livret_maze_right:"Droite →", livret_maze_success:"Bravo, le chêne a retrouvé son amie la truffe !", livret_maze_retry:"Rejouer", livret_animals_title:"Entoure 3 animaux au super flair", livret_animals_instruction:"Ils sont capables de sentir les truffes sous terre. Trouve les 3 bons !", livret_rebus_title:"Devine le rébus", livret_rebus_reveal:"Révéler la réponse", livret_rebus_answer:"beau – nappe – petit = bon appétit !", livret_trees_title:"Découvre les arbres préférés des truffes", livret_recipe_title:"Note ta recette de cuisine", livret_recipe_placeholder:"Écris ta recette à la truffe ici…", livret_credits:"Livret papier original : illustrations Morgane Ischer — graphisme Alice Perritaz.",
       cuisine_quote:"« Le parfum de la truffe fraîche est unique — pas besoin d'être un grand chef pour la sublimer : quelques règles simples suffisent à vivre une belle expérience culinaire. »",
       recette_ingredients:"Ingrédients", recette_steps:"Préparation", recette_note:"À noter",
       especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 7 espèces", especes_plants:"Plantés à Bonvillars", especes_zone:"Zone de plantation",
@@ -822,7 +1000,7 @@ class Component extends DCLogic {
       poste_label:"Station", poste_of:"/ 23", poste_video_soon:"Video folgt · TruffeVaudoise-APRTS", poste_prev:"← Zurück", poste_next:"Weiter →", poste_feedback:"Feedback geben",
       infos_title:"Praktische Infos", infos_horaires:"Öffnungszeiten", infos_access_libre:"Freier Zugang", infos_access_libre_val:"Nicht verfügbar",
       infos_visite_org:"Organisierte Besichtigung", infos_visite_org_val:"Auf Anmeldung", infos_visite_indiv:"Individuelle Besichtigung", infos_visite_indiv_val:"Nach Vereinbarung",
-      infos_parcours:"Rundgang", infos_parcours_val:"ca. 1.5 Std.", infos_acces:"Zugang", infos_maps_btn:"In Google Maps öffnen", infos_contact:"Kontakt", infos_site_btn:"Besuch buchen · truffevaudoise.ch",
+      infos_parcours:"Rundgang", infos_parcours_val:"ca. 1.5 Std.", infos_acces:"Zugang", infos_maps_btn:"In Google Maps öffnen", infos_contact:"Kontakt", infos_site_btn:"Besuch buchen · truffevaudoise.ch", infos_sponsors:"Partner", infos_credits:"Impressum", infos_credits_text:"Fotos der didaktischen Trüffelplantage, Videos und Drohne: Florian Bloesch — Photographie et Productions visuelles (photoflo.ch, holographe.ch)\n\nKamishibai: Morgane Ischer & Alice Perritaz (morganeischer.ch, destination27.ch)\n\nRezepte: Isabelle Ravet\n\nApp entwickelt für die APRTS.", btn_partenaires:"Partner", btn_credits:"Fotocredits",
       truffe_title:"Die Trüffel", truffe_intro:"Die Trüffel ist ein unterirdischer Pilz, der in Symbiose mit den Wurzeln von Bäumen lebt. In Bonvillars wachsen 7 Arten auf Kalkboden unter 14 verschiedenen Wirtsbaumarten.",
       truffe_espece:"Art", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Reife", truffe_maturite_val:"Juni – September", truffe_arbre:"Wirtsbäume", truffe_arbre_val:"14 Arten (Eichen, Hasel, Buche, Linde…)", truffe_recherche:"Suche", truffe_recherche_val:"mit dem Trüffelhund",
       quiz_title:"Kinderquiz", quiz_word:"Frage", quiz_next:"Weiter →", quiz_finish:"Ergebnis anzeigen →",
@@ -832,7 +1010,7 @@ class Component extends DCLogic {
       aromes_title:"Verkostungsbogen", aromes_intro:"Bewerten Sie jedes Kriterium von 1 bis 9, wie auf einem professionellen Verkostungsbogen.",
       aromes_olfactifs_title:"Detailliertes Geruchsraster", aromes_olfactifs_profile:"Sommer-/Herbsttrüffel, gute Reife, weniger als 5 Tage nach der Ernte", aromes_olfactifs_absent:"Abwesend", aromes_olfactifs_intense:"Sehr intensiv",
       aromes_categories_title:"Qualitätskategorien", aromes_source:"Quelle: Wirtschaftskommission für Europa der Vereinten Nationen, 2016", aromes_criteres_title:"Verbindliche Qualitätskriterien",
-      kamishibai_title:"Kamishibai für Kinder", kami_finish:"Fertig — weiter zur Küche!",
+      kamishibai_title:"Kamishibai", kami_finish:"Fertig — weiter zur Küche!", livret_title:"Spielheft", livret_seasons_title:"Der Jahreszeitenzyklus", livret_maze_title:"Hilf der Eiche, die Trüffel zu finden", livret_maze_left:"← Links", livret_maze_right:"Rechts →", livret_maze_success:"Bravo, die Eiche hat ihre Freundin, die Trüffel, gefunden!", livret_maze_retry:"Noch einmal spielen", livret_animals_title:"Finde 3 Tiere mit super Spürnase", livret_animals_instruction:"Sie können Trüffeln unter der Erde riechen. Finde die 3 richtigen!", livret_rebus_title:"Errate das Bilderrätsel", livret_rebus_reveal:"Lösung anzeigen", livret_rebus_answer:"Wortspiel auf Französisch: beau – nappe – petit = bon appétit !", livret_trees_title:"Entdecke die Lieblingsbäume der Trüffel", livret_recipe_title:"Notiere dein Rezept", livret_recipe_placeholder:"Schreibe hier dein Trüffelrezept…", livret_credits:"Original-Heft: Illustrationen Morgane Ischer — Grafik Alice Perritaz.",
       cuisine_quote:"« Der Duft der frischen Trüffel ist einzigartig — man muss kein Spitzenkoch sein, um sie zur Geltung zu bringen: ein paar einfache Regeln reichen für ein schönes kulinarisches Erlebnis. »",
       recette_ingredients:"Zutaten", recette_steps:"Zubereitung", recette_note:"Zu beachten",
       especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 7 Arten", especes_plants:"Gepflanzt in Bonvillars", especes_zone:"Pflanzzone",
@@ -846,7 +1024,7 @@ class Component extends DCLogic {
       poste_label:"Stop", poste_of:"/ 23", poste_video_soon:"Video coming soon · TruffeVaudoise-APRTS", poste_prev:"← Previous", poste_next:"Next →", poste_feedback:"Leave feedback",
       infos_title:"Practical info", infos_horaires:"Opening hours", infos_access_libre:"Free access", infos_access_libre_val:"Not available",
       infos_visite_org:"Guided visit", infos_visite_org_val:"By registration", infos_visite_indiv:"Individual visit", infos_visite_indiv_val:"By appointment",
-      infos_parcours:"Route", infos_parcours_val:"approx. 1h30", infos_acces:"Access", infos_maps_btn:"Open in Google Maps", infos_contact:"Contact", infos_site_btn:"Book a visit · truffevaudoise.ch",
+      infos_parcours:"Route", infos_parcours_val:"approx. 1h30", infos_acces:"Access", infos_maps_btn:"Open in Google Maps", infos_contact:"Contact", infos_site_btn:"Book a visit · truffevaudoise.ch", infos_sponsors:"Partners", infos_credits:"Credits", infos_credits_text:"Photos of the educational truffle plantation, videos and drone footage: Florian Bloesch — Photography and visual productions (photoflo.ch, holographe.ch)\n\nKamishibai: Morgane Ischer & Alice Perritaz (morganeischer.ch, destination27.ch)\n\nRecipes: Isabelle Ravet\n\nApp developed for the APRTS.", btn_partenaires:"Partners", btn_credits:"Photo credits",
       truffe_title:"The truffle", truffe_intro:"The truffle is an underground fungus that lives in symbiosis with tree roots. In Bonvillars, 7 species grow in calcareous soil beneath 14 different host tree varieties.",
       truffe_espece:"Species", truffe_espece_val:"Tuber aestivum", truffe_maturite:"Season", truffe_maturite_val:"June – September", truffe_arbre:"Host trees", truffe_arbre_val:"14 varieties (oaks, hazels, beech, lime…)", truffe_recherche:"Search method", truffe_recherche_val:"with a truffle dog",
       quiz_title:"Kids' quiz", quiz_word:"Question", quiz_next:"Next →", quiz_finish:"See my score →",
@@ -856,7 +1034,7 @@ class Component extends DCLogic {
       aromes_title:"Tasting sheet", aromes_intro:"Rate each criterion from 1 to 9, like on a professional tasting sheet.",
       aromes_olfactifs_title:"Detailed aroma grid", aromes_olfactifs_profile:"Summer/autumn truffle, good maturity, less than 5 days since harvest", aromes_olfactifs_absent:"None", aromes_olfactifs_intense:"Very intense",
       aromes_categories_title:"Quality categories", aromes_source:"Source: United Nations Economic Commission for Europe, 2016", aromes_criteres_title:"Mandatory quality criteria",
-      kamishibai_title:"Children's Kamishibai", kami_finish:"Finish — on to the kitchen!",
+      kamishibai_title:"Kamishibai", kami_finish:"Finish — on to the kitchen!", livret_title:"Activity booklet", livret_seasons_title:"The seasonal cycle", livret_maze_title:"Help the oak find the truffle", livret_maze_left:"← Left", livret_maze_right:"Right →", livret_maze_success:"Well done, the oak found its friend the truffle!", livret_maze_retry:"Play again", livret_animals_title:"Circle 3 animals with a super sense of smell", livret_animals_instruction:"They can smell truffles underground. Find the right 3!", livret_rebus_title:"Guess the rebus", livret_rebus_reveal:"Reveal the answer", livret_rebus_answer:"French wordplay: beau – nappe – petit = bon appétit !", livret_trees_title:"Discover the truffle's favourite trees", livret_recipe_title:"Write down your recipe", livret_recipe_placeholder:"Write your truffle recipe here…", livret_credits:"Original booklet: illustrations Morgane Ischer — graphic design Alice Perritaz.",
       cuisine_quote:"“The aroma of a fresh truffle is unique — you don't need to be a great chef to make the most of it: a few simple rules are enough for a wonderful culinary experience.”",
       recette_ingredients:"Ingredients", recette_steps:"Method", recette_note:"Note",
       especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 7 species", especes_plants:"Planted at Bonvillars", especes_zone:"Planting zone",
@@ -1298,6 +1476,42 @@ class Component extends DCLogic {
       kamiIsLast: this.state.kamiIndex === this.kamiPanelsByLang[lang].length - 1,
       kamiHasNext: this.state.kamiIndex !== this.kamiPanelsByLang[lang].length - 1,
       kamiFinish: () => this.setState({ screen: "cuisine", cuisineTab: "recettes" }),
+      goLivret: () => this.setState({ screen: "livret" }),
+      isLivret: screen === "livret",
+      livretSeasons: this.livretSeasonsByLang[lang].map(s => ({
+        ...s,
+        onSelect: () => this.setState({ livretSeason: s.key }),
+        style: { padding: "10px 4px", textAlign: "center", cursor: "pointer", font: "600 12px var(--font-body)",
+          background: this.state.livretSeason === s.key ? "var(--color-text)" : "var(--color-surface)",
+          color: this.state.livretSeason === s.key ? "#fff" : "var(--color-text)" },
+      })),
+      livretSeasonText: this.state.livretSeason ? this.livretSeasonsByLang[lang].find(s => s.key === this.state.livretSeason).text : null,
+      livretMazePrompt: this.state.livretMazeDone ? "" : this.livretMazeSteps[this.state.livretMazeStep][lang],
+      livretMazeStepLabel: (lang === "de" ? "Schritt " : lang === "en" ? "Step " : "Étape ") + (this.state.livretMazeStep + 1) + " / " + this.livretMazeSteps.length,
+      livretMazeDotX: [50, 32, 68, 50][this.state.livretMazeStep],
+      livretMazeDotY: [8, 38, 68, 92][this.state.livretMazeStep],
+      mazeLeft: () => this._mazeChoose("left"),
+      mazeRight: () => this._mazeChoose("right"),
+      mazeRetry: () => this.setState({ livretMazeStep: 0, livretMazeDone: false, livretMazeMsg: "" }),
+      livretMazeDone: this.state.livretMazeDone,
+      livretMazeMsg: this.state.livretMazeMsg,
+      livretAnimals: this.livretAnimalsByLang[lang].map(a => {
+        const sel = this.state.livretAnimalsSel.includes(a.key);
+        return { ...a, imgId: `livret-animal-${a.key}`,
+          onToggle: () => this._toggleAnimal(a.key),
+          style: { cursor: "pointer", border: sel ? "2px solid var(--color-accent)" : "2px solid var(--color-divider)", padding: "0 0 4px" } };
+      }),
+      livretAnimalsFeedback: this._livretAnimalsFeedback(lang),
+      livretRebusOpen: this.state.livretRebusOpen,
+      toggleRebus: () => this.setState(s => ({ livretRebusOpen: !s.livretRebusOpen })),
+      livretTrees: this.livretTreesByLang[lang].map(tr => ({
+        ...tr,
+        onSelect: () => this.setState({ livretTreeSel: tr.key }),
+        style: { cursor: "pointer", background: this.state.livretTreeSel === tr.key ? "var(--color-accent)" : "var(--color-neutral-100)", color: this.state.livretTreeSel === tr.key ? "#fff" : "var(--color-text)" },
+      })),
+      livretTreeFact: this.state.livretTreeSel ? this.livretTreesByLang[lang].find(tr => tr.key === this.state.livretTreeSel).fact : null,
+      livretRecipe: this.state.livretRecipe,
+      onRecipeChange: (e) => { const v = e.target.value; this.setState({ livretRecipe: v }); try { localStorage.setItem("truffe-livret-recipe", v); } catch (err) {} },
       aromeSections: this.aromesByLang[lang].map(sec => ({
         title: sec.title,
         items: sec.items.map(label => {
