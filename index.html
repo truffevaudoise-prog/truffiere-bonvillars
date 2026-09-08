@@ -269,6 +269,9 @@
           </div>
           <div style="padding:10px 12px;flex:1;min-width:0">
             <span style="font:700 14px var(--font-heading);display:block;margin-bottom:4px">{{ especeActive.name }}</span>
+            <sc-if value="{{ especeActive.latin }}">
+              <span style="font:italic 12px var(--font-body);display:block;margin-bottom:4px;color:var(--color-neutral-600)">{{ especeActive.latin }}</span>
+            </sc-if>
             <span class="tag tag-neutral" style="font-size:10px">{{ especeActive.temp }}</span>
           </div>
         </div>
@@ -290,7 +293,12 @@
       </div>
       <div style="display:flex;gap:10px">
         <a class="btn btn-secondary" onClick="{{ especePrev }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_prev }}</a>
-        <a class="btn btn-secondary" onClick="{{ especeNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+        <sc-if value="{{ especeIsLast }}" hint-placeholder-val="{{ false }}">
+          <a class="btn btn-primary" onClick="{{ goHome }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.quiz_home }}</a>
+        </sc-if>
+        <sc-if value="{{ !especeIsLast }}" hint-placeholder-val="{{ true }}">
+          <a class="btn btn-secondary" onClick="{{ especeNext }}" style="justify-content:center;flex:1;cursor:pointer">{{ t.poste_next }}</a>
+        </sc-if>
       </div>
     </div>
   </div>
@@ -338,6 +346,9 @@
               </div>
               <div style="padding:10px 12px;flex:1;min-width:0">
                 <span style="font:700 14px var(--font-heading);display:block;margin-bottom:4px">{{ e.name }}</span>
+                <sc-if value="{{ e.latin }}">
+                  <span style="font:italic 12px var(--font-body);display:block;margin-bottom:4px;color:var(--color-neutral-600)">{{ e.latin }}</span>
+                </sc-if>
                 <span class="tag tag-neutral" style="font-size:10px">{{ e.temp }}</span>
               </div>
             </div>
@@ -800,7 +811,7 @@ class Component extends DCLogic {
       kamishibai_title:"Kamishibai des enfants", kami_finish:"Terminer — vers la cuisine !",
       cuisine_quote:"« Le parfum de la truffe fraîche est unique — pas besoin d'être un grand chef pour la sublimer : quelques règles simples suffisent à vivre une belle expérience culinaire. »",
       recette_ingredients:"Ingrédients", recette_steps:"Préparation", recette_note:"À noter",
-      especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 8 espèces", especes_plants:"Plantés à Bonvillars", especes_zone:"Zone de plantation",
+      especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 7 espèces", especes_plants:"Plantés à Bonvillars", especes_zone:"Zone de plantation",
       liste_title:"Les 23 postes", liste_search:"Rechercher un poste…",
       chapter_bienvenue:"Bienvenue", chapter_terroir:"Terroir & biologie", chapter_especes:"Espèces de truffes", chapter_recolte:"Récolte & gastronomie", chapter_tourisme:"Tourisme", chapter_association:"Association",
       liste_all:"Tous", poste_speaker:"Intervenant" },
@@ -824,7 +835,7 @@ class Component extends DCLogic {
       kamishibai_title:"Kamishibai für Kinder", kami_finish:"Fertig — weiter zur Küche!",
       cuisine_quote:"« Der Duft der frischen Trüffel ist einzigartig — man muss kein Spitzenkoch sein, um sie zur Geltung zu bringen: ein paar einfache Regeln reichen für ein schönes kulinarisches Erlebnis. »",
       recette_ingredients:"Zutaten", recette_steps:"Zubereitung", recette_note:"Zu beachten",
-      especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 8 Arten", especes_plants:"Gepflanzt in Bonvillars", especes_zone:"Pflanzzone",
+      especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 7 Arten", especes_plants:"Gepflanzt in Bonvillars", especes_zone:"Pflanzzone",
       liste_title:"Die 23 Stationen", liste_search:"Station suchen…",
       chapter_bienvenue:"Willkommen", chapter_terroir:"Terroir & Biologie", chapter_especes:"Trüffelarten", chapter_recolte:"Ernte & Gastronomie", chapter_tourisme:"Tourismus", chapter_association:"Verein",
       liste_all:"Alle", poste_speaker:"Sprecher" },
@@ -848,7 +859,7 @@ class Component extends DCLogic {
       kamishibai_title:"Children's Kamishibai", kami_finish:"Finish — on to the kitchen!",
       cuisine_quote:"“The aroma of a fresh truffle is unique — you don't need to be a great chef to make the most of it: a few simple rules are enough for a wonderful culinary experience.”",
       recette_ingredients:"Ingredients", recette_steps:"Method", recette_note:"Note",
-      especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 8 species", especes_plants:"Planted at Bonvillars", especes_zone:"Planting zone",
+      especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 7 species", especes_plants:"Planted at Bonvillars", especes_zone:"Planting zone",
       liste_title:"The 23 stops", liste_search:"Search a stop…",
       chapter_bienvenue:"Welcome", chapter_terroir:"Terroir & biology", chapter_especes:"Truffle species", chapter_recolte:"Harvest & gastronomy", chapter_tourisme:"Tourism", chapter_association:"Association",
       liste_all:"All", poste_speaker:"Speaker" },
@@ -1015,7 +1026,7 @@ class Component extends DCLogic {
   especesByLang = {
     fr: [
       { name: "Truffe d'été — Tuber aestivum", temp: "40° max", taste: "Parfum léger d'humus et de champignon de Paris, goût de noisette et sous-bois.", season: "Juin – août", gleba: "Ferme et blanche, légèrement striée", peridium: "Noir, prisme large et bien marqué", plants: "9 plants", zone: { cx: 88, cy: 94, count: 9 } },
-      { name: "Truffe d'automne — Bourgogne", temp: "60° max", taste: "Goût de noisette et sous-bois en douceur, parfaitement équilibré.", season: "Sept. – fin mars", gleba: "Beige à brun marron à pleine maturité", peridium: "Noir, souvent à gros prisme", plants: "49 plants", zone: { cx: 48, cy: 13, count: 20, wide: true } },
+      { name: "Truffe d'automne — Bourgogne", latin: "Tuber aestivum var. uncinatum", temp: "60° max", taste: "Goût de noisette et sous-bois en douceur, parfaitement équilibré.", season: "Sept. – fin mars", gleba: "Beige à brun marron à pleine maturité", peridium: "Noir, souvent à gros prisme", plants: "49 plants", zone: { cx: 48, cy: 13, count: 20, wide: true } },
       { name: "Truffe d'hiver — Tuber brumale", temp: "80° max", taste: "Arôme puissant, notes musquées et épicées rappelant le cacao ou la réglisse.", season: "Nov. – mars", gleba: "Marron foncé, marbrures blanches contrastées", peridium: "Noir, prisme finement marqué", plants: "9 plants", zone: { cx: 53, cy: 34, count: 9 } },
       { name: "Truffe du Périgord — Tuber melanosporum", temp: "80° max", taste: "Parfum complexe : sous-bois, cacao, musc et fumé ; goût raffiné et persistant.", season: "Déc. – mars", gleba: "Brun foncé à noir, veines blanches fines", peridium: "Noir, verruqueux, pyramides à 6 faces", plants: "138 plants", zone: { cx: 60, cy: 55, count: 32, wide: true } },
       { name: "Truffe blanche d'Alba — Tuber magnatum pico", temp: "40° max, crue", taste: "Arôme très puissant, notes d'ail, de fromage et de soufre. Ne supporte pas la cuisson.", season: "Oct. – déc.", gleba: "Marbrée, blanc à brun rougeâtre", peridium: "Lisse, jaune pâle à ocre", plants: "7 plants (avec borchii)", zone: { cx: 20, cy: 16, count: 7 } },
@@ -1024,7 +1035,7 @@ class Component extends DCLogic {
     ],
     de: [
       { name: "Sommertrüffel — Tuber aestivum", temp: "40° max", taste: "Leichtes Aroma nach Humus und Champignon, Geschmack nach Haselnuss und Unterholz.", season: "Juni – August", gleba: "Fest und weiss, leicht geriffelt", peridium: "Schwarz, breites, deutliches Prisma", plants: "9 Pflanzen" },
-      { name: "Herbsttrüffel — Burgunder", temp: "60° max", taste: "Sanfter Haselnuss- und Unterholzgeschmack, perfekt ausgewogen.", season: "Sept. – Ende März", gleba: "Beige bis braun bei voller Reife", peridium: "Schwarz, oft grobes Prisma", plants: "49 Pflanzen" },
+      { name: "Herbsttrüffel — Burgunder", latin: "Tuber aestivum var. uncinatum", temp: "60° max", taste: "Sanfter Haselnuss- und Unterholzgeschmack, perfekt ausgewogen.", season: "Sept. – Ende März", gleba: "Beige bis braun bei voller Reife", peridium: "Schwarz, oft grobes Prisma", plants: "49 Pflanzen" },
       { name: "Wintertrüffel — Tuber brumale", temp: "80° max", taste: "Kräftiges Aroma mit muskartigen, würzigen Noten, erinnert an Kakao oder Süssholz.", season: "Nov. – März", gleba: "Dunkelbraun, kontrastreiche weisse Adern", peridium: "Schwarz, fein markiertes Prisma", plants: "9 Pflanzen" },
       { name: "Périgord-Trüffel — Tuber melanosporum", temp: "80° max", taste: "Komplexes Aroma: Unterholz, Kakao, Musk und Rauch; raffinierter, anhaltender Geschmack.", season: "Dez. – März", gleba: "Dunkelbraun bis schwarz, feine weisse Adern", peridium: "Schwarz, warzig, sechseckige Pyramiden", plants: "138 Pflanzen" },
       { name: "Weisse Alba-Trüffel — Tuber magnatum pico", temp: "40° max, roh", taste: "Sehr kräftiges Aroma, Noten von Knoblauch, Käse und Schwefel. Verträgt keine Hitze.", season: "Okt. – Dez.", gleba: "Marmoriert, weiss bis rötlich-braun", peridium: "Glatt, blassgelb bis ockerfarben", plants: "7 Pflanzen (mit borchii)" },
@@ -1033,7 +1044,7 @@ class Component extends DCLogic {
     ],
     en: [
       { name: "Summer truffle — Tuber aestivum", temp: "40° max", taste: "Light aroma of humus and button mushroom, hazelnut and woodland taste.", season: "June – August", gleba: "Firm and white, lightly streaked", peridium: "Black, broad well-marked warts", plants: "9 plants" },
-      { name: "Autumn truffle — Burgundy", temp: "60° max", taste: "Soft hazelnut and woodland flavour, perfectly balanced.", season: "Sept. – late March", gleba: "Beige to brown at full maturity", peridium: "Black, often coarse warts", plants: "49 plants" },
+      { name: "Autumn truffle — Burgundy", latin: "Tuber aestivum var. uncinatum", temp: "60° max", taste: "Soft hazelnut and woodland flavour, perfectly balanced.", season: "Sept. – late March", gleba: "Beige to brown at full maturity", peridium: "Black, often coarse warts", plants: "49 plants" },
       { name: "Winter truffle — Tuber brumale", temp: "80° max", taste: "Powerful aroma with musky, spicy notes reminiscent of cocoa or liquorice.", season: "Nov. – March", gleba: "Dark brown, sharply contrasted white veins", peridium: "Black, finely marked warts", plants: "9 plants" },
       { name: "Périgord truffle — Tuber melanosporum", temp: "80° max", taste: "Complex aroma: woodland, cocoa, musk and smoke; refined, lingering taste.", season: "Dec. – March", gleba: "Dark brown to black, fine white veins", peridium: "Black, warty, six-sided pyramids", plants: "138 plants" },
       { name: "White Alba truffle — Tuber magnatum pico", temp: "40° max, raw", taste: "Very powerful aroma, notes of garlic, cheese and sulphur. Does not tolerate cooking.", season: "Oct. – Dec.", gleba: "Marbled, white to reddish-brown", peridium: "Smooth, pale yellow to ochre", plants: "7 plants (with borchii)" },
@@ -1214,6 +1225,7 @@ class Component extends DCLogic {
     const especeIndexLabel = `${this.state.especeIndex + 1} / ${especesWithZones.length}`;
     const especePrev = () => this.setState(s => ({ especeIndex: Math.max(0, s.especeIndex - 1) }));
     const especeNext = () => this.setState(s => ({ especeIndex: Math.min(especesWithZones.length - 1, s.especeIndex + 1) }));
+    const especeIsLast = this.state.especeIndex === especesWithZones.length - 1;
     const quizList = this.quizByLang[lang];
     const quizQ = quizList[this.state.quizIndex] || quizList[0];
     const quizSel = this.state.quizSelected;
@@ -1265,7 +1277,7 @@ class Component extends DCLogic {
       especes: especesWithZones,
       recettes: recettesList,
       lightboxId: this.state.lightboxId, closeLightbox, openLightboxHome, openLightboxTruffle, openLightboxAccess, openLightboxCuisine, openLightboxPoste,
-      especeActive, especeIndexLabel, especePrev, especeNext,
+      especeActive, especeIndexLabel, especePrev, especeNext, especeIsLast,
       isConseils: this.state.cuisineTab === "conseils", isEspeces: this.state.cuisineTab === "especes", isRecettes: this.state.cuisineTab === "recettes",
       tabConseilsStyle: this.state.cuisineTab === "conseils" ? segOn : segBase,
       tabEspecesStyle: this.state.cuisineTab === "especes" ? segOn : segBase,
