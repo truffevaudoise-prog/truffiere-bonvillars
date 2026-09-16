@@ -123,10 +123,6 @@
     <span class="tag tag-outline langtag" onClick="{{ cycleLang }}" style="font-size:11px">{{ langCode }}</span>
   </div>
   <div class="content" style="padding:0">
-    <div style="position:relative">
-      <image-slot id="poste-{{ poste.num }}" shape="rect" placeholder="Photo panneau" style="width:100%;height:180px" fit="cover"></image-slot>
-      <button onClick="{{ openLightboxPoste }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
-    </div>
     <div style="padding:18px 20px">
       <span class="kicker">{{ posteChapterLabel }} · {{ t.poste_label }} {{ poste.num }} {{ t.poste_of }}</span>
       <sc-if value="{{ posteSpeaker }}">
@@ -172,9 +168,6 @@
               <sc-if value="{{ sec.hasSpeaker }}" hint-placeholder-val="{{ false }}">
                 <div style="font:12px var(--font-body);color:var(--color-neutral-600);margin-bottom:8px">{{ t.poste_speaker }} : {{ sec.speaker }}</div>
               </sc-if>
-              <sc-if value="{{ sec.hasImg }}" hint-placeholder-val="{{ false }}">
-                <image-slot id="{{ sec.imgId }}" shape="rect" placeholder="Illustration" style="width:100%;height:160px;margin-bottom:10px" fit="cover"></image-slot>
-              </sc-if>
               <sc-if value="{{ sec.hasBody }}" hint-placeholder-val="{{ true }}">
                 <p style="font:14px/1.55 var(--font-body);margin:0 0 10px">{{ sec.body }}</p>
               </sc-if>
@@ -182,6 +175,15 @@
                 <div class="card elev-sm" style="padding:0;overflow:hidden">
                   <iframe key="{{ sec.embedUrl }}" src="{{ sec.embedUrl }}" style="width:100%;height:196px;border:0;display:block" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
                 </div>
+              </sc-if>
+              <sc-if value="{{ sec.videoSoon }}" hint-placeholder-val="{{ false }}">
+                <div class="card elev-sm" style="padding:14px;background:var(--color-neutral-100);border-style:dashed">
+                  <span style="font:12px var(--font-body);color:var(--color-neutral-600)">{{ t.poste_video_soon }}</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{ sec.hasImg }}" hint-placeholder-val="{{ false }}">
+                <image-slot id="{{ sec.imgId }}" shape="rect" placeholder="Illustration" style="width:100%;height:160px;margin-top:6px" fit="cover"></image-slot>
+                <div style="font:11px var(--font-body);color:var(--color-neutral-600);margin-top:6px;text-align:center">{{ t.poste_photo_orient }}</div>
               </sc-if>
             </div>
           </sc-if>
@@ -206,6 +208,11 @@
       <sc-if value="{{ isLastPoste }}" hint-placeholder-val="{{ false }}">
         <a class="btn btn-primary btn-block" href="https://s1.sphinxonline.net/surveyserver/s/Observatoirevd/VaudOenoClient/Associationpremiereregiontruffieresuisse.htm?ORIGINE_SAISIE=qr_code" target="_blank" rel="noopener" style="justify-content:center;margin-top:10px;text-decoration:none">{{ t.poste_feedback }}</a>
       </sc-if>
+      <div style="position:relative;margin-top:20px">
+        <image-slot id="poste-{{ poste.num }}" shape="rect" placeholder="Photo panneau" style="width:100%;height:180px" fit="cover"></image-slot>
+        <button onClick="{{ openLightboxPoste }}" style="position:absolute;bottom:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font:700 14px var(--font-body);padding:0">⤢</button>
+      </div>
+      <div style="font:11px var(--font-body);color:var(--color-neutral-600);margin-top:6px;text-align:center">{{ t.poste_photo_orient }}</div>
     </div>
   </div>
 </sc-if>
@@ -236,8 +243,8 @@
       <a href="https://maps.app.goo.gl/EimvH8V2UT94YVrCA" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="border-radius:0;text-decoration:none">{{ t.infos_maps_btn }}</a>
     </div>
     <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">{{ t.infos_contact }}</div>
-    <p style="font:14px/1.6 var(--font-body);margin:0 0 14px">Truffière didactique de Bonvillars<br>1436 Bonvillars, Vaud<br>info@truffevaudoise.ch</p>
-    <a href="https://www.truffevaudoise.ch" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="text-decoration:none">{{ t.infos_site_btn }} →</a>
+    <p style="font:14px/1.6 var(--font-body);margin:0 0 14px">info@truffevaudoise.ch</p>
+    <a href="https://www.truffevaudoise.ch/visites/reservation-visites/#/" target="_blank" rel="noopener" class="btn btn-secondary btn-block" style="text-decoration:none">{{ t.infos_site_btn }} →</a>
     <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin:24px 0 10px;border-top:2px solid var(--color-divider);padding-top:20px">{{ t.infos_sponsors }}</div>
     <image-slot id="sponsors" shape="rect" placeholder="Logos partenaires" style="width:100%;max-height:500px;aspect-ratio:780/2000;border:2px solid var(--color-divider)" fit="contain"></image-slot>
     <div style="font:700 13px var(--font-heading);text-transform:uppercase;letter-spacing:.05em;margin:24px 0 10px;border-top:2px solid var(--color-divider);padding-top:20px">{{ t.infos_credits }}</div>
@@ -880,7 +887,7 @@ class Component extends DCLogic {
       especes_gleba:"Gleba (chair)", especes_peridium:"Péridium (peau)", especes_title:"Les 7 espèces", especes_plants:"Plantés à Bonvillars", especes_zone:"Zone de plantation",
       liste_title:"Les 23 postes", liste_search:"Rechercher un poste…",
       chapter_bienvenue:"Bienvenue", chapter_terroir:"Terroir & biologie", chapter_especes:"Espèces de truffes", chapter_recolte:"Récolte & gastronomie", chapter_tourisme:"Tourisme", chapter_association:"Association",
-      liste_all:"Tous", poste_speaker:"Intervenant" },
+      liste_all:"Tous", poste_speaker:"Intervenant", poste_photo_orient:"Vous êtes ici — repérez-vous avec cette vue aérienne" },
     de: { home_kicker:"Didaktische Trüffelanlage · Bonvillars", home_line1:"Schule der", home_line2:"Trüffel",
       home_intro:"Willkommen an der didaktischen Trüffelanlage. 23 Stationen führen frei über das Gelände — Tafeln und kurze Videos erklären Boden, Baum und Pilz.",
       tag_postes:"23 Stationen", tag_parcours:"Freier Rundgang", btn_carte:"Karte öffnen →", btn_liste:"Stationsliste", btn_infos:"Praktische Infos", btn_truffe:"Die Trüffel", btn_cuisine:"Trüffelküche",
@@ -904,7 +911,7 @@ class Component extends DCLogic {
       especes_gleba:"Gleba (Fruchtfleisch)", especes_peridium:"Péridium (Schale)", especes_title:"Die 7 Arten", especes_plants:"Gepflanzt in Bonvillars", especes_zone:"Pflanzzone",
       liste_title:"Die 23 Stationen", liste_search:"Station suchen…",
       chapter_bienvenue:"Willkommen", chapter_terroir:"Terroir & Biologie", chapter_especes:"Trüffelarten", chapter_recolte:"Ernte & Gastronomie", chapter_tourisme:"Tourismus", chapter_association:"Verein",
-      liste_all:"Alle", poste_speaker:"Sprecher" },
+      liste_all:"Alle", poste_speaker:"Sprecher", poste_photo_orient:"Sie sind hier — orientieren Sie sich mit dieser Luftaufnahme" },
     en: { home_kicker:"Educational truffle ground · Bonvillars", home_line1:"The truffle", home_line2:"school",
       home_intro:"Welcome to the educational truffle ground. 23 stops are freely scattered across the site — panels and short videos explain the soil, the tree and the fungus.",
       tag_postes:"23 stops", tag_parcours:"Free route", btn_carte:"Open the map →", btn_liste:"List of stops", btn_infos:"Practical info", btn_truffe:"The truffle", btn_cuisine:"Truffle cuisine",
@@ -928,7 +935,7 @@ class Component extends DCLogic {
       especes_gleba:"Gleba (flesh)", especes_peridium:"Peridium (skin)", especes_title:"The 7 species", especes_plants:"Planted at Bonvillars", especes_zone:"Planting zone",
       liste_title:"The 23 stops", liste_search:"Search a stop…",
       chapter_bienvenue:"Welcome", chapter_terroir:"Terroir & biology", chapter_especes:"Truffle species", chapter_recolte:"Harvest & gastronomy", chapter_tourisme:"Tourism", chapter_association:"Association",
-      liste_all:"All", poste_speaker:"Speaker" },
+      liste_all:"All", poste_speaker:"Speaker", poste_photo_orient:"You are here — orient yourself with this aerial view" },
   };
   videoIds = {
     "6a": "51g2yVXcTd0", 5: "VIoNE0SejCE", 6: "jSUZtq6mWWo", 7: "ndQ93YCW9R8", 8: "hPRJHYot4So",
@@ -950,8 +957,9 @@ class Component extends DCLogic {
           { title: "3. La truffière", body: "Inaugurée le 23 octobre 2020, c'est la première truffière didactique de Suisse, portée par les Compagnons de la Truffe Vaudoise. On y trouve toutes les espèces de truffes comestibles d'Europe et leurs arbres hôtes, sur un terrain aux qualités pédologiques idéales.", videoId: "yvlHRmZUJ7g", speaker: "Pierre Pittet" },
         ] },
       { num: 4, title: "Plan", short: "Le parcours et ses 23 postes", body: "23 postes jalonnent le parcours, de l'histoire de la truffe aux techniques de récolte. La carte interactive permet de repérer chaque poste sur le terrain.", noVideo: true },
-      { num: 5, title: "Trufficulture", short: "Sol calcaire, plantation, entretien", body: "La trufficulture est l'art de cultiver la truffe : sol calcaire (pH ≥ 7), densité de plantation adaptée à la variété, désherbage manuel, taille des arbres. Aucun produit chimique n'est utilisé — une culture biologique et locale, soutenue par le GIVT vaudois.", video: { title: "La trufficulture : définition", duration: "0:39" },
+      { num: 5, title: "Trufficulture", short: "Sol calcaire, plantation, entretien", body: "La trufficulture est l'art de cultiver la truffe : sol calcaire (pH ≥ 7), densité de plantation adaptée à la variété, désherbage manuel, taille des arbres. Aucun produit chimique n'est utilisé — une culture biologique et locale, soutenue par le GIVT vaudois.",
         sections: [
+          { title: "a. La trufficulture : définition", videoId: "VIoNE0SejCE", duration: "0:39" },
           { title: "b. Irrigation : un enjeu pour l'avenir", videoId: "3zqOtxvP_4Q", speaker: "Alain Jutzeler" },
           { title: "c. Planter une truffière", videoId: "K3EfUBxHOWs", speaker: "Alain Jutzeler" },
           { title: "d. Tuber aestivum", videoId: "hAtf2W-vCkg", speaker: "Robert Pisu" },
@@ -990,8 +998,9 @@ class Component extends DCLogic {
           { title: "3. Die Trüffelanlage", body: "Eingeweiht am 23. Oktober 2020, ist sie die erste didaktische Trüffelanlage der Schweiz, getragen von den Compagnons de la Truffe Vaudoise. Hier findet man alle essbaren Trüffelarten Europas und ihre Wirtsbäume, auf einem Gelände mit idealen Bodeneigenschaften.", videoId: "yvlHRmZUJ7g", speaker: "Pierre Pittet" },
         ] },
       { num: 4, title: "Plan", short: "Der Rundgang und seine 23 Stationen", body: "23 Stationen führen entlang des Rundgangs, von der Geschichte der Trüffel bis zu den Erntetechniken. Die interaktive Karte hilft, jede Station im Gelände zu finden.", noVideo: true },
-      { num: 5, title: "Trüffelanbau", short: "Kalkboden, Pflanzung, Pflege", body: "Trüffelanbau ist die Kunst, die Trüffel zu kultivieren: kalkhaltiger Boden (pH ≥ 7), an die Sorte angepasste Pflanzdichte, manuelles Unkrautjäten, Baumschnitt. Es werden keine Chemikalien verwendet — ein biologischer, lokaler Anbau, unterstützt vom waadtländischen GIVT.", video: { title: "La trufficulture : définition", duration: "0:39" },
+      { num: 5, title: "Trüffelanbau", short: "Kalkboden, Pflanzung, Pflege", body: "Trüffelanbau ist die Kunst, die Trüffel zu kultivieren: kalkhaltiger Boden (pH ≥ 7), an die Sorte angepasste Pflanzdichte, manuelles Unkrautjäten, Baumschnitt. Es werden keine Chemikalien verwendet — ein biologischer, lokaler Anbau, unterstützt vom waadtländischen GIVT.",
         sections: [
+          { title: "a. Trüffelanbau: Definition", videoId: "VIoNE0SejCE", duration: "0:39" },
           { title: "b. Bewässerung: eine Herausforderung für die Zukunft", videoId: "3zqOtxvP_4Q", speaker: "Alain Jutzeler" },
           { title: "c. Eine Trüffelplantage anlegen", videoId: "K3EfUBxHOWs", speaker: "Alain Jutzeler" },
           { title: "d. Tuber aestivum", videoId: "hAtf2W-vCkg", speaker: "Robert Pisu" },
@@ -1030,8 +1039,9 @@ class Component extends DCLogic {
           { title: "3. The truffle ground", body: "Inaugurated on 23 October 2020, it is Switzerland's first educational truffle ground, created by the Compagnons de la Truffe Vaudoise. It brings together every edible truffle species found in Europe and their host trees, on land with ideal soil qualities.", videoId: "yvlHRmZUJ7g", speaker: "Pierre Pittet" },
         ] },
       { num: 4, title: "Map", short: "The route and its 23 stops", body: "23 stops line the route, from the history of the truffle to harvesting techniques. The interactive map helps locate each stop on the ground.", noVideo: true },
-      { num: 5, title: "Truffle growing", short: "Calcareous soil, planting, maintenance", body: "Truffle growing is the art of cultivating truffles: calcareous soil (pH ≥ 7), planting density suited to the variety, manual weeding, tree pruning. No chemicals are used — an organic, local practice supported by the Vaud GIVT.", video: { title: "La trufficulture : définition", duration: "0:39" },
+      { num: 5, title: "Truffle growing", short: "Calcareous soil, planting, maintenance", body: "Truffle growing is the art of cultivating truffles: calcareous soil (pH ≥ 7), planting density suited to the variety, manual weeding, tree pruning. No chemicals are used — an organic, local practice supported by the Vaud GIVT.",
         sections: [
+          { title: "a. Truffle growing: definition", videoId: "VIoNE0SejCE", duration: "0:39" },
           { title: "b. Irrigation: a challenge for the future", videoId: "3zqOtxvP_4Q", speaker: "Alain Jutzeler" },
           { title: "c. Planting a truffle orchard", videoId: "K3EfUBxHOWs", speaker: "Alain Jutzeler" },
           { title: "d. Tuber aestivum", videoId: "hAtf2W-vCkg", speaker: "Robert Pisu" },
